@@ -280,4 +280,144 @@ class BackendService:
             self.profiles.begin(c)
         return c
 
+    def get_session(self, session_id):
+        with self._connection():
+            row = self.db.execute(
+                "SELECT * FROM sessions WHERE id=%s AND workspace=%s AND scenario=%s AND snapshot=%s",
+                (session_id, self.workspace_id, self.scenario.id, self.scenario.snapshot_hash),
+            ).fetchone()
+            if not row or row["state"] in ("expiring", "expired"):
+                raise KeyError("Unknown or expired session")
+            return SessionContext(
+                row["id"],
+                row["workspace"],
+                row["customer"],
+                row["scenario"],
+                row["snapshot"],
+                row["channel"],
+                row["run_id"],
+            )
+
+    def end_session(self, c, reason="completed"):
+        with self._tx(c):
+            self._check(c)
+            self.db.execute(
+                "UPDATE sessions SET state='closed',ended=COALESCE(ended,%s),reason=COALESCE(reason,%s) WHERE id=%s",
+                (self.clock(), reason, c.id),
+            )
+            self._audit(c, "session_closed", {"reason": reason})
+            self.profiles.enqueue(c.id)
+        return result(data={"session_id": c.id, "reason": reason})
+
+    def add_message(
+        self, c, text, origin="customer", message_id=None, final=True, audio_item_id=None
+    ):
+        self._check(c)
+        if origin not in (
+            "customer",
+            "customer_transcript",
+            "agent",
+            "host_control",
+        ) or not isinstance(text, str):
+            return self._denied("Invalid message origin/text")
+        mid = message_id or uid("msg")
+        with self._tx(c):
+            self._check(c)
+            # 消息标识跨客户唯一，锁住标识以返回稳定的重放或冲突结果。
+            self.db.execute(
+                "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+                ("message:" + mid,),
+            )
+            existing = self.db.execute("SELECT * FROM messages WHERE id=%s", (mid,)).fetchone()
+            if existing:
+                if (
+                    existing["session"] != c.id
+                    or existing["text"] != text
+                    or existing["origin"] != origin
+                ):
+                    return result("conflict", {"reason": "Message ID already used"})
+                return result(data={"message_id": mid})
+            self.db.execute(
+                "INSERT INTO messages(id,workspace,customer,scenario,session,origin,text,final,audio_item,created) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                (mid, *self._scope(c), c.id, origin, text, int(final), audio_item_id, self.clock()),
+            )
+        return result(data={"message_id": mid}, evidence=[mid])
+
+    def session(self, c):
+        with self._connection():
+            row = self._check(c)
+            return c.as_dict() | {
+                "state": row["state"],
+                "started_at": row["started"],
+                "ended_at": row["ended"],
+                "reason": row["reason"],
+            }
+
+    def message(self, c, message_id):
+        with self._connection():
+            self._check(c)
+            row = self.db.execute(
+                "SELECT id,origin,text FROM messages WHERE id=%s AND session=%s AND workspace=%s AND customer=%s AND scenario=%s",
+                (message_id, c.id, *self._scope(c)),
+            ).fetchone()
+            return dict(row) if row else None
+
+    def read_memory(self, c, field=None, include_history=False):
+        with self._connection():
+            self._check(c)
+            return self.memory.read(c, field, include_history)
+
+    def write_memory(
+        self,
+        c,
+        field,
+        value,
+        message_id,
+        quote,
+        expected_version=0,
+        status="known",
+        operation_id=None,
+    ):
+        with self._tx(c):
+            # 仅保留宿主内部写入入口，供导入与存储契约验证使用，不注册为 Agent 工具。
+            denied = self._active(c)
+            if denied:
+                return self._denied(denied)
+            return self.memory.write(
+                c, field, value, message_id, quote, expected_version, status, operation_id
+            )
+
+    def send_download_sms(self, c):
+        """在当前客户会话内模拟发送；同次通话的重复调用复用发送回执。"""
+        if self.read_only:
+            return self._denied("session_not_active")
+        with self._tx(c):
+            reason = self._active(c, "send_download_sms")
+            if reason:
+                return self._denied(reason)
+            previous = self.db.execute(
+                "SELECT payload FROM audit WHERE workspace=%s AND customer=%s "
+                "AND scenario=%s AND session=%s AND kind='download_sms_sent' ORDER BY id LIMIT 1",
+                (*self._scope(c), c.id),
+            ).fetchone()
+            if previous:
+                receipt = json.loads(previous["payload"])["receipt"]
+            else:
+                try:
+                    message = download_message(c.scenario_id)
+                except KeyError:
+                    return result("no_data", {"reason": "download_entry_unavailable"})
+                receipt = {
+                    "message_id": uid("sms"),
+                    "app_name": message["app_name"],
+                    "delivery_status": "sent",
+                }
+                # 模拟方式和短信正文只供宿主审计，模型只接收业务回执。
+                self._audit(
+                    c,
+                    "download_sms_sent",
+                    {"transport": "simulated", "message": message, "receipt": receipt},
+                )
+            return result(data=receipt, evidence=[receipt["message_id"]])
+
 
