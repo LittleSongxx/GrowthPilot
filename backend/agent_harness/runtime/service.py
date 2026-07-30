@@ -7,41 +7,30 @@
 from __future__ import annotations
 
 import json
-
 import re
-
 import time
-
 import uuid
-
 from contextlib import contextmanager
-
 from contextvars import ContextVar
-
 from dataclasses import dataclass
-
 from pathlib import Path
 
 from psycopg import IntegrityError
-
 from psycopg.pq import TransactionStatus
 
 from backend.channels.sms import download_message
-
 from backend.database import DatabaseConfig, connect, initialize_database
-
 from backend.paths import PROJECT_PREFIX, portable_path, resolve_project_path
 
 from ..memory import MemoryStore
-
 from ..memory.profiles import ProfileStore
-
 from ..scenario import Scenario
-
 from .snapshots import canonical, digest
+
 
 def uid(prefix):
     return prefix + "_" + uuid.uuid4().hex
+
 
 def result(status="success", data=None, evidence=None, retryable=False):
     return {
@@ -51,12 +40,14 @@ def result(status="success", data=None, evidence=None, retryable=False):
         "retryable": retryable,
     }
 
+
 def _snapshot_root(root: Path) -> str:
     """快照只保存项目内相对位置；外部场景的历史回放完全使用冻结资源。"""
     try:
         return root.resolve().relative_to(resolve_project_path(".")).as_posix()
     except ValueError:
         return "."
+
 
 def _restore_snapshot_root(value: str) -> Path:
     """兼容旧绝对目录并按当前项目重定位，不修改快照正文及其内容哈希。"""
@@ -67,20 +58,15 @@ def _restore_snapshot_root(value: str) -> Path:
             reference = "."
     return resolve_project_path(reference)
 
+
 @dataclass(frozen=True)
 class SessionContext:
     session_id: str
-
     workspace_id: str
-
     customer_id: str
-
     scenario_id: str
-
     snapshot_hash: str
-
     channel: str
-
     run_id: str
 
     @property
@@ -420,4 +406,69 @@ class BackendService:
                 )
             return result(data=receipt, evidence=[receipt["message_id"]])
 
+    def snapshot(self, c):
+        """返回会话证据，不返回外部业务进度或推测的转化结果。"""
+        with self._connection():
+            self._check(c)
+            messages = self.db.execute(
+                "SELECT id,origin,text,final,audio_item,created FROM messages WHERE workspace=%s AND customer=%s AND scenario=%s AND session=%s ORDER BY seq",
+                (*self._scope(c), c.id),
+            ).fetchall()
+            return {
+                "session": self.session(c),
+                "messages": [dict(row) for row in messages],
+                "memory": self.read_memory(c)["data"]["fields"],
+                "audit": self.trace(c),
+            }
 
+    def trace(self, c):
+        with self._connection():
+            self._check(c)
+            rows = self.db.execute(
+                "SELECT id,kind,payload,created FROM audit WHERE workspace=%s AND customer=%s AND scenario=%s AND session=%s ORDER BY id",
+                (*self._scope(c), c.id),
+            ).fetchall()
+            return [dict(x) | {"payload": json.loads(x["payload"])} for x in rows]
+
+    def reset_run(self, run_id):
+        """执行管理端清理操作；该能力不属于 Agent 可调用的工具。"""
+        from backend.maintenance import reset_application_run
+
+        return reset_application_run(self, run_id)
+
+    def recover_host_sessions(self):
+        """释放因宿主崩溃而遗留的会话，不重放模型调用，也不修改旧业务台账。"""
+        with self._tx():
+            # 恢复也遵循会话写入与清理的锁顺序，避免过期会话被迟到的恢复重新关闭。
+            self.db.execute("LOCK TABLE sessions IN ROW EXCLUSIVE MODE")
+            rows = self.db.execute(
+                "SELECT id FROM sessions WHERE workspace=%s AND scenario=%s AND state='active' "
+                "ORDER BY id FOR UPDATE",
+                (self.workspace_id, self.scenario.id),
+            ).fetchall()
+            ids = [row["id"] for row in rows]
+            if ids:
+                marks = ",".join("%s" for _ in ids)
+                self.db.execute(
+                    f"UPDATE sessions SET state='closed',ended=%s,reason='host_restart' WHERE workspace=%s AND scenario=%s AND id IN ({marks})",
+                    (self.clock(), self.workspace_id, self.scenario.id, *ids),
+                )
+                for sid in ids:
+                    self.profiles.enqueue(sid)
+        return result(data={"recovered_sessions": ids})
+
+    def plan_retention(self, retention_days=30, now=None):
+        with self._connection():
+            from backend.retention import plan_retention
+
+            return plan_retention(self, retention_days, now)
+
+    def begin_retention(self, plan_hash, retention_days=30, now=None):
+        from backend.retention import begin_retention
+
+        return begin_retention(self, plan_hash, retention_days, now)
+
+    def cleanup_retention(self, plan_hash, retention_days=30, now=None):
+        from backend.retention import cleanup_retention
+
+        return cleanup_retention(self, plan_hash, retention_days, now)
