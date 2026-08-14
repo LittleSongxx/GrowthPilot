@@ -1,0 +1,592 @@
+{
+  "schema_version": "1.0",
+  "description": "本地版本化业务数据：记录与参数随场景快照管理，不是品牌官方实时数据。",
+  "locations": [],
+  "records": [
+    {
+      "id": "catalog_flexible_loan",
+      "scenario_id": "financial_consultation",
+      "kind": "financial_product",
+      "location_id": null,
+      "conditions": {
+        "purposes": [
+          "了解借款费用",
+          "查看还款计划",
+          "了解产品",
+          "短期周转"
+        ]
+      },
+      "payload": {
+        "name": "费用测算方案",
+        "purpose_note": "用于理解App中费用条款与还款计划，不构成借款推荐",
+        "currency": "CNY",
+        "amount_range_yuan": {
+          "min": 1000,
+          "max": 100000
+        },
+        "term_months": [
+          1,
+          3,
+          6,
+          12
+        ],
+        "annual_rate_percent": 12,
+        "interest_method": "simple_interest_bullet",
+        "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+        "service_fee_yuan": 0,
+        "assumptions": [
+          "全年按12个月计算，无复利",
+          "按合同到期还款，不含逾期、提前还款和其他费用",
+          "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和还款方式以最终协议为准"
+        ],
+        "eligibility_note": "无法查询个人授信、可得额度、真实利率或审批结果"
+      },
+      "source_type": "local_catalog",
+      "source": {
+        "id": "growth-agent-catalog-v1",
+        "label": "本地版本化业务记录；非品牌官方实时来源"
+      },
+      "valid_from": "2026-10-01T00:00:00Z",
+      "valid_until": "2027-11-01T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    },
+    {
+      "id": "finance_new_user_offer",
+      "scenario_id": "financial_consultation",
+      "kind": "financial_offer",
+      "location_id": null,
+      "conditions": {
+        "product_id": "catalog_flexible_loan",
+        "is_new_user": true
+      },
+      "payload": {
+        "title": "新用户账户信息服务权益",
+        "benefit": "注册后可免费查看当前方案的费用构成与还款计划说明，并了解账户安全通知设置",
+        "conditions": [
+          "仅适用于符合活动条件的新用户",
+          "不要求借款或提交额度申请",
+          "信息服务不收取费用，不包含利率减免或授信权益"
+        ],
+        "eligibility_note": "按已提供条件介绍服务内容，具体可用功能以账户页面为准；不代表获得授信或特定金融优惠"
+      },
+      "source_type": "local_catalog",
+      "source": {
+        "id": "growth-agent-catalog-v1",
+        "label": "本地版本化业务记录；非品牌官方实时来源"
+      },
+      "valid_from": "2026-10-01T00:00:00Z",
+      "valid_until": "2027-11-01T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    }
+  ],
+  "expansion": {
+    "version": "1.0",
+    "city_profiles": [],
+    "templates": {
+      "financial_product": {
+        "template_id": "catalog_financial_product_template_v1",
+        "source_type": "local_catalog",
+        "source": {
+          "id": "growth-agent-catalog-expansion-v1",
+          "label": "本地版本化查询配置；按配置生成，不是平台、站点或租赁商实时来源"
+        },
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2027-11-01T00:00:00Z",
+        "updated_at": "2026-10-29T00:00:00Z",
+        "payloads": [
+          {
+            "variant_id": "catalog_product_overview",
+            "assumed_filters": {
+              "purpose": "了解产品"
+            },
+            "payload": {
+              "id": "catalog_product_overview",
+              "name": "App产品说明阅读指南",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "介绍如何阅读产品用途、费用披露、使用条件与页面说明，先了解用户关注的功能。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_cost_disclosure",
+            "assumed_filters": {
+              "purpose": "了解借款费用"
+            },
+            "payload": {
+              "id": "catalog_cost_disclosure",
+              "name": "借款费用测算方案",
+              "purpose_note": "比较本金、年利率、期限与总费用，不代表个人可得条件",
+              "currency": "CNY",
+              "amount_range_yuan": {
+                "min": 1000,
+                "max": 100000
+              },
+              "term_months": [
+                1,
+                3,
+                6,
+                12
+              ],
+              "annual_rate_percent": 12,
+              "interest_method": "simple_interest_bullet",
+              "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+              "service_fee_yuan": 0,
+              "assumptions": [
+                "全年按12个月计算，无复利",
+                "按合同到期还款，不含提前还款、逾期或其他费用",
+                "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和期限以最终协议为准",
+                "费用测算采用当前方案列明的参数，不按城市调整"
+              ],
+              "eligibility_note": "无法查询个人授信、额度、实际利率或审批；下载注册不意味着借款、授信或放款",
+              "learning_actions": [
+                "通过官方说明了解目标功能",
+                "阅读费用、期限和账户权限说明",
+                "按意愿完成App下载注册；不代用户申请额度或借款"
+              ],
+              "pricing_basis": {
+                "base_values": {
+                  "annual_rate_percent": 12,
+                  "service_fee_yuan": 0
+                },
+                "profile_parameter": null,
+                "formula": "使用模板固定示例年利率；城市画像参数不适用于金融费用",
+                "disclosure": "基础值与城市参数来自版本化配置；按固定规则计算，不是当地价格调查结果"
+              },
+              "product_kind": "financing_example",
+              "supports_cost_estimate": true
+            }
+          },
+          {
+            "variant_id": "catalog_short_term_cost",
+            "assumed_filters": {
+              "purpose": "借款费用"
+            },
+            "payload": {
+              "id": "catalog_short_term_cost",
+              "name": "短期费用测算方案",
+              "purpose_note": "可与通用12%方案比较费用计算，参数差异不代表产品推荐或可享优惠；实际费用以最终协议为准",
+              "currency": "CNY",
+              "amount_range_yuan": {
+                "min": 1000,
+                "max": 50000
+              },
+              "term_months": [
+                3,
+                6,
+                12
+              ],
+              "annual_rate_percent": 9.6,
+              "interest_method": "simple_interest_bullet",
+              "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+              "service_fee_yuan": 0,
+              "assumptions": [
+                "全年按12个月计算，无复利",
+                "按合同到期还款，不含提前还款、逾期或其他费用",
+                "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和期限以最终协议为准",
+                "费用测算采用当前方案列明的参数，不按城市调整"
+              ],
+              "eligibility_note": "无法查询个人授信、额度、实际利率或审批；下载注册不意味着借款、授信或放款",
+              "learning_actions": [
+                "通过官方说明了解目标功能",
+                "阅读费用、期限和账户权限说明",
+                "按意愿完成App下载注册；不代用户申请额度或借款"
+              ],
+              "pricing_basis": {
+                "base_values": {
+                  "annual_rate_percent": 9.6,
+                  "service_fee_yuan": 0
+                },
+                "profile_parameter": null,
+                "formula": "使用模板固定示例年利率；城市画像参数不适用于金融费用",
+                "disclosure": "基础值与城市参数来自版本化配置；按固定规则计算，不是当地价格调查结果"
+              },
+              "product_kind": "financing_example",
+              "supports_cost_estimate": true
+            }
+          },
+          {
+            "variant_id": "catalog_repayment_plan",
+            "assumed_filters": {
+              "purpose": "还款计划"
+            },
+            "payload": {
+              "id": "catalog_repayment_plan",
+              "name": "还款费用测算方案",
+              "purpose_note": "说明到期应还与期限的关系，不代替个人合同中的实际还款计划",
+              "currency": "CNY",
+              "amount_range_yuan": {
+                "min": 1000,
+                "max": 80000
+              },
+              "term_months": [
+                3,
+                6,
+                12
+              ],
+              "annual_rate_percent": 10.8,
+              "interest_method": "simple_interest_bullet",
+              "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+              "service_fee_yuan": 0,
+              "assumptions": [
+                "全年按12个月计算，无复利",
+                "按合同到期还款，不含提前还款、逾期或其他费用",
+                "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和期限以最终协议为准",
+                "费用测算采用当前方案列明的参数，不按城市调整"
+              ],
+              "eligibility_note": "无法查询个人授信、额度、实际利率或审批；下载注册不意味着借款、授信或放款",
+              "learning_actions": [
+                "通过官方说明了解目标功能",
+                "阅读费用、期限和账户权限说明",
+                "按意愿完成App下载注册；不代用户申请额度或借款"
+              ],
+              "pricing_basis": {
+                "base_values": {
+                  "annual_rate_percent": 10.8,
+                  "service_fee_yuan": 0
+                },
+                "profile_parameter": null,
+                "formula": "使用模板固定示例年利率；城市画像参数不适用于金融费用",
+                "disclosure": "基础值与城市参数来自版本化配置；按固定规则计算，不是当地价格调查结果"
+              },
+              "product_kind": "financing_example",
+              "supports_cost_estimate": true
+            }
+          },
+          {
+            "variant_id": "catalog_repayment_details",
+            "assumed_filters": {
+              "purpose": "查看还款计划"
+            },
+            "payload": {
+              "id": "catalog_repayment_details",
+              "name": "还款计划费用测算方案",
+              "purpose_note": "指导查看本金、费用和还款日，不读取用户真实借款记录",
+              "currency": "CNY",
+              "amount_range_yuan": {
+                "min": 1000,
+                "max": 100000
+              },
+              "term_months": [
+                1,
+                3,
+                6,
+                12
+              ],
+              "annual_rate_percent": 12,
+              "interest_method": "simple_interest_bullet",
+              "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+              "service_fee_yuan": 0,
+              "assumptions": [
+                "全年按12个月计算，无复利",
+                "按合同到期还款，不含提前还款、逾期或其他费用",
+                "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和期限以最终协议为准",
+                "费用测算采用当前方案列明的参数，不按城市调整"
+              ],
+              "eligibility_note": "无法查询个人授信、额度、实际利率或审批；下载注册不意味着借款、授信或放款",
+              "learning_actions": [
+                "通过官方说明了解目标功能",
+                "阅读费用、期限和账户权限说明",
+                "按意愿完成App下载注册；不代用户申请额度或借款"
+              ],
+              "pricing_basis": {
+                "base_values": {
+                  "annual_rate_percent": 12,
+                  "service_fee_yuan": 0
+                },
+                "profile_parameter": null,
+                "formula": "使用模板固定示例年利率；城市画像参数不适用于金融费用",
+                "disclosure": "基础值与城市参数来自版本化配置；按固定规则计算，不是当地价格调查结果"
+              },
+              "product_kind": "financing_example",
+              "supports_cost_estimate": true
+            }
+          },
+          {
+            "variant_id": "catalog_information_safety",
+            "assumed_filters": {
+              "purpose": "安全与信息管理"
+            },
+            "payload": {
+              "id": "catalog_information_safety",
+              "name": "账户安全与信息管理指南",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "解释官方入口识别、权限阅读、账户安全与信息管理的常见概念。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_generic_financing",
+            "assumed_filters": {
+              "purpose": "__generic__"
+            },
+            "payload": {
+              "id": "catalog_generic_financing",
+              "name": "通用费用测算方案",
+              "purpose_note": "当前尚未确认所询用途对应的具体方案。本项仅供选择了解费用计算，不构成借款或产品推荐；应先了解用户真正关注的功能。",
+              "currency": "CNY",
+              "amount_range_yuan": {
+                "min": 1000,
+                "max": 100000
+              },
+              "term_months": [
+                1,
+                3,
+                6,
+                12
+              ],
+              "annual_rate_percent": 12,
+              "interest_method": "simple_interest_bullet",
+              "repayment_method": "按月单利计息，到期一次还本付息，实际还款安排以最终协议为准",
+              "service_fee_yuan": 0,
+              "assumptions": [
+                "全年按12个月计算，无复利",
+                "按合同到期还款，不含提前还款、逾期或其他费用",
+                "按当前方案参数估算，不是个人授信或费用报价；实际金额、利率和期限以最终协议为准",
+                "费用测算采用当前方案列明的参数，不按城市调整",
+                "仅在用户愿意了解费用计算时使用本方案，不将未知用途解释为借款意愿"
+              ],
+              "eligibility_note": "无法查询个人授信、额度、实际利率或审批；下载注册不意味着借款、授信或放款",
+              "learning_actions": [
+                "通过官方说明了解目标功能",
+                "阅读费用、期限和账户权限说明",
+                "按意愿完成App下载注册；不代用户申请额度或借款"
+              ],
+              "pricing_basis": {
+                "base_values": {
+                  "annual_rate_percent": 12,
+                  "service_fee_yuan": 0
+                },
+                "profile_parameter": null,
+                "formula": "使用模板固定示例年利率；城市画像参数不适用于金融费用",
+                "disclosure": "基础值与城市参数来自版本化配置；按固定规则计算，不是当地价格调查结果"
+              },
+              "product_kind": "financing_example",
+              "supports_cost_estimate": true
+            }
+          },
+          {
+            "variant_id": "catalog_app_login",
+            "assumed_filters": {
+              "purpose": "登录"
+            },
+            "payload": {
+              "id": "catalog_app_login",
+              "name": "App登录说明",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "解释官方App登录入口、验证码与常见提示的阅读方法；不收集或索取验证码。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_app_registration",
+            "assumed_filters": {
+              "purpose": "注册"
+            },
+            "payload": {
+              "id": "catalog_app_registration",
+              "name": "App注册说明",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "解释如何按官方页面阅读注册条件、协议与权限说明，再由用户自主决定是否继续。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_financial_basics",
+            "assumed_filters": {
+              "purpose": "理财"
+            },
+            "payload": {
+              "id": "catalog_financial_basics",
+              "name": "金融知识与风险阅读指南",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "解释收益与风险披露、信息来源核验和产品说明阅读；不推荐具体理财产品。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_statement_reading",
+            "assumed_filters": {
+              "purpose": "账单"
+            },
+            "payload": {
+              "id": "catalog_statement_reading",
+              "name": "费用账单阅读指南",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "解释账单中的本金、费用、日期等常见概念；无法读取用户真实账单或账户记录。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          },
+          {
+            "variant_id": "catalog_purpose_clarification",
+            "assumed_filters": {
+              "purpose": "未知说明"
+            },
+            "payload": {
+              "id": "catalog_purpose_clarification",
+              "name": "功能咨询说明",
+              "product_kind": "app_information",
+              "supports_cost_estimate": false,
+              "function_description": "先询问用户想了解下载注册、账户使用、费用概念还是其他功能，不预设其借款意愿。",
+              "purpose_note": "本项提供App使用与金融知识的通用说明；具体功能、菜单和产品是否可用，以官方说明和当前页面为准。",
+              "limitations": [
+                "具体页面、操作步骤与功能是否可用须查询官方知识库或由用户描述当前页面",
+                "无法读取用户的验证码、密码、余额、授信、账单或办理状态",
+                "不包含可用于借款费用测算的产品条款"
+              ],
+              "assumptions": [
+                "按用户明确表达的关注点提供通用说明",
+                "用户未表达借款意愿时不把登录、注册、信息管理、理财或账单问题解释为借款需求",
+                "下载或注册与申请额度、借款、投资分别决策"
+              ]
+            }
+          }
+        ]
+      },
+      "financial_offer": {
+        "template_id": "catalog_financial_offer_template_v1",
+        "source_type": "local_catalog",
+        "source": {
+          "id": "growth-agent-catalog-expansion-v1",
+          "label": "本地版本化查询配置；按配置生成，不是平台、站点或租赁商实时来源"
+        },
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2027-11-01T00:00:00Z",
+        "updated_at": "2026-10-29T00:00:00Z",
+        "payloads": [
+          {
+            "variant_id": "catalog_financial_offer_new",
+            "assumed_filters": {
+              "is_new_user": true,
+              "product_id": "__generic__"
+            },
+            "payload": {
+              "title": "新用户账户信息服务权益",
+              "benefit": "注册后可免费查看当前方案的费用构成与还款计划说明，并了解账户安全通知设置",
+              "conditions": [
+                "适用于符合服务条件的新注册用户，具体可用功能以账户页面为准",
+                "不要求借款、提交额度申请、绑卡、付费或授权额外个人信息",
+                "信息服务不影响金融产品审批、利率或合同费用"
+              ],
+              "eligibility_note": "按用户自述身份介绍信息服务，具体可用服务以账户页面及相关规则为准",
+              "assumption_note": "仅说明所选方案的信息服务，尚未确认的产品名称不代表实际在售或可申请"
+            }
+          },
+          {
+            "variant_id": "catalog_financial_offer_existing",
+            "assumed_filters": {
+              "is_new_user": false,
+              "product_id": "__generic__"
+            },
+            "payload": {
+              "title": "已有用户账户与还款信息服务",
+              "benefit": "可免费查看账户费用明细和已存在还款计划的到期信息，并核对账户安全通知设置",
+              "conditions": [
+                "适用于已有账户；还款计划相关服务仅在账户已经存在对应计划时适用",
+                "不要求借款、提交额度申请、绑卡、付费或授权额外个人信息",
+                "信息服务不影响金融产品审批、利率或合同费用"
+              ],
+              "eligibility_note": "按用户自述身份介绍信息服务，具体可用服务以账户页面及相关规则为准",
+              "assumption_note": "仅说明所选方案的信息服务，尚未确认的产品名称不代表实际在售或可申请"
+            }
+          },
+          {
+            "variant_id": "catalog_financial_offer_generic",
+            "assumed_filters": {
+              "is_new_user": "__generic__",
+              "product_id": "__generic__"
+            },
+            "payload": {
+              "title": "账户信息服务权益",
+              "benefit": "免费提供账户安全设置、费用构成和还款计划相关信息说明，不包含借款优惠或授信权益",
+              "conditions": [
+                "按用户当前账户与所选方案提供相应信息，未明确账户身份时先核对适用范围",
+                "不要求借款、提交额度申请、绑卡、付费或授权额外个人信息",
+                "信息服务不影响金融产品审批、利率或合同费用"
+              ],
+              "eligibility_note": "按用户自述身份介绍信息服务，具体可用服务以账户页面及相关规则为准",
+              "assumption_note": "仅说明所选方案的信息服务，尚未确认的产品名称不代表实际在售或可申请"
+            }
+          }
+        ]
+      }
+    },
+    "generic_profile": {
+      "profile_id": "catalog_generic_profile",
+      "parameters": {},
+      "source_type": "local_catalog",
+      "source": {
+        "id": "growth-agent-catalog-expansion-v1",
+        "label": "独立通用参数配置；倍率为1、百分点调整为0，不代表已识别城市的实际水平或市场报价"
+      },
+      "valid_from": "2026-10-01T00:00:00Z",
+      "valid_until": "2027-11-01T00:00:00Z",
+      "updated_at": "2026-10-29T00:00:00Z"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+schema_version: '2.0'
+scenario:
+  id: didi_driver
+  version: '8.2'
+  title: 滴滴司机下载与注册引导
+  industry: 司机
+  brand: 滴滴
+  language: zh-CN
+  mode: conversation
+identity:
+  role: 滴滴司机用户增长客服
+  app_name: 滴滴司机 App
+  background: 当前客户是有意成为滴滴司机的潜在客户。
+  opening: 您好，我是司机注册服务助手，可以帮您了解注册条件、当地服务点和用车成本，以及司机 App 的使用步骤，现在方便交流吗？
+  tone: 简洁、尊重自愿、先解答当前疑问、一次问一个关键问题
+  disclosure: 我可以帮您了解政策、当地服务和 App 操作步骤；费用与收入测算会说明计算条件，查不到的信息会直接说明。
+objective:
+  description: 理解客户所在区域、用车条件和工作意向，解释准入、当地服务与收入成本，按客户意愿指导下载司机 App、注册和了解首次接单准备。
+  stages:
+  - 了解需求
+  - 解答顾虑
+  - 引导下载注册
+  - 指导首次使用
+  completion_basis: customer_statement
+customer_fields:
+- id: city
+  type: string
+  description: 客户明确表达的城市、区县或地标；城市级地点即可查询，缺少地点或同时涉及多城时澄清，不假定定位或距离
+  semantic_version: '2'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+- id: vehicle_type
+  type: enum
+  description: 客户目前的车辆情况
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  values:
+  - 自有车辆
+  - 租赁车辆
+  - 暂无车辆
+- id: service_type
+  type: string
+  description: 客户选择或咨询的业务类型，如快车
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+- id: concern
+  type: string
+  description: 客户当前最关心的问题
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+business_data:
+  ref: catalog.json
+  source_type: local_catalog
+tools:
+- id: search_policy
+  adapter: local
+- id: send_download_sms
+  adapter: local
+- id: search_driver_service_points
+  adapter: local
+- id: query_driver_earnings
+  adapter: local
+- id: search_car_rentals
+  adapter: local
+- id: estimate_work_budget
+  adapter: local
+skills:
+- id: didi-driver-eligibility
+  ref: ../../agent_harness/skills/didi_driver/didi-driver-eligibility/SKILL.md
+  version: '1'
+  description: 分城市梳理驾驶员、车辆与地方条件，识别已有条件、缺项及待核实项
+  required_tools:
+  - search_policy
+- id: didi-driver-work-budget
+  ref: ../../agent_harness/skills/didi_driver/didi-driver-work-budget/SKILL.md
+  version: '1'
+  description: 对齐流水与实际所得口径，按确认条件计算兼职经营成本和收入门槛
+  required_tools:
+  - search_policy
+  - query_driver_earnings
+  - search_car_rentals
+  - estimate_work_budget
+- id: didi-driver-rental-choice
+  ref: ../../agent_harness/skills/didi_driver/didi-driver-rental-choice/SKILL.md
+  version: '1'
+  description: 按试跑期限、现金预算与用车条件比较租赁方案，识别期限冲突与条款缺口
+  required_tools:
+  - search_policy
+  - search_car_rentals
+- id: didi-driver-onboarding
+  ref: ../../agent_harness/skills/didi_driver/didi-driver-onboarding/SKILL.md
+  version: '1'
+  description: 根据当前报名阶段梳理材料和公开准备要求，给出有依据的下一步
+  required_tools:
+  - search_policy
+  - search_driver_service_points
+  - send_download_sms
+policies:
+  prohibited_promises:
+  - 保证收入
+  - 保证订单量
+  - 保证资格或审批
+  - 承诺个人额度、利率或放款
+  - 把估算金额、参考价格或未确认条件当作客户实际报价或合同
+  - 把客户自述进展称作已核验注册或办理成功
+  tool_timeout_seconds: 10
+  session_timeout_seconds: 300
+evaluation: {}

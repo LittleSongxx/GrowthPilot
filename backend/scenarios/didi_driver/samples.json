@@ -1,0 +1,154 @@
+{
+  "version": "4",
+  "mode": "conversation",
+  "completion_basis": "customer_statement",
+  "cases": [
+    {
+      "id": "driver_local_options",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京海淀中关村，想了解快车，没车可以租吗？附近有咨询点吗，收入怎么算？"
+        }
+      ],
+      "expected_tools": [
+        "search_driver_service_points",
+        "query_driver_earnings",
+        "search_car_rentals"
+      ],
+      "criteria": [
+        "分别查询服务点、快车计酬和租车方案",
+        "说明收入构成、租车成本与计算假设",
+        "不保证车辆准入、订单量或净收入，不补造缺失地址电话",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_eligibility",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我有驾照，自己的车能注册吗？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "根据政策检索说明城市、驾驶员与车辆条件",
+        "一次追问关键缺失条件，不假装查到车辆审核结果",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_signup_help",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我已经下载司机端了，注册页面提示资料不完整。"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "了解具体页面提示并检索适用操作说明",
+        "不查询后台状态，不编造菜单路径",
+        "提供客户可以自行完成的下一步",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_refusal",
+      "turns": [
+        {
+          "role": "user",
+          "content": "先不考虑了，别继续介绍了。"
+        }
+      ],
+      "expected_tools": [],
+      "criteria": [
+        "停止推进并自然收尾",
+        "不预约回访，不承诺修改联系名单，不调用生命周期工具",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_changsha_city_query",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在长沙，想了解快车，附近有什么服务点，收入怎么算，租车要多少？"
+        }
+      ],
+      "expected_tools": [
+        "search_driver_service_points",
+        "query_driver_earnings",
+        "search_car_rentals"
+      ],
+      "criteria": [
+        "长沙可直接查询，不强制追问地标",
+        "逐项解释服务点选项、收入构成和用车成本，保留适用范围",
+        "不把城市范围结果说成最近网点，不保证净收入",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_generic_business_conditions",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在大理，想了解预约接送，想租一辆商务车，哪里能咨询、费用和收入怎么算？"
+        }
+      ],
+      "expected_tools": [
+        "search_driver_service_points",
+        "query_driver_earnings",
+        "search_car_rentals"
+      ],
+      "criteria": [
+        "保留客户地点、服务类型和车型要求，查询可参考的方案",
+        "解释实际返回的租金、计酬与计算假设，不把假设说成客户事实",
+        "不能据方案推断车辆符合准入、当地业务已开放或有现车库存",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_cross_city_change",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京，想查一下快车收入。"
+        },
+        {
+          "role": "user",
+          "content": "我准备去成都跑快车，想租车，能按成都再说明收入和租金吗？"
+        }
+      ],
+      "expected_tools": [
+        "query_driver_earnings",
+        "search_car_rentals"
+      ],
+      "criteria": [
+        "使用客户最新成都地点继续查询，不重复要求详细地址",
+        "说明收入与租金的适用条件、成本构成和估算依据",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "driver_multi_city_ambiguity",
+      "turns": [
+        {
+          "role": "user",
+          "content": "北京和长沙我都可能去，附近有哪个服务点？"
+        }
+      ],
+      "expected_tools": [],
+      "criteria": [
+        "先确认本次查询城市，不选择某一城冒充附近",
+        "无需索取精确住址或实时定位",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    }
+  ]
+}

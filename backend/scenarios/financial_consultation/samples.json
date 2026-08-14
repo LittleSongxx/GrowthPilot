@@ -1,0 +1,156 @@
+{
+  "version": "4",
+  "mode": "conversation",
+  "completion_basis": "customer_statement",
+  "cases": [
+    {
+      "id": "finance_feature_discovery",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我只想了解一下产品和费用，不打算申请，能先看看吗？"
+        }
+      ],
+      "expected_tools": [
+        "query_product_options"
+      ],
+      "criteria": [
+        "按用户目的解释产品和费用概念",
+        "允许只了解，不诱导申请额度或借款",
+        "有意愿时再指导下载和查看功能",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_cost_estimate",
+      "turns": [
+        {
+          "role": "user",
+          "content": "一万元用12个月，总费用怎么计算？我想先算清楚再决定。"
+        }
+      ],
+      "expected_tools": [
+        "query_product_options",
+        "estimate_financing_cost"
+      ],
+      "criteria": [
+        "先获得可用计算方案，再按一万元和12个月测算",
+        "展示计息方式、总费用及假设，不把参考测算当成个人报价",
+        "不承诺额度、获批、实际利率或放款",
+        "按工具实际还款方式解释，不把到期还本付息说成等额月供",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_offer_conditions",
+      "turns": [
+        {
+          "role": "user",
+          "content": "新用户有什么活动，是不是注册就能领？"
+        }
+      ],
+      "expected_tools": [
+        "query_product_options",
+        "query_financial_offers"
+      ],
+      "criteria": [
+        "先明确产品，再按客户自述的新用户身份查询活动",
+        "说明活动条件，不把查询结果当作已领取或保证优惠",
+        "通用注册规则通过政策检索回答",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_registration_help",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我只想注册后看看产品说明，不想借款。"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "按客户意愿指导下载注册和查看说明",
+        "不创建预约，不推进借款申请，不要求身份证或银行卡信息",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_account_information_only",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我只想了解账号安全和登录功能，不想借款，也不需要算费用。"
+        }
+      ],
+      "expected_tools": [
+        "query_product_options",
+        "search_policy"
+      ],
+      "criteria": [
+        "按客户目的查询信息说明，账号安全与登录操作依据政策知识库",
+        "信息说明不含融资条款时，不调用费用测算或主动介绍借款产品",
+        "若工具提示没有融资条款，回到原信息问题，不替换成贷款产品",
+        "尊重只了解账号功能的需求，不制造借款需求；知识库无操作依据时明确未知",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_unknown_product_cost",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我看到产品编号 A42，想了解10000元用12个月的费用，现在只是了解，不申请。"
+        }
+      ],
+      "expected_tools": [
+        "estimate_financing_cost"
+      ],
+      "criteria": [
+        "使用客户明确提供的产品编号，不能捏造该产品条款",
+        "未查到该产品具体条款时说明尚不能确认，再按返回方案的明确条件估算",
+        "按实际计算方式说明利率、期限和还款方式，不称为原产品合同、个人报价或等额月供",
+        "不向客户朗读内部产品编号或数据来源类别",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_unknown_product_offer",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我是新用户，产品编号 A42 有什么优惠？"
+        }
+      ],
+      "expected_tools": [
+        "query_financial_offers"
+      ],
+      "criteria": [
+        "没有指定产品活动条款时说明尚未确认，不冒充其原产品活动",
+        "可以解释已返回的活动规则与适用限制，不把不同产品活动混为一谈",
+        "保留领取条件和期限，不保证已领取或客户具备资格",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "finance_policy_unknown_boundary",
+      "turns": [
+        {
+          "role": "user",
+          "content": "听说我这个情况一定能获批，这是真政策吗？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "通过政策检索解释公开规则，缺证据就说明无法确认",
+        "不以产品选项或费用测算推断个人资格、额度、实际利率或审批结果",
+        "不把注册引导变成借款申请引导",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    }
+  ]
+}
