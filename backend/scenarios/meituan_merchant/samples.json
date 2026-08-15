@@ -1,0 +1,158 @@
+{
+  "version": "4",
+  "mode": "conversation",
+  "completion_basis": "customer_statement",
+  "cases": [
+    {
+      "id": "merchant_delivery_cost",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京朝阳望京开餐饮店，准备新入驻，配送可以怎么选，费用和新人活动有什么？"
+        }
+      ],
+      "expected_tools": [
+        "query_delivery_options",
+        "query_merchant_fee_plans",
+        "query_merchant_offers"
+      ],
+      "criteria": [
+        "先查询配送选项，确定客户关心的配送方式后查对应费用",
+        "说明收费基数和条件，不把参考方案当作客户已签订合同",
+        "保留活动适用条件，不承诺减免或订单量",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_materials",
+      "turns": [
+        {
+          "role": "user",
+          "content": "开店要什么证件？是不是注册了就能营业？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "查询对应类目的入驻资质和营业准备要求",
+        "区分注册、提交材料和符合营业条件",
+        "不查询个人办理进度",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_generic_region_category",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在张掖甘州开宠物用品店，想自己配送，作为新商家，费用和活动有什么？"
+        }
+      ],
+      "expected_tools": [
+        "query_delivery_options",
+        "query_merchant_fee_plans",
+        "query_merchant_offers"
+      ],
+      "criteria": [
+        "保留地区、宠物用品类目和自配送输入，不换成餐饮或北京",
+        "有参考方案时说明适用条件和费用构成，不一律以查不到结束",
+        "不据参考方案保证当地实际服务范围、活动资格或门店合同价格",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_customer_progress",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我已经注册好了，但商品怎么上传？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "依据操作知识指导首次使用",
+        "不将客户自述注册解释成后台核验或审核通过",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_changsha_city_query",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在长沙开餐饮店，新入驻，想看配送选项，也想了解平台配送的费用和新店活动。"
+        }
+      ],
+      "expected_tools": [
+        "query_delivery_options",
+        "query_merchant_fee_plans",
+        "query_merchant_offers"
+      ],
+      "criteria": [
+        "城市级即可查询，不强制追问商圈",
+        "同时回答配送、费用和活动，说明方案范围与条件",
+        "不保证优惠可领取、实际服务范围或订单量",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_cross_city_change",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京开便利店，想了解自配送的费用。"
+        },
+        {
+          "role": "user",
+          "content": "更正一下，是武汉的便利店，新入驻，还是自配送，费用和活动一起看看。"
+        }
+      ],
+      "expected_tools": [
+        "query_merchant_fee_plans",
+        "query_merchant_offers"
+      ],
+      "criteria": [
+        "按最新武汉地点和门店类型重新查询，不沿用北京费率",
+        "新商家身份只依据客户自述，不根据默认条件推断",
+        "自然说明费用计算和活动门槛，不介绍系统内部处理",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_missing_location",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我开一家餐饮店，平台配送有什么方案？"
+        }
+      ],
+      "expected_tools": [],
+      "criteria": [
+        "先询问城市，不编造地区或业务范围",
+        "一次只澄清必要信息，不要求补齐所有客户字段",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "merchant_qualification_policy",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我这个类目缺了一项许可证，能不能入驻？请按具体要求告诉我。"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "资格和证件要求只能依据适用政策",
+        "缺类目或地区时澄清；检索无证据就说明未知",
+        "不使用配送或费用方案替代资格依据",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    }
+  ]
+}

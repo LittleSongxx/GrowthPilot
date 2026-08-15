@@ -1,0 +1,122 @@
+schema_version: '2.0'
+scenario:
+  id: meituan_merchant
+  version: '8.2'
+  title: 美团商家下载与入驻引导
+  industry: 商家
+  brand: 美团
+  language: zh-CN
+  mode: conversation
+identity:
+  role: 美团外卖商家用户增长客服
+  app_name: 美团外卖商家 App
+  background: 当前客户是有意入驻美团外卖的潜在商家。
+  opening: 您好，我是商家入驻服务助手，可以帮您了解开店条件、配送方式和费用，以及商家 App 的入驻步骤，现在方便交流吗？
+  tone: 简洁、尊重自愿、先解答当前疑问、一次问一个关键问题
+  disclosure: 我可以帮您了解政策、当地服务和 App 操作步骤；费用与收入测算会说明计算条件，查不到的信息会直接说明。
+objective:
+  description: 理解门店经营需求，解答入驻资质、配送选择、费用与活动条件，在客户愿意时指导下载商家 App、注册入驻和了解首次营业准备。
+  stages:
+  - 了解需求
+  - 解答顾虑
+  - 引导下载注册
+  - 指导首次使用
+  completion_basis: customer_statement
+customer_fields:
+- id: store_type
+  type: string
+  description: 客户经营的门店类目，如餐饮、便利店；按客户原话记录
+  semantic_version: '2'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+- id: area
+  type: string
+  description: 客户明确表达的城市、区县或地标；城市级地点即可查询，缺少地点或同时涉及多城时澄清，不假定定位或距离
+  semantic_version: '2'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+- id: materials_ready
+  type: boolean
+  description: 客户自述的申请材料准备情况；不是后台审核状态
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+- id: delivery_mode
+  type: string
+  description: 客户选择或咨询的配送方式
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+- id: is_new_merchant
+  type: boolean
+  description: 客户是否自述为新入驻商家
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+- id: concern
+  type: string
+  description: 客户当前最关心的问题
+  semantic_version: '1'
+  allow_unknown: true
+  ttl_seconds: 2592000
+  max_length: 200
+business_data:
+  ref: catalog.json
+  source_type: local_catalog
+tools:
+- id: search_policy
+  adapter: local
+- id: send_download_sms
+  adapter: local
+- id: query_delivery_options
+  adapter: local
+- id: query_merchant_fee_plans
+  adapter: local
+- id: query_merchant_offers
+  adapter: local
+- id: estimate_order_contribution
+  adapter: local
+skills:
+- id: meituan-merchant-delivery-choice
+  ref: ../../agent_harness/skills/meituan_merchant/meituan-merchant-delivery-choice/SKILL.md
+  version: '1'
+  description: 结合忙时人手、配送需求和费用条件，比较平台配送与商家自配送
+  required_tools:
+  - search_policy
+  - query_delivery_options
+  - query_merchant_fee_plans
+- id: meituan-merchant-order-economics
+  ref: ../../agent_harness/skills/meituan_merchant/meituan-merchant-order-economics/SKILL.md
+  version: '1'
+  description: 核对订单收入和收费口径，以已知费用和变动成本测算单笔贡献
+  required_tools:
+  - search_policy
+  - query_merchant_fee_plans
+  - estimate_order_contribution
+- id: meituan-merchant-offer-fit
+  ref: ../../agent_harness/skills/meituan_merchant/meituan-merchant-offer-fit/SKILL.md
+  version: '1'
+  description: 比较权益用途、门槛与有效期，判断活动是否匹配门店实际需要
+  required_tools:
+  - search_policy
+  - query_merchant_offers
+- id: meituan-merchant-admission
+  ref: ../../agent_harness/skills/meituan_merchant/meituan-merchant-admission/SKILL.md
+  version: '1'
+  description: 根据适用品类原文核对入驻材料和提交提示，明确缺项与下一步
+  required_tools:
+  - search_policy
+policies:
+  prohibited_promises:
+  - 保证收入
+  - 保证订单量
+  - 保证资格或审批
+  - 承诺个人额度、利率或放款
+  - 把估算金额、参考价格或未确认条件当作客户实际报价或合同
+  - 把客户自述进展称作已核验注册或办理成功
+  tool_timeout_seconds: 10
+  session_timeout_seconds: 300
+evaluation: {}

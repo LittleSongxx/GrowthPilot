@@ -1,0 +1,178 @@
+{
+  "version": "4",
+  "mode": "conversation",
+  "completion_basis": "customer_statement",
+  "cases": [
+    {
+      "id": "rider_city_query",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京，附近有站点吗？"
+        },
+        {
+          "role": "user",
+          "content": "把能联系的站点地址和电话告诉我吧。"
+        }
+      ],
+      "expected_tools": [
+        "search_nearby_stations"
+      ],
+      "criteria": [
+        "直接使用北京查询，不强制追问区县或地标",
+        "按城市范围介绍返回的站点或服务选项，不称最近站点，不报没有依据的距离",
+        "地址或电话缺失时说明暂未查到，不补造具体门牌或号码",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_local_costs",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京朝阳望京，想做众包，附近哪里能咨询？单价多少？没车，租车多少钱？"
+        }
+      ],
+      "expected_tools": [
+        "search_nearby_stations",
+        "query_delivery_pay",
+        "search_vehicle_rentals"
+      ],
+      "criteria": [
+        "分别查询站点、众包计酬与租车成本，逐项解答",
+        "只使用返回的业务信息，参考价格须保留适用条件",
+        "不承诺月收入，解决顾虑后按客户意愿引导下一步",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_age_policy",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我已经50岁了，还能跑外卖吗？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "检索年龄与配送类型的适用规则",
+        "资料不足先澄清，不根据站点或价格信息断言资格",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_customer_progress",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我已经下载注册好了，接下来呢？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy"
+      ],
+      "criteria": [
+        "接受客户自述并指导适用的首次使用步骤",
+        "不声称已核验注册、审核通过或已可接单",
+        "不查询外部状态，不重复催促下载",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_changsha_multi_question",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在长沙，50岁，想做众包，附近有站点吗？单价怎样，没有电瓶车租一辆要多少钱？"
+        }
+      ],
+      "expected_tools": [
+        "search_policy",
+        "search_nearby_stations",
+        "query_delivery_pay",
+        "search_vehicle_rentals"
+      ],
+      "criteria": [
+        "年龄资格通过政策检索回答，缺依据就明确未知",
+        "长沙城市级即可查站点、计酬和租车信息，不等待更细地标",
+        "逐项回应年龄、站点、单价和用车问题；参考价格与计算条件说清楚",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_unprofiled_location_and_mode",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在张掖甘州，想了解校园专送，站点、单价和租电瓶车成本都想看看。"
+        }
+      ],
+      "expected_tools": [
+        "search_nearby_stations",
+        "query_delivery_pay",
+        "search_vehicle_rentals"
+      ],
+      "criteria": [
+        "按客户原始地点和配送类型查询，不擅自改成北京或众包",
+        "有参考方案时继续解释条件和费用，不一律以查不到结束",
+        "保留估算假设，不声称已核实具体网点、最终单价或业务开放情况",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_missing_location",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我想看看附近哪里有站点。"
+        }
+      ],
+      "expected_tools": [],
+      "criteria": [
+        "缺少实际地点时先问所在城市，不凭空选择北京或长沙",
+        "澄清真正缺少的信息，不推断实时位置",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_multi_city_ambiguity",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在北京和长沙两边跑，附近哪有站点？"
+        }
+      ],
+      "expected_tools": [],
+      "criteria": [
+        "先确认本次要了解哪一个城市，不把两个城市拼成地点",
+        "明确地区后再查询，不假装知道用户当前位置",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    },
+    {
+      "id": "rider_cross_city_change",
+      "turns": [
+        {
+          "role": "user",
+          "content": "我在长沙，想做众包，单价怎么算？"
+        },
+        {
+          "role": "user",
+          "content": "刚才说错了，我现在在昆明，还是众包，也想知道租电瓶车多少钱。"
+        }
+      ],
+      "expected_tools": [
+        "query_delivery_pay",
+        "search_vehicle_rentals"
+      ],
+      "criteria": [
+        "客户更正位置后使用最新昆明查询，不继续引用长沙参数",
+        "解释昆明查询结果的费用条件与估算依据",
+        "不把前一地区费率当作当前地区最终报价",
+        "回复自然聚焦业务问题，不向客户讲解系统内部字段、数据类别或处理过程"
+      ]
+    }
+  ]
+}
