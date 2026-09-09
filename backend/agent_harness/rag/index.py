@@ -7,25 +7,15 @@
 from __future__ import annotations
 
 import hashlib
-
 import json
-
 import math
-
 import re
-
 import threading
-
 from collections import Counter
-
 from contextlib import contextmanager
-
 from datetime import UTC, date, datetime
-
 from functools import lru_cache
-
 from pathlib import Path
-
 from zoneinfo import ZoneInfo
 
 from psycopg.types.json import Jsonb
@@ -33,17 +23,14 @@ from psycopg.types.json import Jsonb
 from backend.database import DatabaseConfig, connect, initialize_database, table_exists
 
 MODEL_NAME = "BAAI/bge-small-zh-v1.5"
-
 DIMENSIONS = 512
-
 QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
-
 INDEX_SIGNATURE = f"policy-pg-v1:{MODEL_NAME}:{DIMENSIONS}:scope-context:bm25"
-
+# 用四场景真实问答和域外问题检查过的宽松下限；它不是正确率或充分证据标准。
 MIN_SIMILARITY = 0.40
-
 _MODEL_LOCK = threading.Lock()
 
+# 身份证、银行卡、征信本身也是申请条件，不能见到这些词就切到隐私资料。
 _PRIVACY_INTENT = re.compile(
     r"隐私|敏感信息|信息安全|授权|撤回同意|撤销同意|"
     r"营销|推销|骚扰|退订|勿扰|免打扰|注销(?:账号|账户)|"
@@ -60,7 +47,8 @@ _PRIVACY_INTENT = re.compile(
     r"\b(?:privacy|consent|unsubscribe)\b",
     re.IGNORECASE,
 )
-
+# 金融隐私政策也承载账号登录、本人信息访问和账单入口说明。
+# 仅补充明确的账号与访问意图，借款申请材料和其他场景报名仍走业务资料。
 _FINANCIAL_ACCOUNT_INTENT = re.compile(
     r"(?=.*(?:登录|注册(?:账号|账户)|(?:账号|账户|app|有钱花|度小满).{0,6}注册|"
     r"注册.{0,6}(?:有钱花|度小满|app)))(?=.*(?:信息|资料|手机号|手机号码|实名|绑卡))|"
@@ -71,6 +59,7 @@ _FINANCIAL_ACCOUNT_INTENT = re.compile(
     re.IGNORECASE,
 )
 
+
 @lru_cache(maxsize=2)
 def _load_model(cache_dir: str, local_files_only: bool):
     from fastembed import TextEmbedding
@@ -78,6 +67,7 @@ def _load_model(cache_dir: str, local_files_only: bool):
     return TextEmbedding(
         MODEL_NAME, cache_dir=cache_dir, threads=2, local_files_only=local_files_only
     )
+
 
 def _terms(text: str) -> list[str]:
     """沿用原检索口径：中文生成双字词项，英文和数字保留整词。"""
@@ -88,6 +78,7 @@ def _terms(text: str) -> list[str]:
         else:
             terms.append(part)
     return terms
+
 
 def _retrieval_text(chunk: dict) -> str:
     """给条款补上适用范围；限制上下文长度，正文保持原样。"""
@@ -102,12 +93,15 @@ def _retrieval_text(chunk: dict) -> str:
             context.append(value)
     return "\n".join([*context, chunk["text"]])
 
+
 def _json(value) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True)
+
 
 def _scenario(value: str) -> None:
     if not isinstance(value, str) or not re.fullmatch(r"[a-zA-Z0-9_-]{1,80}", value):
         raise ValueError("scenario_id 必须是 1–80 位字母、数字、下划线或连字符。")
+
 
 def _is_current(chunk: dict) -> bool:
     """仅使用来源明确声明的日期；没有日期不代表已核实其现行有效性。"""
@@ -120,6 +114,7 @@ def _is_current(chunk: dict) -> bool:
             if (future and declared > today) or (not future and declared < today):
                 return False
     return True
+
 
 def corpus_versions(chunks: list[dict]) -> dict[str, dict]:
     """按索引的序列化与有效期口径计算版本，避免把不同教学语料误当作已初始化。"""
@@ -134,6 +129,7 @@ def corpus_versions(chunks: list[dict]) -> dict[str, dict]:
         }
         for scenario, payloads in sorted(members.items())
     }
+
 
 class PolicyIndex:
     def __init__(
@@ -314,4 +310,219 @@ class PolicyIndex:
         ).fetchall()
         return {**state, "status": "ready" if corpora else "no_data", "scenarios": corpora}
 
+    def status(self) -> dict:
+        with self._read_snapshot() as connection:
+            return self._status(connection)
 
+    def snapshot(self, scenarios: list[str] | None = None) -> dict:
+        """在同一只读快照中导出语料版本与原文，供冻结评测验证。"""
+        if scenarios is not None:
+            scenarios = list(scenarios)
+            for scenario in scenarios:
+                _scenario(scenario)
+        with self._read_snapshot() as connection:
+            state = self._status(connection, scenarios)
+            state.update(
+                identity=self.identity, namespace=self.namespace,
+                signature=self._signature(connection), chunks=[],
+            )
+            if state["status"] != "ready":
+                return state
+            where = "namespace = %s"
+            args = [self.namespace]
+            if scenarios is not None:
+                where += " AND scenario_id = ANY(%s)"
+                args.append(scenarios)
+            for row in connection.execute(
+                f"SELECT id, scenario_id, payload FROM rag_chunks WHERE {where} ORDER BY id", args,
+            ).fetchall():
+                payload = row["payload"]
+                if (
+                    not isinstance(payload, dict)
+                    or payload.get("id") != row["id"]
+                    or payload.get("scenario_id") != row["scenario_id"]
+                ):
+                    raise ValueError("索引行标识与政策原文不一致，请重新构建知识库。")
+                state["chunks"].append(payload)
+            return state
+
+    def corpus(self, scenario_id: str) -> dict | None:
+        """读取单个场景的语料版本；未索引或格式不匹配时返回空。"""
+        _scenario(scenario_id)
+        with self._read_snapshot() as connection:
+            scenarios = self._status(connection, [scenario_id])["scenarios"]
+            return scenarios[0] if scenarios else None
+
+    def clear(self) -> None:
+        """清理当前命名空间，供临时评测结束时释放索引。"""
+        with self._connect() as connection, connection.transaction():
+            if self._signature(connection) is None:
+                return
+            self._lock_namespace(connection)
+            for table in ("rag_chunks", "rag_corpora", "rag_index_meta"):
+                connection.execute(f"DELETE FROM {table} WHERE namespace = %s", (self.namespace,))
+
+    def _scope(self, scenario_id: str, is_privacy: bool) -> tuple[str, tuple]:
+        # 在 Top-K 之前再次检查有效期，避免过期原文占满候选池。
+        current = datetime.now(ZoneInfo("Asia/Shanghai")).date()
+        return (
+            ("c.namespace = %s AND c.scenario_id = %s AND c.is_privacy = %s "
+            "AND COALESCE(c.payload->>'source_status', '') NOT IN ('stale', 'failed', 'superseded') "
+            "AND (NULLIF(left(c.payload->>'valid_from', 10), '')::date IS NULL "
+            "OR NULLIF(left(c.payload->>'valid_from', 10), '')::date <= %s) "
+            "AND (NULLIF(left(c.payload->>'valid_until', 10), '')::date IS NULL "
+            "OR NULLIF(left(c.payload->>'valid_until', 10), '')::date >= %s)"),
+            (self.namespace, scenario_id, is_privacy, current, current),
+        )
+
+    def _vector_candidates(self, connection, vector, scenario_id, is_privacy, candidates):
+        scope, args = self._scope(scenario_id, is_privacy)
+        return connection.execute(
+            "SELECT c.chunk_no, c.embedding OPERATOR(public.<=>) %s::public.vector AS distance "
+            f"FROM rag_chunks c WHERE {scope} ORDER BY distance, c.chunk_no LIMIT %s",
+            (vector, *args, candidates),
+        ).fetchall()
+
+    def _lexical_candidates(self, connection, terms, scenario_id, is_privacy, candidates):
+        """按 BM25 公式计算词项相关性，统计范围为当前命名空间的完整语料。"""
+        scope, args = self._scope(scenario_id, is_privacy)
+        return connection.execute(
+            "WITH corpus_stats AS ("
+            " SELECT count(*)::double precision AS documents, avg(term_count) AS average_length"
+            " FROM rag_chunks WHERE namespace = %s"
+            "), document_frequencies AS ("
+            " SELECT term, count(*)::double precision AS documents"
+            " FROM rag_chunk_terms WHERE namespace = %s AND term = ANY(%s) GROUP BY term"
+            ") SELECT c.chunk_no, -sum("
+            " greatest(ln((s.documents - d.documents + 0.5) / (d.documents + 0.5)), 0.000001)"
+            " * (t.frequency * 2.2)"
+            " / (t.frequency + 1.2 * (0.25 + 0.75 * c.term_count / nullif(s.average_length, 0)))"
+            ") AS score FROM rag_chunks c"
+            " JOIN rag_chunk_terms t ON t.chunk_no = c.chunk_no AND t.namespace = c.namespace"
+            " JOIN document_frequencies d ON d.term = t.term CROSS JOIN corpus_stats s"
+            f" WHERE {scope} GROUP BY c.chunk_no ORDER BY score, c.chunk_no LIMIT %s",
+            (self.namespace, self.namespace, terms, *args, candidates),
+        ).fetchall()
+
+    def search(self, query: str, scenario_id: str, limit: int = 8) -> dict:
+        """返回相关原文和来源；一次自然语言检索内部包含向量与关键词两路。"""
+        _scenario(scenario_id)
+        if not isinstance(query, str) or not 1 <= len(query.strip()) <= 1000:
+            raise ValueError("政策查询必须是 1–1000 字的非空文本。")
+        if type(limit) is not int or not 1 <= limit <= 10:
+            raise ValueError("limit 必须是 1–10 的整数。")
+        query = query.strip()
+        data = {"query": query, "scenario_id": scenario_id, "clauses": []}
+        result = {"status": "no_data", "data": data, "evidence": [], "retryable": False}
+        with self._read_snapshot() as connection:
+            signature = self._signature(connection)
+            if signature is None:
+                data["reason"] = "knowledge_not_indexed"
+                return result
+            if signature != INDEX_SIGNATURE:
+                data["reason"] = "index_rebuild_required"
+                return result
+            corpus = connection.execute(
+                "SELECT version, indexed_at FROM rag_corpora "
+                "WHERE namespace = %s AND scenario_id = %s", (self.namespace, scenario_id),
+            ).fetchone()
+            if not corpus:
+                data["reason"] = "scenario_not_indexed"
+                return result
+            data.update(
+                corpus_version=corpus["version"], indexed_at=corpus["indexed_at"], model=MODEL_NAME,
+                retrieval="pgvector cosine + BM25, reciprocal rank fusion",
+            )
+            vector = self._embed([QUERY_PREFIX + query])[0]
+            # 返回条数只控制证据长度，不改变两路候选池和融合排名。
+            candidates = 20
+            terms = list(dict.fromkeys(_terms(query)))[:64]
+            include_privacy = bool(
+                _PRIVACY_INTENT.search(query)
+                or (
+                    scenario_id == "financial_consultation"
+                    and _FINANCIAL_ACCOUNT_INTENT.search(query)
+                )
+            )
+            data["retrieval_scopes"] = ["business", "privacy"] if include_privacy else ["business"]
+            vector_rows, lexical_rows = [], []
+            # 在两路 Top-K 之前限定范围；隐私问题分组召回，长协议不会吃掉业务候选。
+            for is_privacy in [False, True] if include_privacy else [False]:
+                vector_rows.extend(self._vector_candidates(
+                    connection, vector, scenario_id, is_privacy, candidates,
+                ))
+                if terms:
+                    lexical_rows.extend(self._lexical_candidates(
+                        connection, terms, scenario_id, is_privacy, candidates,
+                    ))
+            # 对关键词补入的候选也计算向量排名，避免“两路都出现”胜过明显更相关的原文。
+            vector_ids = {row["chunk_no"] for row in vector_rows}
+            for row in lexical_rows:
+                if row["chunk_no"] not in vector_ids:
+                    vector_rows.append(connection.execute(
+                        "SELECT chunk_no, embedding OPERATOR(public.<=>) %s::public.vector AS distance "
+                        "FROM rag_chunks WHERE namespace = %s AND chunk_no = %s",
+                        (vector, self.namespace, row["chunk_no"]),
+                    ).fetchone())
+                    vector_ids.add(row["chunk_no"])
+            vector_rows.sort(key=lambda row: (row["distance"], row["chunk_no"]))
+            lexical_rows.sort(key=lambda row: (row["score"], row["chunk_no"]))
+            # RRF 按名次相加，避免直接混合量纲不同的 BM25 与余弦分数。
+            ranks: dict[int, dict] = {}
+            for route, rows in (("vector", vector_rows), ("lexical", lexical_rows)):
+                for rank, row in enumerate(rows, 1):
+                    item = ranks.setdefault(row["chunk_no"], {"rrf_score": 0.0})
+                    item[f"{route}_rank"] = rank
+                    item["rrf_score"] += 1 / (60 + rank)
+            for chunk_no, rank in sorted(
+                ranks.items(), key=lambda pair: (-pair[1]["rrf_score"], pair[0])
+            ):
+                row = connection.execute(
+                    "SELECT payload, embedding OPERATOR(public.<=>) %s::public.vector AS distance "
+                    "FROM rag_chunks WHERE namespace = %s AND chunk_no = %s AND scenario_id = %s",
+                    (vector, self.namespace, chunk_no, scenario_id),
+                ).fetchone()
+                similarity = 1 - row["distance"]
+                if similarity < MIN_SIMILARITY:
+                    continue
+                clause = row["payload"]
+                if not _is_current(clause):
+                    continue
+                clause["retrieval"] = {**rank, "cosine_similarity": round(similarity, 4)}
+                data["clauses"].append(clause)
+            ranked = data["clauses"]
+            selected = ranked[:limit]
+            # 混合问题的两类证据都相关时各保留一条；不让弱相关业务条款挤掉隐私原文。
+            if include_privacy and limit > 1 and ranked:
+                best_similarity = max(c["retrieval"]["cosine_similarity"] for c in ranked)
+                for privacy in (False, True):
+                    if any(
+                        (c.get("document_type") == "privacy_policy") == privacy for c in selected
+                    ):
+                        continue
+                    candidate = next(
+                        (
+                            c
+                            for c in ranked
+                            if (c.get("document_type") == "privacy_policy") == privacy
+                            and c["retrieval"]["cosine_similarity"] >= best_similarity - 0.10
+                        ),
+                        None,
+                    )
+                    if candidate:
+                        selected[-1:] = [candidate]
+            data["clauses"] = [c for c in ranked if c in selected]
+            result["evidence"] = [c["id"] for c in data["clauses"]]
+        if data["clauses"]:
+            result["status"] = "success"
+            data["usage"] = (
+                "相关性分数不是正确率。核对原文的地区、对象和时间；证据不足时继续检索或明确未知。"
+            )
+            if any(c.get("partial_sentence") for c in data["clauses"]):
+                data["usage"] += (
+                    "标记 partial_sentence 的片段是超长句的一部分，不能独立作为完整依据；"
+                    "需结合相关片段核对完整条件。"
+                )
+        else:
+            data["reason"] = "no_relevant_clauses"
+        return result
