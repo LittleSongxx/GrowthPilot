@@ -1,10 +1,9 @@
 """依据客户字段定义和原话，校验模型提出的记忆值。"""
 
 import math
-
 import re
-
 from datetime import date, datetime
+
 
 def validate_value(field, value):
     typ = field["type"]
@@ -36,3 +35,15 @@ def validate_value(field, value):
         raise ValueError("datetime must have timezone")
     return value
 
+
+def value_in_quote(field, value, quote):
+    if field["type"] == "boolean":
+        normalized = quote.strip().lower().rstrip("。.!！")
+        allowed = {
+            True: {"是", "是的", "有", "愿意", "同意", "方便", "true", "yes", "可以"},
+            False: {"否", "不是", "没有", "不愿意", "不同意", "不方便", "false", "no", "不可以"},
+        }
+        return normalized in allowed[value]
+    if field["type"] in ("integer", "number"):
+        return bool(re.search(r"(?<![\d.])" + re.escape(str(value)) + r"(?![\d.])", quote))
+    return str(value) in quote
