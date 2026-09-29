@@ -114,4 +114,27 @@ class Conversation(MiddlewareBase):
     def emit(self, kind, data):
         return self.store.emit(self.id, kind, data)
 
+    def metadata(self):
+        return self.store.get(self.id)["metadata"]
+
+    def save_metadata(self, **values):
+        metadata = self.metadata() | values
+        self.store.save(self.id, metadata_json=json.dumps(metadata, ensure_ascii=False))
+
+    def framework_state(self):
+        saved = self.store.get(self.id)["state"]
+        return AgentState.model_validate(saved) if saved else AgentState(session_id=self.id)
+
+    def checkpoint(self):
+        if self.agent is not None:
+            self.store.save(self.id, state_json=self.agent.state.model_dump_json())
+
+    def record_input(self, text, origin):
+        """先保存真实客户文本，再将同一个消息 ID 交给框架。"""
+        message_id = uuid.uuid4().hex
+        self.service.add_message(self.ctx, text, origin=origin, message_id=message_id)
+        if origin == "customer_transcript":
+            self.emit("customer_transcript_final", {"message_id": message_id, "text": text})
+        return message_id
+
 
