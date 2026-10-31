@@ -1,0 +1,262 @@
+# 固定业务问题，不根据当前语料命中情况缩小要求。anchors 仅筛选候选原文，不能判定正确性。
+# 每组是备选表达，各组需同时出现在同一条正文；expected_evidence 留给人工判断。
+version: 1
+questions:
+  - id: didi-driving-experience
+    scenario: didi_driver
+    topic: 驾驶证与驾龄
+    question: 我想注册滴滴网约车司机，驾驶证类型和驾龄分别有什么要求？
+    anchors: [[驾驶证, 驾驶资格], [驾龄, 驾驶经历, 驾驶经验]]
+    expected_evidence: 应能核对驾驶证类别与驾龄要求，并说明适用业务和地区限制。
+  - id: didi-age
+    scenario: didi_driver
+    topic: 年龄要求
+    question: 我今年 59 岁，还能申请成为滴滴网约车司机吗？
+    anchors: [[年龄, 周岁, 年满], [岁]]
+    expected_evidence: 提供年龄上下限及其适用范围；不能仅凭年龄断言个人准入通过。
+    must_not_claim: 年龄符合即保证注册通过。
+  - id: didi-registration-city
+    scenario: didi_driver
+    topic: 注册城市与车牌
+    question: 我的车是外地牌照，能直接在杭州注册滴滴接单吗？
+    anchors: [[车牌, 号牌, 车辆登记, 注册城市], [当地, 本地, 城市]]
+    expected_evidence: 区分平台注册城市与当地车牌准入；没有杭州现行依据时明确缺口。
+  - id: didi-local-certificates
+    scenario: didi_driver
+    topic: 网约车双证
+    question: 有普通驾驶证就能跑滴滴吗，网约车驾驶员证和车辆运输证都要办吗？
+    anchors: [[驾驶员证, 从业资格, 驾驶员资格], [运输证, 运输许可]]
+    expected_evidence: 说明司机和车辆各自证照要求及地方适用范围，不能把普通驾驶证等同于经营资格。
+  - id: didi-vehicle-age
+    scenario: didi_driver
+    topic: 车辆年限
+    question: 我的车买了八年，还能注册滴滴网约车吗？
+    anchors: [[车龄, 使用年限, 注册日期, 登记日期], [年, 月]]
+    expected_evidence: 查到车辆年限的口径与适用范围；购车时间不能直接替代首次登记时间。
+  - id: didi-rental-entry
+    scenario: didi_driver
+    topic: 无车租车
+    question: 我没有自己的车，滴滴有没有官方的租车加入入口和办理流程？
+    anchors: [[租车, 租赁, 无车], [司机, 车辆, 网约车]]
+    expected_evidence: 有官方无车加入或租车路径、办理主体与入口；司机隐私说明不是租车办理指南。
+  - id: didi-rental-deposit
+    scenario: didi_driver
+    topic: 租车押金退还
+    question: 租车跑滴滴需要押金吗，提前退车时押金按什么条件退？
+    anchors: [[押金, 保证金], [退还, 退租, 退款, 扣除]]
+    expected_evidence: 提供具体租车产品的押金和退还规则；不同租赁公司的合同不能混同。
+  - id: didi-platform-fees
+    scenario: didi_driver
+    topic: 平台服务费
+    question: 滴滴司机每单的平台服务费怎么收，能直接给我一个固定抽成比例吗？
+    anchors: [[服务费, 抽成, 佣金], [比例, 费率, 收取, 收费]]
+    expected_evidence: 区分费用口径、业务类型和适用时间；没有个人订单或产品费率依据时不能报固定比例。
+    must_not_claim: 全部城市、全部订单采用同一个抽成比例。
+  - id: didi-application-materials
+    scenario: didi_driver
+    topic: 注册资料
+    question: 注册滴滴司机需要上传哪些本人和车辆资料？
+    anchors: [[身份证, 驾驶证], [行驶证, 照片, 上传, 材料]]
+    expected_evidence: 从入驻说明核对本人和车辆材料；隐私条款列出可能收集的信息不等同于全部必需材料。
+  - id: didi-review-time
+    scenario: didi_driver
+    topic: 审核时效
+    question: 提交滴滴司机注册资料后，一般多久审核，在哪看结果？
+    anchors: [[审核], [时间, 工作日, 小时, 结果]]
+    expected_evidence: 有注册审核时效及查询方式；缺少时效依据就保留未知，不承诺到账或通过。
+  - id: didi-personal-approval
+    scenario: didi_driver
+    kind: personal_boundary
+    topic: 个人准入边界
+    question: 我有三年驾龄，能保证我今天注册滴滴就通过吗？
+    anchors: [[驾龄, 驾驶经历, 准入, 条件], [审核, 要求, 资格, 条件]]
+    expected_evidence: 只能提供一般准入与审核规则，不能凭公开条款判断这位客户已通过或承诺当天通过。
+    must_not_claim: 保证个人审核通过或已完成注册。
+  - id: didi-privacy-deletion
+    scenario: didi_driver
+    kind: privacy
+    topic: 账户注销与信息保留
+    question: 我注销滴滴车主账号后，所有司机信息会马上删除吗？
+    anchors: [[注销, 删除], [保存, 保留, 期限]]
+    expected_evidence: 隐私原文应区分注销、删除和依法保留；不能把提交注销申请等同于立即删除所有信息。
+
+  - id: finance-age
+    scenario: financial_consultation
+    topic: 申请年龄
+    question: 有钱花申请借款的年龄范围是什么，在校学生可以申请吗？
+    anchors: [[年龄, 周岁, 年满], [学生, 申请, 借款]]
+    expected_evidence: 核对年龄和学生限制；申请条件与最终审批须分开。
+  - id: finance-materials
+    scenario: financial_consultation
+    topic: 申请材料
+    question: 申请有钱花需要准备什么材料，身份证和银行卡都需要吗？
+    anchors: [[身份证], [银行卡, 材料, 申请]]
+    expected_evidence: 官方申请说明中明确的必要材料；不能将隐私条款中的全部可收集信息说成必须提交。
+  - id: finance-loan-purpose
+    scenario: financial_consultation
+    topic: 借款用途
+    question: 有钱花借到的钱可以拿去买股票或者买房吗？
+    anchors: [[用途, 用于, 使用], [股票, 证券, 购房, 房地产]]
+    expected_evidence: 提供资金用途限制及适用产品，不能只凭一般风控介绍作推断。
+  - id: finance-credit-versus-loan
+    scenario: financial_consultation
+    topic: 授信与借款
+    question: 页面显示有额度，是不是代表钱已经借到、开始计息了？
+    anchors: [[额度, 授信], [借款, 使用, 利息, 计息]]
+    expected_evidence: 区分授信额度、申请提款、实际放款与计息起点，不能把显示额度当作放款结果。
+  - id: finance-interest-start
+    scenario: financial_consultation
+    topic: 利息起算
+    question: 有钱花从什么时候开始计息，是申请额度当天还是实际借款后？
+    anchors: [[利息, 计息], [借款, 放款, 起算]]
+    expected_evidence: 找到计息起点和计费口径，产品宣传中的最低利率不能替代计息规则。
+  - id: finance-repayment-method
+    scenario: financial_consultation
+    topic: 还款方式
+    question: 有钱花到期怎么还款，可以主动还款还是必须等银行卡自动扣款？
+    anchors: [[还款], [自动, 主动, 银行卡, 扣款]]
+    expected_evidence: 返回主动与自动还款的适用方式、入口或注意事项，不能据此声称客户已还款。
+  - id: finance-early-repayment
+    scenario: financial_consultation
+    topic: 提前还款费用
+    question: 有钱花能提前还款吗，剩余利息和提前还款手续费怎么算？
+    anchors: [[提前还款], [费用, 利息, 违约金, 手续费]]
+    expected_evidence: 区分产品和合同规则，核对剩余利息与额外费用；历史公示不能代表客户当前费用。
+  - id: finance-overdue
+    scenario: financial_consultation
+    topic: 逾期后果
+    question: 有钱花晚还一天会有什么费用，会不会影响征信？
+    anchors: [[逾期], [征信, 罚息, 违约金, 信用]]
+    expected_evidence: 提供逾期费用及征信相关规则，不能擅自承诺宽限期或不会上报。
+  - id: finance-disbursement-time
+    scenario: financial_consultation
+    topic: 放款到账时效
+    question: 有钱花借款申请通过后多久能到账，今天一定能到账吗？
+    anchors: [[到账, 放款], [时间, 实时, 分钟, 小时, 工作日]]
+    expected_evidence: 有适用的放款时效说明与例外；最快宣传不能变为必定到账承诺。
+    must_not_claim: 保证客户今天到账。
+  - id: finance-personal-limit
+    scenario: financial_consultation
+    kind: personal_boundary
+    topic: 个人额度与审批
+    question: 我收入稳定，你能保证有钱花给我批二十万元吗？
+    anchors: [[额度, 审核, 审批], [评估, 结果, 实际, 页面, 综合]]
+    expected_evidence: 区分宣传的最高额度、一般评估规则与个人实际结果，不能提供个人审批结论。
+    must_not_claim: 保证批款、保证二十万元额度或已授信。
+  - id: finance-personal-rate
+    scenario: financial_consultation
+    kind: personal_boundary
+    topic: 个人利率报价
+    question: 你直接告诉我，我现在借十万元的年化利率就是 7.2% 吗？
+    anchors: [[利率, 年化], [实际, 审批, 综合, 页面, 为准]]
+    expected_evidence: 原文应说明个人利率以何种实际展示或合同为准，最低宣传利率和历史区间不能当作个人报价。
+    must_not_claim: 确认这位客户的具体利率、每期费用或总还款金额。
+  - id: finance-privacy-authorization
+    scenario: financial_consultation
+    kind: privacy
+    topic: 撤回信息授权
+    question: 我不想继续授权有钱花使用个人信息了，在哪里撤回，会有什么影响？
+    anchors: [[撤回, 取消, 关闭], [授权]]
+    expected_evidence: 隐私原文应提供授权撤回路径及影响，不能把撤回授权解释成解除已有借款合同。
+
+  - id: rider-registration-fees
+    scenario: meituan_rider
+    topic: 报名费用
+    question: 美团骑手报名要交钱吗，报名免费是不是装备和租车也都免费？
+    anchors: [[费用, 收费, 免费, 交钱], [报名, 注册, 加入, 骑手]]
+    expected_evidence: 区分报名费用与装备、租车等费用；未说明的收费项目不能推成免费。
+  - id: rider-vehicle
+    scenario: meituan_rider
+    topic: 车辆准备
+    question: 做美团骑手必须自备电动车吗，平台或站点会提供车辆吗？
+    anchors: [[电动车, 摩托车, 车辆], [自备, 提供, 准备, 自行]]
+    expected_evidence: 区分众包与站点安排，提供车辆来源说明；没有依据不能承诺免费配车。
+  - id: rider-part-time
+    scenario: meituan_rider
+    topic: 兼职与工作时间
+    question: 我只能晚上兼职送外卖，美团众包和专送在工作时间上有什么区别？
+    anchors: [[众包], [时间, 兼职, 自由, 专送]]
+    expected_evidence: 明确众包与专送的时间安排差异，不能把其中一种模式推广到全部骑手。
+  - id: rider-entry-health
+    scenario: meituan_rider
+    topic: 年龄与健康要求
+    question: 美团骑手入职有年龄和健康证明要求吗？
+    anchors: [[年龄, 周岁, 年满], [健康, 身份证, 身体]]
+    expected_evidence: 核对年龄和健康要求；只召回其中一项时应判部分支持而不是完整覆盖。
+  - id: rider-training-scope
+    scenario: meituan_rider
+    topic: 注册培训试点
+    question: 美团新骑手注册培训是不是全国都必须参加？
+    anchors: [[培训], [试点, 个别区域, 部分城市, 部分区域]]
+    expected_evidence: 保留官方公告的试点范围和时间，不能回答为全国统一强制要求。
+  - id: rider-income
+    scenario: meituan_rider
+    kind: personal_boundary
+    topic: 配送费与收入
+    question: 骑手每单配送费由什么决定，你能保证我每天赚三百元吗？
+    anchors: [[配送费, 收入], [距离, 天气, 难度, 订单]]
+    expected_evidence: 解释配送费影响因素，不以平均值或宣传数据承诺个人日收入。
+    must_not_claim: 保证个人每天赚三百元或固定单价。
+  - id: rider-insurance
+    scenario: meituan_rider
+    topic: 保险与社保补贴
+    question: 美团骑手有哪些保险和社保补贴，我刚报名就自动享受吗？
+    anchors: [[保险, 社保], [补贴, 保障, 参保]]
+    expected_evidence: 区分保障项目、资格和生效条件；报名不等于个人已经参保或取得补贴。
+  - id: rider-privacy-location
+    scenario: meituan_rider
+    kind: privacy
+    topic: 位置权限
+    question: 美团骑手 App 为什么要获取位置，关闭定位权限会怎样？
+    anchors: [[定位, 位置], [权限, 授权, 信息]]
+    expected_evidence: 从骑手适用的隐私原文核对位置权限用途和关闭影响，不能引用商家或消费者规则替代。
+
+  - id: merchant-fees
+    scenario: meituan_merchant
+    topic: 入驻与订单费用
+    question: 美团外卖开店免费，是不是每一笔订单也不收服务费？
+    anchors: [[服务费, 费用, 收费], [免费, 订单, 履约, 技术]]
+    expected_evidence: 区分开店费用、技术服务费与配送履约费，不能把免费入驻等同于免除全部经营费用。
+  - id: merchant-licenses
+    scenario: meituan_merchant
+    topic: 经营资质
+    question: 我想在美团外卖卖餐食，需要营业执照和食品经营许可证吗？
+    anchors: [[营业执照], [食品经营, 许可证, 食品]]
+    expected_evidence: 找到餐饮入驻的资质要求及例外，不能把其他品类资质直接套用。
+  - id: merchant-premises
+    scenario: meituan_merchant
+    topic: 实体经营场所
+    question: 我没有线下实体门店，能直接在家做餐食入驻美团外卖吗？
+    anchors: [[实体, 门店, 场所], [经营, 入驻, 地址]]
+    expected_evidence: 返回实际经营场所和餐饮准入要求，不能仅依据能注册账号就肯定允许开店经营。
+  - id: merchant-delivery
+    scenario: meituan_merchant
+    topic: 配送方式
+    question: 入驻美团外卖后可以自己配送吗，必须使用美团配送吗？
+    anchors: [[配送], [自配送, 商家, 平台, 美团配送]]
+    expected_evidence: 核对可选配送模式和适用约束，费用和覆盖范围未知时不能承诺。
+  - id: merchant-review-time
+    scenario: meituan_merchant
+    topic: 入驻审核时效
+    question: 美团商家资料提交后多久审核，审核通过就一定能马上营业吗？
+    anchors: [[审核], [工作日, 天, 时间, 结果]]
+    expected_evidence: 区分资质审核、上线和实际营业步骤；没有时间依据时应留空而不是猜测。
+  - id: merchant-license-renewal
+    scenario: meituan_merchant
+    topic: 资质到期与更新
+    question: 我在美团外卖的食品经营许可证快到期了，要更新吗，会影响营业吗？
+    anchors: [[许可证, 资质, 证照], [到期, 有效期, 更新, 变更]]
+    expected_evidence: 返回资质持续有效、变更或到期处置要求；不能只回答初次入驻需要什么。
+  - id: merchant-refund-dispute
+    scenario: meituan_merchant
+    topic: 退款纠纷处理
+    question: 顾客申请退款但我有异议，美团外卖商家能怎么举证或申诉？
+    anchors: [[退款, 纠纷, 维权], [举证, 协商, 处理, 申诉]]
+    expected_evidence: 返回商家适用的争议处理流程、举证或时限要求，不能把消费者规则直接代替。
+  - id: merchant-privacy-deletion
+    scenario: meituan_merchant
+    kind: privacy
+    topic: 商家账户信息删除
+    question: 我不做美团外卖了，注销商家账户后经营者个人信息怎么删除？
+    anchors: [[注销, 删除], [信息, 账号, 账户]]
+    expected_evidence: 返回适用于商家经营者的隐私及注销说明，区分停止营业、账户注销与法定保留。

@@ -1,0 +1,100 @@
+version: knowledge-questions-v1
+frozen_at: '2026-10-27'
+purpose: 四场景公开知识增长闭环；固定16题，不按当前命中改题，不代表真实用户分布或线上准确率。
+review_rules:
+  supported: 当次实际返回正文完整支持问题要求；地区、时间、主体与必要前提均保留。
+  partial: 部分有正文，但材料、费用、步骤、例外或前提仍缺失。
+  gap: 实际返回正文不能回答主要问题；承认未知不使业务覆盖升级。
+  agent_separate_axes: 业务覆盖、忠于实际证据、未知时是否保留全部问题并给可核实下一步分别审阅。
+  evidence_boundary: 只用该case当轮及此前真实返回text；scope_note是整理提示，不是官方声明。不能借未来轮或别题补证。
+  actionable_unknown: 指明缺少哪个信息、向哪个真实官方渠道或实际合同/申请页核对什么；泛称“咨询客服”或仅推预约不算完整下一步。
+  individual_boundary: 个人审批、费率、装备报价和站点安排不能从公开资料推定；未知处理妥当也不等于公开业务知识充分。
+questions:
+  - id: closure-didi-materials
+    scenario: didi_driver
+    topic: 材料
+    question: 我准备在杭州用自己的车注册滴滴，本人和车辆分别要上传什么材料？网约车驾驶员证、运输证和平台注册资料是一回事吗？
+    expected_evidence: 分开个人与车辆材料、法定双证与平台注册，材料清单未知不得用隐私授权或平台企业许可材料拼凑。
+  - id: closure-didi-eligibility
+    scenario: didi_driver
+    topic: 成本/资格
+    question: 我在福州，C1驾照刚满三年，59岁，自有车第一次登记到现在四年，能跑滴滴吗？除了报名还要确认哪些车辆和平台费用？
+    expected_evidence: 福州当前地域适用、年龄与驾龄和车龄口径分别有据；平台个人准入、具体费用未知明确留下核对项。
+  - id: closure-didi-steps
+    scenario: didi_driver
+    topic: 办理步骤
+    question: 我在厦门，看到2025年交通局答复说车证零材料零等待，是不是任何车直接申请就能接单？请说清车辆条件、接入协议和申请先后。
+    expected_evidence: 复述2025答复时必须保留车辆满足条件、所有人与平台签接入协议前提；历史行政许可答复不能等同当前滴滴上线承诺。
+  - id: closure-didi-failure
+    scenario: didi_driver
+    topic: 失败处理/多轮澄清
+    question: 滴滴注册审核没过，我接下来怎么查原因、补材料或申诉？
+    followups:
+      - 我在厦门，自有车，页面只显示车辆不符合要求。请告诉我现行车龄车型标准和在哪里核实，网上2020年的办法能直接照着用吗？
+    expected_evidence: 先澄清城市和失败环节；不拿订单处罚申诉替代注册驳回渠道，无法确认厦门现行标准或旧法效力时保留未知并提供真实核实方向。
+  - id: closure-finance-materials
+    scenario: financial_consultation
+    topic: 材料
+    question: 申请有钱花需要哪些必交材料，身份证、银行卡、收入证明分别是否必须？我应在什么地方核对完整清单？
+    expected_evidence: 官方必交清单与银行模板身份核验严格区分；未覆盖逐项说明未知，给实际申请页或官方可核实渠道，不推断所有产品统一要求。
+  - id: closure-finance-eligibility
+    scenario: financial_consultation
+    topic: 成本/资格
+    question: 我22岁还在上大学，兼职有收入，能申请有钱花吗？网页7.2%就是我的利率吗，最终资格和费用在哪里看？
+    expected_evidence: 年龄、学生资格、个人审批与费率四点分别回答；银行模板学生限制只归属对应资方，历史费率下界不能当个人报价。
+  - id: closure-finance-steps
+    scenario: financial_consultation
+    topic: 办理步骤
+    question: 有钱花已经显示可用额度，我还没点借款。接下来要在哪确认金额、利率和还款计划？什么操作后才真正借到钱并开始计息？
+    expected_evidence: 区分授信、提款申请、签约/放款与计息；App当前按钮未知不能编造；模板计息限定资方渠道，不把额度当放款。
+  - id: closure-finance-failure
+    scenario: financial_consultation
+    topic: 失败处理/多轮澄清
+    question: 有钱花扣款失败，但卡里有钱，我现在应该怎么处理？
+    followups:
+      - 今天就是还款日，不能保证今晚扣款成功。手动还款入口、截止时间、会不会重复扣款和逾期影响分别怎么核实？
+    expected_evidence: 还款失败后的可执行核实动作；入口/截止/重复扣款无原文须逐项未知，不作宽限期或征信保证，具体合同与官方客服路径应真实。
+  - id: closure-rider-materials
+    scenario: meituan_rider
+    topic: 材料
+    question: 我想做美团众包兼职，报名要准备身份证、健康证和什么其他材料？没办健康证能不能先接单？
+    expected_evidence: 众包报名与健康证要求、办理/上传环节区别明确；缺证是否可接单不能从一般健康证倡议推出。
+  - id: closure-rider-costs
+    scenario: meituan_rider
+    topic: 成本/资格
+    question: 美团骑手报名免费，是不是电动车、头盔、餐箱和服装也免费？众包和专送分别由谁准备，装备是否必须买指定的？
+    expected_evidence: 报名、电动车、头盔、餐箱、服装、指定购买逐项回应；众包自备车、专送问站点不代替装备价格证据，不能再次漏答装备。
+  - id: closure-rider-steps
+    scenario: meituan_rider
+    topic: 办理步骤
+    question: 我决定注册美团众包，从哪里下载官方App，注册认证、培训和开始接单按什么顺序？专送报名是不是也一样？
+    expected_evidence: 官方入口与实际流程有据；众包App与专送站点路径区分，未被资料覆盖的认证培训顺序不得编造。
+  - id: closure-rider-failure
+    scenario: meituan_rider
+    topic: 失败处理/多轮澄清
+    question: 我报名美团骑手后没人联系，应该找谁、在哪里查进度？
+    followups:
+      - 我报的是专送，一个人联系我说必须先交报名费、分期买车和买装备才安排入职，我该怎么核实和处理？
+    expected_evidence: 先澄清众包/专送；官方报名联络与费用边界、分期车骗局警示有据；装备收费是否允许单独保留，不以安全提醒替代进度和核实渠道。
+  - id: closure-merchant-materials
+    scenario: meituan_merchant
+    topic: 材料
+    question: 我有实体餐馆，入驻美团外卖需要营业执照、食品经营许可证、身份证和哪些门店照片？证照地址或经营者不一致能直接提交吗？
+    expected_evidence: 分别列材料和照片，证照一致性及当地替代资质边界有据；不能把所有餐饮资格简化为同一许可证。
+  - id: closure-merchant-costs
+    scenario: meituan_merchant
+    topic: 成本/资格
+    question: 美团外卖免费开店后，技术服务费、配送费和其他费用怎样区分？我想自己配送，实际费率在哪里确认？
+    expected_evidence: 开店与订单费用分开；技术服务/履约/其他费用仅据实际原文，费率按地区品类配送方式和实际展示确认，不能统一定价。
+  - id: closure-merchant-steps
+    scenario: meituan_merchant
+    topic: 办理步骤
+    question: 我已备齐开店资料，从哪个官方入口提交，怎样查看美团商家审核结果，通过后还要做什么才能上线营业？
+    expected_evidence: 入口、提交、结果查询、通过后上线分别检查；审核通过不可擅自等同马上营业，时效和缺失步骤保留未知。
+  - id: closure-merchant-failure
+    scenario: meituan_merchant
+    topic: 失败处理/多轮澄清
+    question: 美团外卖开店申请被驳回了，我应该在哪里看原因，修改后怎么重新提交？
+    followups:
+      - 页面说食品经营许可证有效期不足，我的证还有45天到期。为什么不行，能不能先上线再补，换证后还要更新什么？
+    expected_evidence: 驳回结果渠道、修正重提、首次提审有效期阈值与经营期间续期分开；不把入驻规范当续期完整流程，不承诺先上后补。
