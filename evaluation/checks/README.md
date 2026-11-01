@@ -13,11 +13,11 @@ uv run python -m evaluation.checks.policy_coverage --output .run/checks/policy-c
 uv run python -m evaluation.checks.knowledge_probe --agent --output .run/checks/agent-probe.json
 ```
 
-`data/knowledge_questions.yaml` 为 16 道历史业务问题，`data/policy_coverage.yaml` 为 40 道政策覆盖检查，`data/skill-knowledge.yaml` 为 30 道历史知识依赖问题。它们没有完整相关片段标注，不计入正式 400 道 RAG 题，也没有独立 Skill 成绩。原文件名只用于保留来源。
+`data/knowledge_questions.yaml` 为 16 道历史业务问题，`data/policy_coverage.yaml` 为 40 道政策覆盖检查。它们没有完整相关片段标注，不计入正式 400 道 RAG 题。`data/skill-knowledge.yaml` 是已撤销 skills 套件的历史输入，当前没有代码引用，只保留来源。
 
 `data/business-coverage-v1.json` 是确定性业务工具输入矩阵，不是对话客户题集。`growth evaluate --suite contracts` 和 `--suite business-coverage` 继续用于工程检查，不调用模型，也不接受 `--execute`；结果写入 `.run/checks/<run>/`，可用 `--run` 指定本轮名称。`config/acceptance.yaml` 保存语音验收设置。
 
-语音探针同样不属于文本 Agent 正式评测：
+语音探针同样不属于文本 Agent 正式评测；它只验证一次 ASR/TTS 链路可用。人工验收记录保存在 `config/acceptance.yaml`，当前 `observations` 为空，`growth evaluate --suite voice` 会返回 pending，不能当作已验收：
 
 ```sh
 # 调用云端 ASR、文本模型和 TTS
