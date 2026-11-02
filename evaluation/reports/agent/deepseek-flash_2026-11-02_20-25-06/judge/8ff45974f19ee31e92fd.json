@@ -1,0 +1,213 @@
+{
+  "case_id": "rider-dialogue-046",
+  "repeat": 1,
+  "judge_version": "dialogue-rubric-v3.2.3",
+  "model": "deepseek-flash",
+  "thinking": true,
+  "reasoning_effort": "high",
+  "temperature": null,
+  "configured_temperature": null,
+  "temperature_used": false,
+  "max_tokens": 16384,
+  "status": "valid",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "valid",
+      "usage": {
+        "completion_tokens": 4046,
+        "prompt_tokens": 5773,
+        "total_tokens": 9819,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 3807,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 1920,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 3853
+      },
+      "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通已说明大病关怀的家庭成员为父母、配偶、子女，并明确住院诊疗补充报销的公开条件为美团直营城市、稳定跑单骑手，以及152种疾病、住院自付超5000元按规则报销，未把保障对象扩展到其他家属。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关心的家属范围和是否同条件均得到回应，未写明的报销比例、上限、病种细节也明确说明无法下结论，并给出向绵阳站点核实的下一步。\"}, \"facts\": {\"score\": 4, \"reason\": \"家属范围、直营城市、稳定跑单、152种疾病和5000元门槛均有资料支持，但称站点可核对直营城市、跑单资格和申请细节，工具未明确提供该项服务，属轻微越界表述。\"}, \"tone\": {\"score\": 5, \"reason\": \"开场承接客户身份，回答简洁、尊重客户自行向站点核实，提供联系方式并确认众包或专送类型，收尾自然。\"}}",
+      "finish_reason": "stop",
+      "reasoning_content": "We need evaluate. Need produce JSON only.\n\nLet's parse task. Goal: explain public family scope, stable running and city conditions, not expand coverage. Success condition single: \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象\". Call 1. Business context agent identity rider growth customer service.\n\nTurns: customer is already rider, asks family care scope, which family members. Agent responds: rider serious illness care plan? family scope parents spouse children, part-time riders included. Reminds inpatient supplemental reimbursement public statement says Meituan direct-operated cities, stable running riders, 152 diseases, inpatient self-pay over 5000 reimbursed per rules. Asks city; can check local station. Customer says Mianyang, stable. Asks \"父母、配偶、子女都算，是都有一样的条件吗？\" Agent says public says parents spouse children included, no separate stricter/looser conditions. But specific reimbursement ratio, cap, disease types not detailed, can't conclude. Mianyang has crowd and dedicated stations, station can verify whether local direct-operated city, qualification and application details. Offers contact. Customer says all included clear, give one contact, will ask station. Agent gives both stations phone and address, asks crowd or dedicated, gives corresponding one.\n\nNeed score goal, answer, facts, tone.\n\nNeed inspect facts basis. Materials official notice. Important nuances: \"新增住院诊疗补充医疗保障原文明示美团直营城市\" region. The text says stable running riders and family members. It also says \"目前这一保障也已覆盖至兼职骑手\" in context of保障对象 all. Older 2025 article says \"进阶保障首次覆盖全部骑手及其家人... 全行业骑手及其家人可随时申请\". But target specific public family scope, stable running and city conditions. Agent in turn 1 says \"家属范围是父母、配偶和子女，兼职骑手也包含在内.\" Is that accurate? It says \"目前这一保障也已覆盖至兼职骑手\" indeed for大病关怀 plan. But could be okay. Then says \"住院诊疗补充报销这块，公开说明里写的是美团直营城市、稳定跑单的骑手，而且要求是计划涵盖的152种疾病、住院自付超过5000元的部分按规则报销.\" This matches. It asks city. Good.\n\nTurn 2 customer asks are all same conditions? Agent answers public includes all, no separate distinction in public statement, but specific reimbursement ratio etc not written. This is safe, not overclaim. Good.\n\nGoal: Did explain family scope, stable running and city conditions? Yes. \"不扩张保障对象\" Did include part-time riders, which is supported by material. But maybe \"兼职骑手也包含\" expands? It is in notice. \"全行业骑手\" in older material maybe broad. But for大病 care? The public notice says \"目前这一保障也已覆盖至兼职骑手\" and another article \"不管在哪家平台跑单...均可向美团申请\". So not expansion. However target says \"稳定跑单及城市条件\" maybe agent should clarify that the upgraded inpatient supplement is for direct-operated city stable running riders; family scope includes parents spouse children. Agent did. It also mentions part-time riders, which could confuse with stable running? Part-time can be stable? Potential. But not critical.\n\nQuestion: Did agent satisfy all? It asked city, customer gave Mianyang, then agent said station can verify whether local is direct-operated city, not actually determine. Goal condition \"说明...城市条件\" could mean tell that public condition is direct-operated cities. Agent did, and says station can verify if Mianyang direct-operated. Since no tool/policy evidence that Mianyang is direct-operated. That's appropriate. Goal seems achieved. Maybe minor: In turn 1 \"兼职骑手也包含在内\" is relevant and could be considered expansion of保障对象? The condition says \"不扩张保障对象\". Parents spouse children only, not e.g. grandparents. Agent didn't list extra family. Part-time riders are not family object but rider type. It's not expanding family. Fine.\n\nAnswer: Customer main questions: family scope; same conditions; asks one contact. Agent responded: family scope; same conditions? It says no separate distinctions, specifics not in announcement. It offered contacts. Customer asked \"联系方式可以给我一个\" singular. Agent gave both contacts, then asks crowd or dedicated. Is that a miss? Could be slight over-delivery but helpful. They didn't know customer type; giving both and asking which is okay. Customer said \"我回头自己问站点\", agent provided. Need maybe note no major missing. Could score 5? Or 4 due to not directly confirming whether all family members have same conditions? It said public includes all, no separate criteria, but then says reimbursement specifics not written. Actually answers. It did not explain that part-time riders included in turn 2? Not asked.\n\nNeed consider facts score. Agent states:\n- \"公开说明里是把父母、配偶、子女一起纳入的，没有单独区分谁的条件更严或更松。\" Is there evidence? Materials only say \"家庭成员(包含父母、配偶以及子女)新增住院诊疗补充医疗保障\" and \"保障对象上...全部纳入\". It doesn't explicitly say same conditions for each. But saying public didn't separately differentiate is fair from provided document? Could be over-general? It hedges \"公开说明里...没有单独区分\". That's an accurate statement about the document, not policy. Then specific details not in announcement. Good.\n- \"绵阳这边有众包和专送两个服务站\" from tool. Yes.\n- \"站点能帮您核对当地是否属于直营城市、您的跑单资格和申请细节.\" The station tool services lists app registration, flexible online, vehicle equipment; for专送 station: shift system, registration materials, fees. Does not list verifying direct-operated city or eligibility or application details for大病关怀. The material's unverified_conditions include service scope and reception arrangements subject to provider, client conditions not platform verified. The station service list doesn't include大病关怀 verification. Agent says station can verify whether local is direct-operated city, run qualification and application details. Is that unsupported? It might be a reasonable suggestion? The tool result says station can provide service info; \"registration_note: specific download and registration steps need policy knowledge base...\" It doesn't mention大病关怀. Agent assigns station capability not in evidence. This could be a facts issue. But maybe not severe: station can help check local direct city? Not guaranteed. It says \"站点能帮您核对...\" as definite. That's an unsupported claim. However current target is explaining conditions, not station services. Could affect facts. Need decide.\n\n- In turn 3, gives addresses and phone. Correct. \"去之前最好先打电话确认接待时间.\" Matches address_note. Good.\n- Asks \"您跑的是众包还是专送？我给您对应的那个就行。\" Customer had said \"我本来就是跑单的骑手，App早就装好了\" but didn't specify type. Fine.\n\n- Agent says \"兼职骑手也包含在内\" from article. Good.\n- \"152种疾病、住院自付超过5000元的部分按规则报销\" matches.\n- \"美团直营城市、稳定跑单的骑手\" matches. Need note family? It says rider and family in direct cities. Good.\n\nPotential issue: It says \"没有单独区分谁的条件更严或更松\" but public notice text has percentages only, no condition difference. Safe.\n\nFact score likely 4 due to station capability overclaim, or 5 if considered reasonable. Need evaluate \"关键事实有据、估算合理，少量措辞不严谨\" 4. Is there any actual severe? Not severe. We need likely 4. But maybe the intended evaluation focuses on goal condition \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象\". Agent did exactly. Need not punish station contact.\n\nAnswer: main problem \"家属范围，具体都包括哪些家里人\" and \"是都有一样的条件吗\" got answered. It also gave contacts. Maybe 5. Yet customer asked \"联系方式可以给我一个\" and agent provided two, asked which. That's minor not problematic. It did not confirm Mianyang direct-operated city, but no data. It said station verify. Since customer said will ask station, that's acceptable. Answer score 5? \"关键疑问处理完整；未知事项说明清楚，并给出合理下一步\" Yes: unknown reimbursement details and local eligibility explained, next step station. So 5. Could be 4 if \"站点能帮您核对...申请细节\" not verified is necessary info. But answer not facts.\n\nTone: clear, polite, no pressure, but turn 3 gives both then asks which, slightly extra but okay. Score 5? \"自然承接客户表达，推进与收尾都恰当\". It ended with question after customer said they'd ask station themselves; maybe acceptable because offering correct contact. But customer asked one contact; agent gave two and asked type. Not a major flaw. It didn't explicitly close? Customer said \"联系方式可以给我一个，我回头自己问站点\" and agent gave contacts plus question. It doesn't say goodbye but conversation may continue. If call ends there, asking a question after customer effectively ended could be slight. But not pushy. Score 4? Need choose.\n\nGoal: all conditions? It explained family scope yes. Stable running and city conditions yes. \"不扩张保障对象\" yes. Score 5. But wait: agent in turn 1 says \"兼职骑手也包含在内\" before clarifying the inpatient supplement's stable running/direct-city conditions. Could this be seen as expanding保障对象? It's a separate plan fact. The goal probably wants not to say all family members, e.g. grandparents, and not to imply all riders regardless city. Agent appropriately distinguished: family scope includes parents spouse children, but reimbursement public conditions direct cities stable riders. \"兼职骑手 also included\" could imply part-time stable? The notice says currently coverage extended to part-time riders, likely for whole plan. It's factual. Good.\n\nBut in turn 2 when customer asks \"父母配偶子女都算，是都有一样的条件吗？\" Agent says no separate distinction, but \"具体到报销比例、上限、哪些病种算，公告没写细，我也不能替您下结论.\" That is good. It could maybe should say all three are covered under same plan but individual medical conditions determine eligibility, not family relation. It does. Fine.\n\nGoal score 5 likely. Answer 5? Facts 4? Tone 5 or 4.\n\nNeed produce reasons in Chinese, one sentence each. Need no extra.\n\nLet's think if any hidden expected rubric: They might penalize facts for saying \"兼职骑手也包含在内\" because target \"稳定跑单\" condition. The materials: newer notice says \"2026年预计投入超千万资金,覆盖全国超百万稳定跑单骑手及其主要家庭成员(父母、配偶和子女)\" and \"目前这一保障也已覆盖至兼职骑手\". There's tension: stable runners vs part-time. The notice says保障已覆盖至兼职骑手, but maybe the upgrade applies to stable? Hmm. The document is one article. It says upgrade from Feb 10, platform-funded free for stable-running riders and family members new inpatient supplement. Then later says \"在保障对象上，将骑手配偶、父母及子女全部纳入...目前这一保障也已覆盖至兼职骑手。\" \"这一保障\" likely the whole大病关怀计划. So part-time included. The goal only asks \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象.\" Maybe including兼职 is extra but not harmful? It may conflict with \"稳定跑单\" because兼职 could be stable too, no contradiction. Fine.\n\nWhat about \"美团直营城市\" - agent says \"美团直营城市、稳定跑单的骑手\". It doesn't mention \"及其家庭成员\" in same sentence but previously family. Good.\n\nCould goal be 4 because the agent never gives final answer on Mianyang direct-operated, and instead asks station. But there's no data; goal says \"说明...城市条件\" not \"verify city\". It did.\n\nAnswer: Did it answer \"联系方式给我一个\" - yes gave one and one extra. But did not complete \"我给您对应的那个就行\" because asked type and gave both anyway; that's acceptable. Maybe it leaves customer with need to choose. Not severe. 5.\n\nTone: It starts \"您说的是骑手大病关怀计划吧？\" good. It gives contact info. At end \"您跑的是众包还是专送？我给您对应的那个就行。\" After already giving both, asking is a bit redundant but not bad. If customer said \"给我一个\" maybe agent should have asked first then give corresponding one. But gave both with clear labels. Minor. 4 maybe. The rubric 5: natural, appropriate. 4: clear concise respectful, minor flaws. Could be 4 due to redundancy and mild questioning after self-service. But not \"明显机械/冗长/反复推销\". It's efficient. I can give 5, maybe 4 if strict. Need decide final.\n\nFacts 4 due unsupported station capability and maybe overconfident \"站点能帮您核对当地是否属于直营城市\" not in tool. But if facts dimension only actual business facts, this is a statement about station capabilities, a business fact. It is not supported by tool result. The tool services don't include it. It might be considered \"key conclusion lacks basis.\" Would that be 3 or 4? The station tool result says \"service and reception arrangements subject to service provider confirmation\" and \"client conditions not verified\". It doesn't say station cannot help; but agent asserts. Since customer plans to ask station based on this, could be important. However official notice's region \"直接经营城市\" maybe station can check. But no evidence. If we're strict: \"站点能帮您核对当地是否属于直营城市、您的跑单资格和申请细节\" - station is rider station for registration, not大病关怀. It can probably help, but not documented. This is an unsupported capability, but not core facts. Score 4. If we overlook, 5. The rubric says 5 \"重要事实有支持；估算合理，条件和不确定性表达准确\". The station claim is not supported. Score 4 appropriate.\n\nGoal 5? If facts issue not goal. Yes.\n\nAnswer maybe 4? Let's re-evaluate \"问题解决度\": Customer asks \"父母、配偶、子女都算，是都有一样的条件吗？\" Agent says \"公开说明里是把父母、配偶、子女一起纳入的，没有单独区分谁的条件更严或更松。但具体到报销比例、上限、哪些病种算，公告没写细，我也不能替您下结论.\" This addresses that conditions not differentiated at family relation level. But maybe the actual answer is yes, they're all the same scope, but specific condition is disease and self-pay threshold, not relationship. Agent doesn't explicitly say \"条件一样\" except no separate differentiation. It's clear. Then customer says \"行，那父母配偶子女都包含我就清楚了.\" So satisfied. Good 5.\n\nCould there be an issue: The \"公开家属范围\" maybe only \"主要家庭成员(父母、配偶和子女)\" not \"兼职骑手\". Agent says兼职 included, which is not family but rider type. Not problem. Goal \"不扩张保障对象\" maybe if it says \"兼职骑手也包含\" expands rider eligibility to兼职; but supported. If target specifically stable running, saying兼职 included might imply unstable part-time eligible, conflicting with stable. But materials say coverage extended to兼职. Hmm, but the public upgrade's \"新增住院诊疗补充医疗保障\" applies to stable riders and families; the older plan includes兼职. The article says \"目前这一保障也已覆盖至兼职骑手\" after discussing all保障对象, likely the plan, not necessarily the new supplement. If agent says \"家属范围...兼职骑手也包含在内\" could conflate new supplement eligibility with whole plan. It immediately says \"不过要提醒一下，住院诊疗补充报销这块，公开说明里写的是美团直营城市、稳定跑单的骑手...\" So it distinguishes. Good.\n\nGoal score 5.\n\nMaybe the output should be JSON with scores as integers, reason one sentence. Need include null_reason only if null. None null. Output exactly.\n\nLet's craft:\n\ngoal score 5 reason: \"本通已说明大病关怀的家庭成员为父母、配偶、子女，并明确住院诊疗补充报销的公开条件为美团直营城市、稳定跑单骑手及152种疾病、住院自付超5000元按规则报销，未把保障对象扩展到其他家属。\" This is good. Could mention no verification Mianyang but unknown properly.\n\nanswer score 5: \"客户关心的家属范围和是否同条件均得到回应，未写明的报销比例、上限、病种细节也明确说明无法下结论，并给出向绵阳站点核实的下一步。\" Good.\n\nfacts score 4: \"家属范围、直营城市、稳定跑单、152种疾病和5000元门槛均有官方资料支持，但称站点可核对直营城市、跑单资格和申请细节，工具未明确提供该项服务，属轻微越界表述。\" Good. Is this too harsh? It's a fact issue.\n\ntone score 5 maybe: \"开场承接客户身份，回答简洁、尊重客户自行向站点核实，提供联系方式并确认众包/专送类型，收尾自然。\" But it ended with question; okay. Maybe 4 because gave both then asked which. Need decide. Tone 5 is plausible. The instruction \"客户已明确结束时，回应其决定并礼貌告别即可，不要求再追问...\" Here customer didn't explicitly end call, said will ask station, asked for contact. Agent provided and asked type. That's acceptable. Tone 5.\n\nLet's ensure \"不输出综合总分\" no overall. JSON only.\n\nNeed maybe not use \"官方资料\" if facts includes official. Fine.\n\nFinal.",
+      "parsing_method": "json",
+      "ignored_fields": []
+    }
+  ],
+  "max_attempts": 3,
+  "attempt_count": 1,
+  "retry_count": 0,
+  "usage": {
+    "completion_tokens": 4046,
+    "prompt_tokens": 5773,
+    "total_tokens": 9819,
+    "completion_tokens_details": {
+      "reasoning_tokens": 3807
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 1920
+    },
+    "prompt_cache_hit_tokens": 1920,
+    "prompt_cache_miss_tokens": 3853
+  },
+  "usage_complete": true,
+  "input": {
+    "goal": {
+      "description": "说明公开家属范围、稳定跑单及城市条件，不扩张保障对象",
+      "success_conditions": [
+        "说明公开家属范围、稳定跑单及城市条件，不扩张保障对象"
+      ],
+      "call_number": 1,
+      "business_context": {
+        "app_name": "美团骑手 App",
+        "agent_role": "美团外卖骑手用户增长客服"
+      }
+    },
+    "memory_at_start": {},
+    "turns": [
+      {
+        "turn": 0,
+        "agent": "您好，我是美团骑手用户增长客服，这次联系是想帮您了解怎么下载注册美团骑手 App、开始跑单。请问现在方便聊两句吗？"
+      },
+      {
+        "turn": 1,
+        "customer": "我本来就是跑单的骑手，App早就装好了。我主要是想问问那个家属关怀的范围，具体都包括哪些家里人？",
+        "materials": [
+          {
+            "text": "2月6日,美团官方宣布将于2月10日起升级“骑手大病关怀计划”,由平台出资,免费为稳定跑单的骑手及其家庭成员(包含父母、配偶以及子女)新增住院诊疗补充医疗保障。\n“骑手大病关怀项目已累计帮扶骑手及家属7570人次,发放关怀金超过2.1亿元,最高单次发放20万元,”美团骑手保障相关负责人表示,2026年预计投入超千万资金,覆盖全国超百万稳定跑单骑手及其主要家庭成员(父母、配偶和子女),也是行业首个实现覆盖全部类型骑手及其核心家庭成员的住院诊疗保障,“未来,我们还将继续拓展上线更多场景、更多细分需求的保障方案。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "“这组数据非常直观地说明了,对骑手群体的关怀,尤其对其主要家庭成员的关怀需进一步深化保障。”上述负责人指出,此次新增的住院诊疗补充医疗保障,也是在此前已有的一次性援助、住院津贴等基础上,让骑手家庭在面对长期住院治疗时,能有更坚实的保障支撑。\n▲美团“骑手大病关怀计划”超70%的资助人员为骑手父母、配偶和子女(图源:美团)\n西安骑手陈金(化名)就是大病关怀计划不断扩容、升级的受益者。此前陈金母亲被诊断出多发性骨髓瘤,在提交申请后,2.46万元关怀金帮他渡过了艰难时光。而对于骑手林健(化名)来说,关怀金的意义在于守护了女儿的未来。他4岁的女儿妙妙被诊断为“双耳极重度耳聋”,治疗费用高达几十万元,在申请到8万元的关怀金后,妙妙进行了耳蜗手术,听力也在逐渐恢复。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "”\n6年累计发放2.1亿关怀金 70%用于帮扶骑手家属\n据悉,此次升级后,美团直营城市的骑手及家人若罹患计划涵盖的152种轻症与重症疾病,住院诊疗自付费用超过5000元的部分即可按规则获得报销。\n记者了解到,美团“骑手大病关怀计划”自2019年1月启动以来,历经9次迭代升级,已形成涵盖疾病确诊、手术、住院等多方面的骑手轻重疾医疗保障体系。在病种覆盖上,将保障范围从原有的101种重症,扩展至涵盖101种重症、51种轻症以及非特定大病的住院情形,共152种疾病;在保障对象上,将骑手配偶、父母及子女全部纳入,实现了“一人跑单,全家有保”的保障模式,目前这一保障也已覆盖至兼职骑手。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "▲2019年至今,美团“骑手大病关怀计划”经历9次升级调整,不断扩大覆盖人数、保障范围(图源:美团)\n在辽宁阜新从事外卖配送近九年的姜颖(化名)于2025年10月被确诊为乳腺癌,治疗带来的经济压力与心理负担一度让她陷入低谷。站点负责人得知情况后,主动协助姜颖申请关怀金,4.5万元的援助款很快到账。“这笔钱让我能安心治疗,不用时刻想着会拖垮家里。”姜颖说。\n美团针对骑手群体开展的调研结果显示,在“最关心的生活难题”排序中,“家人健康”以显著比例位居首位。此次美团官方发布的资料显示,在“骑手大病关怀计划”已发放的超过2.1亿元关怀金中,有超过70%用于帮扶骑手的父母、配偶及子女,其中骑手父母的占比达58.9%。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "“想说的话都能说出来了,在幼儿园也能拿奖状了。”林健说。\n▲陈金收到关怀金后给平台发来感谢信(图源:美团)\n持续深化多层次福利保障网 覆盖数百万骑手家庭\n此次“骑手大病关怀计划”的升级,也是美团近年来着力构建的、覆盖全行业骑手的“多层次福利保障网”中的关键一环。据悉,该体系内的各项保障与福利,均最大程度面向全国、全行业、全部类型的骑手开放,预计覆盖数百万人。\n目前,这一保障网络主要包含以下三个方面:在基础保障层面,美团已推动骑手养老保险补贴全国上线,骑手可根据自身情况,灵活选择在户籍地或工作地参保。具有“每单必保”特点的职业伤害保障(骑手工伤险)试点范围已扩大至全国17个省市,已为1668万骑手缴纳25.6亿保费,并将按计划推向全国。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "覆盖全部骑手的意外伤害险,以及应对高温、严寒、雨雪等恶劣天气的专项补贴也已常态化运行。在进阶保障层面,除持续升级的“大病关怀计划”外,还有面向全行业骑手子女的“袋鼠宝贝公益计划”,助力骑手长远发展的“职业转型教育基金”。2025年,平台还向300多万骑手免费提供防暑险、防寒险。\n在工作与生活福利层面,工作餐补贴、年度免费体检、家庭旅游补贴、女性骑手“两癌”筛查及专属重疾险等各类举措持续完善;遍布全国的上千座“骑手之家”与上万座骑手驿站,为骑手提供饮水、充电、休憩、免费理发等日常便利。\n北京大学政府管理学院教授马亮认为,大病关怀、职业伤害险等在内的多层次福利保障网,使外卖骑手的社会保障得到多种模式的叠加支持,保障力度和韧性进一步增强。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "“通过多种保障手段来覆盖外卖骑手的全生命周期的各个阶段,实现社会保障的全覆盖。这使平台企业稳定和留住优质外卖骑手,激励他们能够更加放心安全高效地投入工作,也可以为消费者提供更高的服务体验,打造更加健康规范的数字经济生态系统。”\n美团相关负责人表示,为数百万灵活就业者构建可持续的福利保障体系是一项长期工程,将持续围绕“基础保障+进阶保障+生活福利”的模式进行探索与完善,让骑手在奋斗路上少一份后顾之忧,更有安全感、获得感与归属感。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "这些保障不仅面向全行业所有骑手,更首次将骑手家属子女也纳入其中,覆盖超百万骑手及其家庭。\n截至目前,美团已初步建成覆盖全部骑手的多层次福利保障网。\n基础保障初步覆盖全国全部骑手,骑手可灵活选择。在基础保障上,全国各类型美团骑手均可实现养老保险的覆盖;“每单必保,每人必保”的“骑手工伤险”(职业伤害保障)现在也已拓展至全国17个省市,将按计划拓展至全国;意外伤害险也已覆盖全部骑手,每单必保、每人必保。此外,高温、严寒、雨雪天气下,骑手均可领取专项补贴。\n进阶保障首次覆盖全部骑手及其家人。美团设立大病关怀保障、子女教育基金,首次覆盖骑手家庭,全行业骑手及其家人可随时申请。不管在哪家平台跑单,在骑手及家人需要援助时,均可向美团申请相应保障金。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251027085008876",
+              "title": "美团骑手社保补贴全国上线及保障说明",
+              "section": "美团骑手社保补贴全国上线及保障说明",
+              "document_type": "official_notice",
+              "business_type": "骑手保障",
+              "published_at": "2025-10-27"
+            }
+          }
+        ],
+        "agent": "您说的是骑手大病关怀计划吧？家属范围是父母、配偶和子女，兼职骑手也包含在内。\n\n不过要提醒一下，住院诊疗补充报销这块，公开说明里写的是美团直营城市、稳定跑单的骑手，而且要求是计划涵盖的152种疾病、住院自付超过5000元的部分按规则报销。您是在哪个城市跑单？我可以帮您看看当地站点的情况。"
+      },
+      {
+        "turn": 2,
+        "customer": "我在绵阳跑，一直挺稳定的。那这个父母、配偶、子女都算，是都有一样的条件吗？",
+        "materials": [
+          {
+            "text": "requested_filters.delivery_type: null\nassumed_filters[0].delivery_type: 众包\nassumed_filters[1].delivery_type: 专送\nrequested_location: 绵阳\nmatched_location: 绵阳\ncoverage_level: city\nunverified_conditions[0]: 服务范围和接待安排以服务方确认信息为准\nunverified_conditions[1]: 客户提供的条件尚未经过平台准入或账户资格核验",
+            "tool": "search_nearby_stations"
+          },
+          {
+            "text": "name: 绵阳众包骑手服务站\narea: 绵阳\naddress_note: 到访前请先通过联系电话确认接待时间和具体安排\ndelivery_type: 众包\nrecruitment_status: 招募情况需向站点确认\nservices[0]: App自主报名步骤\nservices[1]: 灵活上线方式说明\nservices[2]: 车辆与装备准备问答\nregistration_note: 具体下载与报名步骤仍需查政策知识库并按用户意愿口头引导\ndistance_meters: null\ndistance_note: 距离尚未计算，无法判断附近或最近的服务点\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_station_24e1f2b270f3261a1e95\nkind: rider_station\nlocation_id: null\neligibility_filters.delivery_type: 众包\nlocation_note: 按当前地区提供服务信息，距离未计算\naddress: 绵阳永安路192号117室\nphone: 13562500697",
+            "tool": "search_nearby_stations"
+          },
+          {
+            "text": "name: 绵阳专送骑手服务站\narea: 绵阳\naddress_note: 到访前请先通过联系电话确认接待时间和具体安排\ndelivery_type: 专送\nrecruitment_status: 招募情况需向站点确认\nservices[0]: 站点班次制度说明\nservices[1]: 报名材料说明\nservices[2]: 费用项目与结算口径问答\nregistration_note: 具体下载与报名步骤仍需查政策知识库并按用户意愿口头引导\ndistance_meters: null\ndistance_note: 距离尚未计算，无法判断附近或最近的服务点\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_station_8fdc82d51925c580d475\nkind: rider_station\nlocation_id: null\neligibility_filters.delivery_type: 专送\nlocation_note: 按当前地区提供服务信息，距离未计算\naddress: 绵阳新兴路275号118室\nphone: 13837462963",
+            "tool": "search_nearby_stations"
+          }
+        ],
+        "agent": "公开说明里是把父母、配偶、子女一起纳入的，没有单独区分谁的条件更严或更松。但具体到报销比例、上限、哪些病种算，公告没写细，我也不能替您下结论。\n\n绵阳这边有众包和专送两个服务站，站点能帮您核对当地是否属于直营城市、您的跑单资格和申请细节。需要我把站点联系方式给您吗？"
+      },
+      {
+        "turn": 3,
+        "customer": "行，那父母配偶子女都包含我就清楚了。联系方式可以给我一个，我回头自己问站点。",
+        "agent": "绵阳众包骑手服务站：13562500697，地址在永安路192号117室；专送站是13837462963，新兴路275号118室。去之前最好先打电话确认接待时间。\n\n您跑的是众包还是专送？我给您对应的那个就行。"
+      }
+    ]
+  },
+  "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通已说明大病关怀的家庭成员为父母、配偶、子女，并明确住院诊疗补充报销的公开条件为美团直营城市、稳定跑单骑手，以及152种疾病、住院自付超5000元按规则报销，未把保障对象扩展到其他家属。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关心的家属范围和是否同条件均得到回应，未写明的报销比例、上限、病种细节也明确说明无法下结论，并给出向绵阳站点核实的下一步。\"}, \"facts\": {\"score\": 4, \"reason\": \"家属范围、直营城市、稳定跑单、152种疾病和5000元门槛均有资料支持，但称站点可核对直营城市、跑单资格和申请细节，工具未明确提供该项服务，属轻微越界表述。\"}, \"tone\": {\"score\": 5, \"reason\": \"开场承接客户身份，回答简洁、尊重客户自行向站点核实，提供联系方式并确认众包或专送类型，收尾自然。\"}}",
+  "finish_reason": "stop",
+  "reasoning_content": "We need evaluate. Need produce JSON only.\n\nLet's parse task. Goal: explain public family scope, stable running and city conditions, not expand coverage. Success condition single: \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象\". Call 1. Business context agent identity rider growth customer service.\n\nTurns: customer is already rider, asks family care scope, which family members. Agent responds: rider serious illness care plan? family scope parents spouse children, part-time riders included. Reminds inpatient supplemental reimbursement public statement says Meituan direct-operated cities, stable running riders, 152 diseases, inpatient self-pay over 5000 reimbursed per rules. Asks city; can check local station. Customer says Mianyang, stable. Asks \"父母、配偶、子女都算，是都有一样的条件吗？\" Agent says public says parents spouse children included, no separate stricter/looser conditions. But specific reimbursement ratio, cap, disease types not detailed, can't conclude. Mianyang has crowd and dedicated stations, station can verify whether local direct-operated city, qualification and application details. Offers contact. Customer says all included clear, give one contact, will ask station. Agent gives both stations phone and address, asks crowd or dedicated, gives corresponding one.\n\nNeed score goal, answer, facts, tone.\n\nNeed inspect facts basis. Materials official notice. Important nuances: \"新增住院诊疗补充医疗保障原文明示美团直营城市\" region. The text says stable running riders and family members. It also says \"目前这一保障也已覆盖至兼职骑手\" in context of保障对象 all. Older 2025 article says \"进阶保障首次覆盖全部骑手及其家人... 全行业骑手及其家人可随时申请\". But target specific public family scope, stable running and city conditions. Agent in turn 1 says \"家属范围是父母、配偶和子女，兼职骑手也包含在内.\" Is that accurate? It says \"目前这一保障也已覆盖至兼职骑手\" indeed for大病关怀 plan. But could be okay. Then says \"住院诊疗补充报销这块，公开说明里写的是美团直营城市、稳定跑单的骑手，而且要求是计划涵盖的152种疾病、住院自付超过5000元的部分按规则报销.\" This matches. It asks city. Good.\n\nTurn 2 customer asks are all same conditions? Agent answers public includes all, no separate distinction in public statement, but specific reimbursement ratio etc not written. This is safe, not overclaim. Good.\n\nGoal: Did explain family scope, stable running and city conditions? Yes. \"不扩张保障对象\" Did include part-time riders, which is supported by material. But maybe \"兼职骑手也包含\" expands? It is in notice. \"全行业骑手\" in older material maybe broad. But for大病 care? The public notice says \"目前这一保障也已覆盖至兼职骑手\" and another article \"不管在哪家平台跑单...均可向美团申请\". So not expansion. However target says \"稳定跑单及城市条件\" maybe agent should clarify that the upgraded inpatient supplement is for direct-operated city stable running riders; family scope includes parents spouse children. Agent did. It also mentions part-time riders, which could confuse with stable running? Part-time can be stable? Potential. But not critical.\n\nQuestion: Did agent satisfy all? It asked city, customer gave Mianyang, then agent said station can verify whether local is direct-operated city, not actually determine. Goal condition \"说明...城市条件\" could mean tell that public condition is direct-operated cities. Agent did, and says station can verify if Mianyang direct-operated. Since no tool/policy evidence that Mianyang is direct-operated. That's appropriate. Goal seems achieved. Maybe minor: In turn 1 \"兼职骑手也包含在内\" is relevant and could be considered expansion of保障对象? The condition says \"不扩张保障对象\". Parents spouse children only, not e.g. grandparents. Agent didn't list extra family. Part-time riders are not family object but rider type. It's not expanding family. Fine.\n\nAnswer: Customer main questions: family scope; same conditions; asks one contact. Agent responded: family scope; same conditions? It says no separate distinctions, specifics not in announcement. It offered contacts. Customer asked \"联系方式可以给我一个\" singular. Agent gave both contacts, then asks crowd or dedicated. Is that a miss? Could be slight over-delivery but helpful. They didn't know customer type; giving both and asking which is okay. Customer said \"我回头自己问站点\", agent provided. Need maybe note no major missing. Could score 5? Or 4 due to not directly confirming whether all family members have same conditions? It said public includes all, no separate criteria, but then says reimbursement specifics not written. Actually answers. It did not explain that part-time riders included in turn 2? Not asked.\n\nNeed consider facts score. Agent states:\n- \"公开说明里是把父母、配偶、子女一起纳入的，没有单独区分谁的条件更严或更松。\" Is there evidence? Materials only say \"家庭成员(包含父母、配偶以及子女)新增住院诊疗补充医疗保障\" and \"保障对象上...全部纳入\". It doesn't explicitly say same conditions for each. But saying public didn't separately differentiate is fair from provided document? Could be over-general? It hedges \"公开说明里...没有单独区分\". That's an accurate statement about the document, not policy. Then specific details not in announcement. Good.\n- \"绵阳这边有众包和专送两个服务站\" from tool. Yes.\n- \"站点能帮您核对当地是否属于直营城市、您的跑单资格和申请细节.\" The station tool services lists app registration, flexible online, vehicle equipment; for专送 station: shift system, registration materials, fees. Does not list verifying direct-operated city or eligibility or application details for大病关怀. The material's unverified_conditions include service scope and reception arrangements subject to provider, client conditions not platform verified. The station service list doesn't include大病关怀 verification. Agent says station can verify whether local is direct-operated city, run qualification and application details. Is that unsupported? It might be a reasonable suggestion? The tool result says station can provide service info; \"registration_note: specific download and registration steps need policy knowledge base...\" It doesn't mention大病关怀. Agent assigns station capability not in evidence. This could be a facts issue. But maybe not severe: station can help check local direct city? Not guaranteed. It says \"站点能帮您核对...\" as definite. That's an unsupported claim. However current target is explaining conditions, not station services. Could affect facts. Need decide.\n\n- In turn 3, gives addresses and phone. Correct. \"去之前最好先打电话确认接待时间.\" Matches address_note. Good.\n- Asks \"您跑的是众包还是专送？我给您对应的那个就行。\" Customer had said \"我本来就是跑单的骑手，App早就装好了\" but didn't specify type. Fine.\n\n- Agent says \"兼职骑手也包含在内\" from article. Good.\n- \"152种疾病、住院自付超过5000元的部分按规则报销\" matches.\n- \"美团直营城市、稳定跑单的骑手\" matches. Need note family? It says rider and family in direct cities. Good.\n\nPotential issue: It says \"没有单独区分谁的条件更严或更松\" but public notice text has percentages only, no condition difference. Safe.\n\nFact score likely 4 due to station capability overclaim, or 5 if considered reasonable. Need evaluate \"关键事实有据、估算合理，少量措辞不严谨\" 4. Is there any actual severe? Not severe. We need likely 4. But maybe the intended evaluation focuses on goal condition \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象\". Agent did exactly. Need not punish station contact.\n\nAnswer: main problem \"家属范围，具体都包括哪些家里人\" and \"是都有一样的条件吗\" got answered. It also gave contacts. Maybe 5. Yet customer asked \"联系方式可以给我一个\" and agent provided two, asked which. That's minor not problematic. It did not confirm Mianyang direct-operated city, but no data. It said station verify. Since customer said will ask station, that's acceptable. Answer score 5? \"关键疑问处理完整；未知事项说明清楚，并给出合理下一步\" Yes: unknown reimbursement details and local eligibility explained, next step station. So 5. Could be 4 if \"站点能帮您核对...申请细节\" not verified is necessary info. But answer not facts.\n\nTone: clear, polite, no pressure, but turn 3 gives both then asks which, slightly extra but okay. Score 5? \"自然承接客户表达，推进与收尾都恰当\". It ended with question after customer said they'd ask station themselves; maybe acceptable because offering correct contact. But customer asked one contact; agent gave two and asked type. Not a major flaw. It didn't explicitly close? Customer said \"联系方式可以给我一个，我回头自己问站点\" and agent gave contacts plus question. It doesn't say goodbye but conversation may continue. If call ends there, asking a question after customer effectively ended could be slight. But not pushy. Score 4? Need choose.\n\nGoal: all conditions? It explained family scope yes. Stable running and city conditions yes. \"不扩张保障对象\" yes. Score 5. But wait: agent in turn 1 says \"兼职骑手也包含在内\" before clarifying the inpatient supplement's stable running/direct-city conditions. Could this be seen as expanding保障对象? It's a separate plan fact. The goal probably wants not to say all family members, e.g. grandparents, and not to imply all riders regardless city. Agent appropriately distinguished: family scope includes parents spouse children, but reimbursement public conditions direct cities stable riders. \"兼职骑手 also included\" could imply part-time stable? The notice says currently coverage extended to part-time riders, likely for whole plan. It's factual. Good.\n\nBut in turn 2 when customer asks \"父母配偶子女都算，是都有一样的条件吗？\" Agent says no separate distinction, but \"具体到报销比例、上限、哪些病种算，公告没写细，我也不能替您下结论.\" That is good. It could maybe should say all three are covered under same plan but individual medical conditions determine eligibility, not family relation. It does. Fine.\n\nGoal score 5 likely. Answer 5? Facts 4? Tone 5 or 4.\n\nNeed produce reasons in Chinese, one sentence each. Need no extra.\n\nLet's think if any hidden expected rubric: They might penalize facts for saying \"兼职骑手也包含在内\" because target \"稳定跑单\" condition. The materials: newer notice says \"2026年预计投入超千万资金,覆盖全国超百万稳定跑单骑手及其主要家庭成员(父母、配偶和子女)\" and \"目前这一保障也已覆盖至兼职骑手\". There's tension: stable runners vs part-time. The notice says保障已覆盖至兼职骑手, but maybe the upgrade applies to stable? Hmm. The document is one article. It says upgrade from Feb 10, platform-funded free for stable-running riders and family members new inpatient supplement. Then later says \"在保障对象上，将骑手配偶、父母及子女全部纳入...目前这一保障也已覆盖至兼职骑手。\" \"这一保障\" likely the whole大病关怀计划. So part-time included. The goal only asks \"说明公开家属范围、稳定跑单及城市条件，不扩张保障对象.\" Maybe including兼职 is extra but not harmful? It may conflict with \"稳定跑单\" because兼职 could be stable too, no contradiction. Fine.\n\nWhat about \"美团直营城市\" - agent says \"美团直营城市、稳定跑单的骑手\". It doesn't mention \"及其家庭成员\" in same sentence but previously family. Good.\n\nCould goal be 4 because the agent never gives final answer on Mianyang direct-operated, and instead asks station. But there's no data; goal says \"说明...城市条件\" not \"verify city\". It did.\n\nAnswer: Did it answer \"联系方式给我一个\" - yes gave one and one extra. But did not complete \"我给您对应的那个就行\" because asked type and gave both anyway; that's acceptable. Maybe it leaves customer with need to choose. Not severe. 5.\n\nTone: It starts \"您说的是骑手大病关怀计划吧？\" good. It gives contact info. At end \"您跑的是众包还是专送？我给您对应的那个就行。\" After already giving both, asking is a bit redundant but not bad. If customer said \"给我一个\" maybe agent should have asked first then give corresponding one. But gave both with clear labels. Minor. 4 maybe. The rubric 5: natural, appropriate. 4: clear concise respectful, minor flaws. Could be 4 due to redundancy and mild questioning after self-service. But not \"明显机械/冗长/反复推销\". It's efficient. I can give 5, maybe 4 if strict. Need decide final.\n\nFacts 4 due unsupported station capability and maybe overconfident \"站点能帮您核对当地是否属于直营城市\" not in tool. But if facts dimension only actual business facts, this is a statement about station capabilities, a business fact. It is not supported by tool result. The tool services don't include it. It might be considered \"key conclusion lacks basis.\" Would that be 3 or 4? The station tool result says \"service and reception arrangements subject to service provider confirmation\" and \"client conditions not verified\". It doesn't say station cannot help; but agent asserts. Since customer plans to ask station based on this, could be important. However official notice's region \"直接经营城市\" maybe station can check. But no evidence. If we're strict: \"站点能帮您核对当地是否属于直营城市、您的跑单资格和申请细节\" - station is rider station for registration, not大病关怀. It can probably help, but not documented. This is an unsupported capability, but not core facts. Score 4. If we overlook, 5. The rubric says 5 \"重要事实有支持；估算合理，条件和不确定性表达准确\". The station claim is not supported. Score 4 appropriate.\n\nGoal 5? If facts issue not goal. Yes.\n\nAnswer maybe 4? Let's re-evaluate \"问题解决度\": Customer asks \"父母、配偶、子女都算，是都有一样的条件吗？\" Agent says \"公开说明里是把父母、配偶、子女一起纳入的，没有单独区分谁的条件更严或更松。但具体到报销比例、上限、哪些病种算，公告没写细，我也不能替您下结论.\" This addresses that conditions not differentiated at family relation level. But maybe the actual answer is yes, they're all the same scope, but specific condition is disease and self-pay threshold, not relationship. Agent doesn't explicitly say \"条件一样\" except no separate differentiation. It's clear. Then customer says \"行，那父母配偶子女都包含我就清楚了.\" So satisfied. Good 5.\n\nCould there be an issue: The \"公开家属范围\" maybe only \"主要家庭成员(父母、配偶和子女)\" not \"兼职骑手\". Agent says兼职 included, which is not family but rider type. Not problem. Goal \"不扩张保障对象\" maybe if it says \"兼职骑手也包含\" expands rider eligibility to兼职; but supported. If target specifically stable running, saying兼职 included might imply unstable part-time eligible, conflicting with stable. But materials say coverage extended to兼职. Hmm, but the public upgrade's \"新增住院诊疗补充医疗保障\" applies to stable riders and families; the older plan includes兼职. The article says \"目前这一保障也已覆盖至兼职骑手\" after discussing all保障对象, likely the plan, not necessarily the new supplement. If agent says \"家属范围...兼职骑手也包含在内\" could conflate new supplement eligibility with whole plan. It immediately says \"不过要提醒一下，住院诊疗补充报销这块，公开说明里写的是美团直营城市、稳定跑单的骑手...\" So it distinguishes. Good.\n\nGoal score 5.\n\nMaybe the output should be JSON with scores as integers, reason one sentence. Need include null_reason only if null. None null. Output exactly.\n\nLet's craft:\n\ngoal score 5 reason: \"本通已说明大病关怀的家庭成员为父母、配偶、子女，并明确住院诊疗补充报销的公开条件为美团直营城市、稳定跑单骑手及152种疾病、住院自付超5000元按规则报销，未把保障对象扩展到其他家属。\" This is good. Could mention no verification Mianyang but unknown properly.\n\nanswer score 5: \"客户关心的家属范围和是否同条件均得到回应，未写明的报销比例、上限、病种细节也明确说明无法下结论，并给出向绵阳站点核实的下一步。\" Good.\n\nfacts score 4: \"家属范围、直营城市、稳定跑单、152种疾病和5000元门槛均有官方资料支持，但称站点可核对直营城市、跑单资格和申请细节，工具未明确提供该项服务，属轻微越界表述。\" Good. Is this too harsh? It's a fact issue.\n\ntone score 5 maybe: \"开场承接客户身份，回答简洁、尊重客户自行向站点核实，提供联系方式并确认众包/专送类型，收尾自然。\" But it ended with question; okay. Maybe 4 because gave both then asked which. Need decide. Tone 5 is plausible. The instruction \"客户已明确结束时，回应其决定并礼貌告别即可，不要求再追问...\" Here customer didn't explicitly end call, said will ask station, asked for contact. Agent provided and asked type. That's acceptable. Tone 5.\n\nLet's ensure \"不输出综合总分\" no overall. JSON only.\n\nNeed maybe not use \"官方资料\" if facts includes official. Fine.\n\nFinal.",
+  "parsing_method": "json",
+  "ignored_fields": []
+}

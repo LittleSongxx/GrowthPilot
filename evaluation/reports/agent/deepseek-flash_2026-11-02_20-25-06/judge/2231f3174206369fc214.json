@@ -1,0 +1,300 @@
+{
+  "case_id": "rider-dialogue-048",
+  "repeat": 1,
+  "judge_version": "dialogue-rubric-v3.2.3",
+  "model": "deepseek-flash",
+  "thinking": true,
+  "reasoning_effort": "high",
+  "temperature": null,
+  "configured_temperature": null,
+  "temperature_used": false,
+  "max_tokens": 16384,
+  "status": "valid",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "valid",
+      "usage": {
+        "completion_tokens": 4522,
+        "prompt_tokens": 6256,
+        "total_tokens": 10778,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 4311,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 1920,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 4336
+      },
+      "content": "{\"goal\":{\"score\":5,\"reason\":\"本通围绕客户低频跑单场景，明确区分了每单的意外伤害保障和职业伤害保障等基础保障，与养老补贴、大病关怀等需稳定跑单或达到收入门槛的进阶福利，目标已完成。\"},\"answer\":{\"score\":5,\"reason\":\"客户关于偶尔跑单能否报名、有无基本保障、是否只有长期跑才有福利的疑问均得到回应，并说明了养老补贴门槛、大病关怀限制及惠州众包需注册后查看的下一步。\"},\"facts\":{\"score\":5,\"reason\":\"职业伤害保障全国覆盖、养老补贴按近6个月收入门槛补贴50%、大病关怀覆盖兼职但受稳定跑单和直营城市等限制，均与所给资料相符；对个人门槛使用了合理估算并保留不确定性。\"},\"tone\":{\"score\":5,\"reason\":\"表达自然、简洁，先确认需求再解释，尊重客户先下载查看的决定，并完成短信发送和礼貌收尾。\"}}",
+      "finish_reason": "stop",
+      "reasoning_content": "We need evaluate this call. Need output JSON only. Need analyze each dimension.\n\nGoal: \"依据2026指引区分低频保障与稳定跑单进阶福利\" success condition exactly differentiate low-frequency protection vs stable-run advanced benefits. Call 1. Business context app 美团骑手 App, agent rider growth customer service.\n\nConversation: customer occasional 1-2 times/month, Huizhou, has main job. Agent recommends 众包, explains conditions, asks SMS. Customer asks basic protections for occasional vs long-term benefits. Agent answers three blocks: occupational injury insurance nationwide July 1 platform paid every order; pension subsidy for stable and transitional part-timers but threshold 3 of 6 months at local base lower limit, likely not met; critical illness care covers part-timers but requires stable running and limited direct cities, 152 diseases, hospitalization self-pay >5000. Says occasional most directly relevant per-order accident and occupational injury protection. Sends SMS. Customer confirms understanding: per-order basic protection but pension etc stable. Accepts. SMS sent.\n\nNeed assess accuracy with materials. There are possible issues: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" source from 2026-08-28 says 7月1日起新职伤保险已覆盖全国; another 2026-02 says pilot expanded to 17 provinces. Agent says \"今年7月1日起已覆盖全国\" likely correct based later material (published 2026-08-28). However date? The call no timestamp. Goal says 2026指引. Fine. \"每单必保、每人必保\" correct. \"意外和职业伤害保障\" for occasional. Accident insurance covered all riders per materials. Good.\n\nPension subsidy: agent says \"长期稳定跑单和过渡兼职的骑手都能参与，条件是近6个月里有3个月收入达到当地社保缴费基数下限，平台补贴50%的养老保险参保费用。您一个月只跑一两次，这个门槛大概率达不到。\" This matches 2025-12 notice. It says \"只要近6个月内，有3个月收入达到当地社保缴费基数下限，平台就会补贴50%\". Good. It's an inference that likely not met; acceptable. But \"养老保险补贴...长期稳定跑单和过渡兼职的骑手都能参与\" source says \"不管是长期稳定跑单，还是过渡兼职的骑手，都可灵活自主参与\" and specific condition. Fine.\n\nCritical illness: agent says \"已覆盖到兼职骑手，但要求稳定跑单，且限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销。\" Need check materials: 2026-02 notice: 美团直营城市 rider and family if 152 diseases, hospitalization self-pay above 5000 reimbursed. \"目前这一保障也已覆盖至兼职骑手\". Business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Does it require稳定跑单? The article title and business_type mention stable runners; within original text \"骑手大病关怀计划... 目前这一保障也已覆盖至兼职骑手.\" But there is conflicting \"要求稳定跑单\" possibly not explicit? Let's inspect: material says \"在保障对象上,将骑手配偶、父母及子女全部纳入... 目前这一保障也已覆盖至兼职骑手.\" It doesn't say \"要求稳定跑单\" in visible text. But source metadata business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Could be inferred from title? The task says title/incomplete fragments can't supply missing rules. However business_type metadata may indicate program for stable runners. Need not over-penalize. Agent distinguishes \"稳定跑单进阶福利\"; goal itself says low-frequency vs stable-run advanced benefits. So likely expected to say critical illness requires stable running? The source business_type explicitly indicates stable跑单骑手, and agent says \"要求稳定跑单\". Is \"兼职骑手\" covered too? There is potential contradiction: \"已覆盖到兼职骑手\" and requires stable running. But part-time can be stable? Fine. \"限定美团直营城市\" source says新增住院诊疗补充保障原文明确美团直营城市. Region metadata. Agent correctly states. Could be good.\n\nBut potential issue: Agent says \"不是只有长期跑的人才有，兼职也能沾上一些\" and then \"最直接相关的是每单的意外和职业伤害保障\". It doesn't mention the \"意外伤害险\" explicitly in three blocks? It says at end \"每单的意外和职业伤害保障\" but didn't explain意外险 coverage. Customer asked basic protections; agent actually answers occupational injury, pension, critical illness. It omits explicit accident insurance in main list but mentions at end. Materials say \"覆盖全部骑手的意外伤害险\" and weather subsidies. Agent says \"每单的意外和职业伤害保障\" possibly fine. It also doesn't mention weather subsidies, but not necessary? Customer asks basic保障, could include. However goal is differentiating low-frequency and stable advanced welfare. It covers relevant distinctions.\n\nPotential factual issues: \"每单必保、每人必保\" for occupational injury nationwide: correct per 2026 Q2 report. \"职业伤害保障\" and \"意外伤害险\" might be distinct. Agent at end says \"每单的意外和职业伤害保障\" conflating? It says \"每单的意外和职业伤害保障\" could mean two, but earlier only explained occupational injury. Accident insurance is also per order. Is that misleading? Not severe. It doesn't state accident insurance details. Customer said \"就是每单有基本保障\" and agent affirms. That's accurate generally.\n\nNeed score goal. Success condition: differentiate low-frequency protection vs stable-run advanced benefits. Agent clearly distinguishes: occasional most relevant per-order accident & occupational injury; pension threshold likely not met; critical illness stable, direct cities etc. Fully satisfied? Main goal achieved. Maybe all necessary conditions? We need decide 4 or 5. It clearly meets target. However might have minor inaccuracies/omission: Did not mention \"养老保险补贴全国开放\" and \"每单必保\" etc. It did. Did not mention \"职业伤害保障试点范围\" before? It says nationwide. Fine. Could give 5 for goal because goal achieved. Need be careful: The goal is \"依据2026指引区分低频保障与稳定跑单进阶福利\". It did exactly. The success condition is just that. So goal 5 likely. But check \"要求稳定跑单\" for big illness – if incorrect or overgeneralized maybe facts. But goal still achieved.\n\nAnswer: Customer's core question: occasional runner basic保障? and whether only long-term get welfare. Agent addresses. It gives details, threshold, example. It answers clearly. Could be 5? Minor missing: It doesn't mention that pension subsidy is open nationwide and that \"只要近6个月有3个月...\" It gives enough. It doesn't clarify \"意外伤害险\" perhaps but says at end. It doesn't mention \"高温严寒雨雪专项补贴\" although relevant basic welfare. But current question \"基本保障\" broad; however the agent's answer focuses on major. Missing optional? Need judge if important detail omitted. The customer wanted basic保障; agent mentions per-order accident and occupational injury but not weather subsidies. But \"基本保障\" maybe includes. The material includes \"覆盖全部骑手的意外伤害险，以及应对高温、严寒、雨雪等恶劣天气的专项补贴也已常态化运行.\" Agent's omission of weather subsidies could be an important detail? But not necessary to distinguish low-frequency vs stable. The success condition only differentiate. It's optional. So answer 5 or 4? The scoring says answer 5 if key questions handled completely; unknown explained and next step. Agent did. \"养老保险补贴... 大概率达不到\" is a helpful estimate and says app. It sent SMS. It confirms. Could be 5. Maybe 4 due to not explaining意外伤害险 separately? But likely 5.\n\nFacts: Need scrutinize. Could be a factual error: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" source 2026-08-28 says \"7月1日起,美团骑手‘新职伤’保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保.\" Good. But source 2026-02 says试点范围扩大至全国17个省市 and will push nationwide. Later source supersedes. Good.\n\n\"大病关怀，已覆盖到兼职骑手，但要求稳定跑单\" Is there evidence for \"要求稳定跑单\"? Metadata business_type says \"稳定跑单骑手及其父母、配偶、子女的大病关怀\"; article says \"目前这一保障也已覆盖至兼职骑手\". Could be stable part-time. The goal frames advanced福利 for stable running. Agent's statement is likely intended. But is \"限定美团直营城市\" correct? The material region says \"新增住院诊疗补充保障原文明示美团直营城市\"; article says \"美团直营城市的骑手及家人若罹患计划涵盖的152种...住院诊疗自付费用超过5000元的部分即可按规则获得报销.\" So yes. However the article also says \"目前这一保障也已覆盖至兼职骑手\" without region exception? It might be national for part-time? But the specific reimbursement condition is direct cities. Agent says \"限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销\" as a general statement. Correct for新住院诊疗补充. Could be okay.\n\n\"养老保险补贴... 条件是近6个月里有3个月收入达到当地社保缴费基数下限\" Source says exactly. \"平台补贴50%\" correct. \"长期稳定跑单和过渡兼职的骑手都能参与\" source says all. Fine.\n\n\"惠州当地是否开通众包，需要下载美团众包 App 注册后查看\" source says download app register即可, can查看所在区域是否开通众包配送. Correct. But business context app_name: \"美团骑手 App\". Agent tells download \"美团众包 App\", and tool sends \"美团骑手 App\"? Hmm in turn 2 agent says \"要不要我把下载短信发到您手机上？\" turn 3 asks \"先问一下\", turn 4 \"短信发我吧\". Tool result app_name: 美团骑手 App delivery sent. Agent in turn 4 says \"下载短信已经发出去了，您留意下手机，注册后在 App 里就能看到惠州当地是否开通众包.\" Business context app name 美团骑手 App. The policy says 美团骑手 App and 美团众包 App 同义称呼, any dimension no penalty. So fine.\n\nPotential fact issue: Customer asks \"像偶尔跑跑的，有没有什么基本保障？我听别人说好像只有长期跑的人才有那些福利。\" Agent says \"不是只有长期跑的人才有，兼职也能沾上一些.\" That's true for some. It lists three blocks. Good.\n\nBut \"职业伤害保障...今年7月1日起已覆盖全国\" The current date may be 2026? The goal \"2026指引\". Source 2026-08-28 says 7月1日. If call before Aug 28? The material is available in turn 3, presumably current. The source published 2026-08-28, if call after. Good.\n\nCould there be issue: Agent says \"每单的意外和职业伤害保障\" but \"意外伤害险\" not in materials? It is: \"覆盖全部骑手的意外伤害险\". Good.\n\nNeed maybe consider \"养老保险补贴\" is基础保障, not进阶? Agent places it as second in three blocks, says it's available to stable and transitional, threshold. Customer's occasional likely not met. Good.\n\nQuestion: \"不要输出综合总分\". Need JSON fields exactly. Each reason one sentence. Need perhaps facts score 5? Let's decide.\n\nTone: Natural, empathetic, clear. It asks permission, sends SMS, closes. No issues. Could give 5. Maybe \"要不要我把下载短信发到您手机上？\" before answering? It answered. Good.\n\nGoal: 5. Answer: 5. Facts: 5? Need be strict: Does \"大病关怀...要求稳定跑单\" have support? Metadata business_type says \"稳定跑单骑手...\" but is that enough? The materials: title \"美团骑手大病关怀计划升级与住院诊疗补充保障条件\"; business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Agent says \"要求稳定跑单\". If this requirement not explicitly in text but business_type? Could be considered supported by metadata. However the article text says \"目前这一保障也已覆盖至兼职骑手\", which could conflict with \"要求稳定跑单\". But \"兼职骑手\" can be stable? The customer is occasional, so distinction remains. Does \"稳定跑单\" requirement mean the plan is for stable runners only? The metadata says so. The article says \"大病关怀计划\" self 2019, 9 iterations, covers兼职; not necessarily stable. But \"进阶保障\" in context: \"在进阶保障层面，除持续升级的大病关怀计划外...\" after基础保障. The article says \"进阶保障首次覆盖全部骑手及其家人\". Later 2026 article business_type stable. Hmm.\n\nCould facts score be 4 because of slight overgeneralization \"要求稳定跑单\" and maybe \"限定美团直营城市\" without noting region limit applies specifically to新增住院诊疗补充保障, not all大病关怀. Agent's phrasing: \"三是大病关怀，已覆盖到兼职骑手，但要求稳定跑单，且限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销。\" Could be interpreted entire大病关怀 is limited to direct cities, but only住院诊疗补充保障 is. But for the purpose of customer, the key limit. \"且限定美团直营城市\" may be accurate for the 152/5000 reimbursement. It says \"计划涵盖的152种疾病、住院自付超5000元的部分按规则报销.\" The \"限定直营城市\" maybe ties to this. Fine.\n\nAnother potential error: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" from 2026 Q2 report. But \"新职伤\" covers all? It says 7月1日起，美团骑手“新职伤”保险已覆盖全国. Good. \"保费平台全额缴纳\" yes. \"每单必保、每人必保\" yes.\n\n\"养老保险补贴...长期稳定跑单和过渡兼职的骑手都能参与\" official says \"不管是长期稳定跑单，还是过渡兼职的骑手，都可灵活自主参与.\" Good. \"条件是近6个月里有3个月收入达到当地社保缴费基数下限\" official. \"平台补贴50%\" official. Good.\n\n\"最直接相关的是每单的意外和职业伤害保障\" For occasional, is there also \"每单必保\" for accident. Yes. Could be all.\n\nThus facts 5 seems plausible. But the scoring for facts 5 requires important facts supported, estimates reasonable, conditions and uncertainty accurate. Agent says \"您一个月只跑一两次，这个门槛大概率达不到\" clearly estimate. It says \"具体什么情况算工伤、怎么赔，要看实际适用规则，我不能替您判断\" good uncertainty. It tells app local rules. Good.\n\nMaybe answer 5 and goal 5. Need not overcriticize.\n\nHowever let's consider if the agent's response to \"偶尔跑一下，一个月可能就跑一两次，这样也能报名吗？\" It says can报名, but then asks city/time. It doesn't yet say exact condition until next turn. Good. It recommends众包 based on time; correct. It asks for city and time. Customer gives city/time. Agent says \"惠州当地是否开通众包，需要下载美团众包 App 注册后查看.\" Correct. It sends SMS. Good.\n\nPotential goal success condition \"依据2026指引区分低频保障与稳定跑单进阶福利\" Could require citing 2026指引? Agent doesn't say \"根据2026指引\" but content is based on notices. Scoring is behavior not citation. It differentiates. Fine.\n\nMaybe goal 4 due to \"大病关怀\" as stable-run advanced benefit; customer wanted basic protection. The agent may overcomplicate with three blocks but useful. No missing key condition. 5.\n\nNeed output JSON. Each reason one sentence. Could mention exact. Ensure no extra.\n\nLet's draft:\n\n{\n \"goal\": {\"score\":5,\"reason\":\"本通围绕客户低频跑单场景，明确区分了每单的意外/职业伤害等基础保障与养老补贴、大病关怀等需稳定跑单或达到收入门槛的进阶福利，目标已完成。\"},\n \"answer\": {\"score\":5,\"reason\":\"客户关于偶尔跑单能否报名、有无基本保障、是否只有长期跑才有福利的疑问均得到回应，并说明了养老补贴门槛、大病关怀限制及惠州众包需注册后查看的下一步。\"},\n \"facts\": {\"score\":5,\"reason\":\"职业伤害保障全国覆盖、养老补贴50%及近6个月3个月达缴费基数下限、大病关怀覆盖兼职但受稳定跑单和直营城市等限制，均与所给资料相符，个人门槛用了合理估算并保留不确定性。\"},\n \"tone\": {\"score\":5,\"reason\":\"表达自然、简洁，先确认需求再解释，尊重客户先下载查看的决定并完成短信发送和礼貌收尾。\"}\n}\n\nNeed ensure \"facts\" reason doesn't overstate \"稳定跑单\" maybe. It says \"受稳定跑单和直营城市等限制\" from metadata. Fine.\n\nBut let's re-evaluate if answer should be 4 due to \"意外伤害险\" not detailed. The customer didn't ask detailed types. \"每单有基本保障\" yes. They didn't ask weather. Good.\n\nOne subtle issue: The agent says \"养老保险补贴，长期稳定跑单和过渡兼职的骑手都能参与\" but then \"您一个月只跑一两次，这个门槛大概率达不到.\" The customer said \"就是每单有基本保障，但养老补贴那些得稳定跑才够条件，对吧？\" Agent says \"对，您理解得没错.\" But earlier agent said \"长期稳定跑单和过渡兼职的骑手都能参与\" not only stable; threshold is income. Customer's summary \"得稳定跑才够条件\" is a simplification. Agent affirming could be slightly imprecise because an occasional rider who happens to meet the 3-month income threshold could qualify; but for this customer's one-two times a month, yes. Is that a factual misstatement? It confirms \"养老补贴那些得稳定跑才够条件\" which could overgeneralize. But context is \"像我这种偶尔跑跑的\" and agent said \"您一个月只跑一两次，这个门槛大概率达不到.\" Customer's \"得稳定跑才够条件\" maybe broadly true for them. Does agent need correct to \"要达到收入门槛\"? It already explained threshold. Affirming a simplification is acceptable in context. Could facts 4 due to slight imprecision. But scoring says minor wording not rigorous can be 4; facts 5 requires accurate expressions. Is \"得稳定跑才够条件\" an \"important fact\"? It may mislead that part-time always not eligible, but agent earlier says threshold. The final confirmation could be a small imprecision. Similarly \"就是每单有基本保障\" – actual per-order accident and occupational injury, yes. \"养老补贴那些得稳定跑才够条件\" – not exactly stable, but income threshold. However for occasional one-two times, not. The customer has understood the material. I think 5 still.\n\nWait: The goal and success condition from benchmark may expect exact distinction based on 2026 \"2026指引\". The agent didn't mention \"2026指引\" but okay. It could be expected to distinguish \"低频保障\" (职业伤害、意外) vs \"稳定跑单进阶福利\" (大病关怀 etc). It did. Facts: The agent's \"大病关怀...要求稳定跑单\" maybe may conflict with one source saying \"覆盖至兼职骑手\". But the benchmark's business_type for 大病关怀 is \"稳定跑单骑手及其父母...\" so likely agent correct. Good.\n\nNeed maybe mention SMS sent: tool result message status sent. Agent says sent. Correct. Good.\n\nNo need null. All applicable.\n\nNow output only JSON.",
+      "parsing_method": "json",
+      "ignored_fields": []
+    }
+  ],
+  "max_attempts": 3,
+  "attempt_count": 1,
+  "retry_count": 0,
+  "usage": {
+    "completion_tokens": 4522,
+    "prompt_tokens": 6256,
+    "total_tokens": 10778,
+    "completion_tokens_details": {
+      "reasoning_tokens": 4311
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 1920
+    },
+    "prompt_cache_hit_tokens": 1920,
+    "prompt_cache_miss_tokens": 4336
+  },
+  "usage_complete": true,
+  "input": {
+    "goal": {
+      "description": "依据2026指引区分低频保障与稳定跑单进阶福利",
+      "success_conditions": [
+        "依据2026指引区分低频保障与稳定跑单进阶福利"
+      ],
+      "call_number": 1,
+      "business_context": {
+        "app_name": "美团骑手 App",
+        "agent_role": "美团外卖骑手用户增长客服"
+      }
+    },
+    "memory_at_start": {},
+    "turns": [
+      {
+        "turn": 0,
+        "agent": "您好，我是美团骑手用户增长客服，看到您对成为美团外卖骑手感兴趣，想帮您了解报名和用 App 的流程。现在方便聊两句吗？"
+      },
+      {
+        "turn": 1,
+        "customer": "方便，不过我主要是想偶尔跑一下，一个月可能就跑一两次，这样也能报名吗？",
+        "agent": "偶尔跑一两次是可以报名的，具体适合哪种配送类型要看您的时间安排。方便说下您大概在哪个城市，以及平时能跑的时间段吗？"
+      },
+      {
+        "turn": 2,
+        "customer": "人在惠州，平时有主业，时间不太固定，只能偶尔抽空跑一下。",
+        "materials": [
+          {
+            "text": "专送骑手遵循各地合作商配送站点的配送安排,众包骑手由其根据自己的时间自由决定配送时长。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "日常配送时间是怎样安排的?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "可以的,众包骑手可以根据自身的时间自由安排接单及配送,即使有正式工作,也可以利用空闲时间,在平台接单赚钱。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "我想利用空闲时间跑单可以吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "兼职骑手即众包骑手,只要您身体健康,年龄在18-56周岁之间,有一部智能手机和交通工具,并通过安全测试就可以成为众包骑手。 招募页面报名之后,会有相关人员联系您,请您保持电话可以正常接通; 您也可以选择下载美团众包APP自行注册成为众包骑手。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团兼职骑手怎么做?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "众包骑手需要自己配备符合国家标准的电动车等交通工具。报名成为专送骑手后,请保持电话畅通,届时会有相关合作商人员与您联系,您可以与意向站点沟通是否配备电动车等交通工具。温馨提示:请勿相信分期购买电动车等骗局。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "加入后会给配电动车吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "您在美团骑手招募页面留下相关信息后,1-3个工作日内,会有相关人员主动联系您,了解您的工作地,并安排面试。您通过面试就可成为一名美团专送骑手。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团专送骑手怎么做?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "如果您想加入专送骑手,根据提示填写相关个人信息及意向工作地点,请保持电话畅通,届时会有相关工作人员联系您。如果您想加入众包骑手,下载美团众包APP注册即可,可以查看您所在区域是否开通众包配送。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "在哪些地方可以加入美团骑手?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "只要您满足身体及年龄的条件,且没有违法犯罪记录就可加入美团骑手。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团骑手招募条件是什么?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "在各大应用商店均可进行下载。如果您想成为众包骑手,在各应用市场搜索美团众包,就可下载;如果您想成为专送骑手,在各应用市场搜索美团骑手,就可下载。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团骑手app在哪里下载?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          }
+        ],
+        "agent": "您这种情况更适合众包：众包骑手可以自己决定配送时长，有正式工作也能利用空闲时间接单，不用按站点排班。专送则要跟站点的配送安排走，时间不固定就不太合适。\n\n众包报名条件是18-56周岁、身体健康、无违法犯罪记录，有智能手机和符合国标的电动车，通过安全测试就行。惠州当地是否开通众包，需要下载美团众包 App 注册后查看。要不要我把下载短信发到您手机上？"
+      },
+      {
+        "turn": 3,
+        "customer": "可以发，不过我想先问一下，像我这种偶尔跑跑的，有没有什么基本保障？我听别人说好像只有长期跑的人才有那些福利。",
+        "materials": [
+          {
+            "text": "“想说的话都能说出来了,在幼儿园也能拿奖状了。”林健说。\n▲陈金收到关怀金后给平台发来感谢信(图源:美团)\n持续深化多层次福利保障网 覆盖数百万骑手家庭\n此次“骑手大病关怀计划”的升级,也是美团近年来着力构建的、覆盖全行业骑手的“多层次福利保障网”中的关键一环。据悉,该体系内的各项保障与福利,均最大程度面向全国、全行业、全部类型的骑手开放,预计覆盖数百万人。\n目前,这一保障网络主要包含以下三个方面:在基础保障层面,美团已推动骑手养老保险补贴全国上线,骑手可根据自身情况,灵活选择在户籍地或工作地参保。具有“每单必保”特点的职业伤害保障(骑手工伤险)试点范围已扩大至全国17个省市,已为1668万骑手缴纳25.6亿保费,并将按计划推向全国。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "覆盖全部骑手的意外伤害险,以及应对高温、严寒、雨雪等恶劣天气的专项补贴也已常态化运行。在进阶保障层面,除持续升级的“大病关怀计划”外,还有面向全行业骑手子女的“袋鼠宝贝公益计划”,助力骑手长远发展的“职业转型教育基金”。2025年,平台还向300多万骑手免费提供防暑险、防寒险。\n在工作与生活福利层面,工作餐补贴、年度免费体检、家庭旅游补贴、女性骑手“两癌”筛查及专属重疾险等各类举措持续完善;遍布全国的上千座“骑手之家”与上万座骑手驿站,为骑手提供饮水、充电、休憩、免费理发等日常便利。\n北京大学政府管理学院教授马亮认为,大病关怀、职业伤害险等在内的多层次福利保障网,使外卖骑手的社会保障得到多种模式的叠加支持,保障力度和韧性进一步增强。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "”\n6年累计发放2.1亿关怀金 70%用于帮扶骑手家属\n据悉,此次升级后,美团直营城市的骑手及家人若罹患计划涵盖的152种轻症与重症疾病,住院诊疗自付费用超过5000元的部分即可按规则获得报销。\n记者了解到,美团“骑手大病关怀计划”自2019年1月启动以来,历经9次迭代升级,已形成涵盖疾病确诊、手术、住院等多方面的骑手轻重疾医疗保障体系。在病种覆盖上,将保障范围从原有的101种重症,扩展至涵盖101种重症、51种轻症以及非特定大病的住院情形,共152种疾病;在保障对象上,将骑手配偶、父母及子女全部纳入,实现了“一人跑单,全家有保”的保障模式,目前这一保障也已覆盖至兼职骑手。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "”\n广东惠州的专送骑手赵柔璇,今年42岁,家里有两个孩子,2023年,她关闭了经营多年的便利店生意,转行做起了外卖骑手。“以前做便利店要全家大小一起守店,每月赚几千块钱,现在我一个人跑单就能赚八九千了,收入比之前高了许多,还更自由。”赵柔璇说,她不仅在惠州稳定了下来,还把户口迁到了这里,现在有了社保补贴,相当于每个月多了一笔买衣服的钱。\n很多在异地打拼的骑手告诉我们,小城市花销低,压力也相对小。不少骑手私下算过账,“在县城一个月工资,差不多能买一平方米房子。”现在有了社保补贴,留在这里跑单也越来越有奔头。\n03 收入增加,职业认同感提升\n浙江宁波,众包骑手程浩。\n“交社保美团给补贴,孩子就能读市里的幼儿园,还有费用优惠。”\n37岁的程浩跑单6年多,今年刚刚做了爸爸。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          },
+          {
+            "text": "即日起,美团骑手养老保险补贴将正式覆盖全国,向全部骑手开放。\n11月开始,骑手可根据自身需求,选择在户籍地或工作所在地缴纳。具体规则可在骑手App或当地社保咨询点查阅。\n外卖骑手是典型的灵活就业岗位,也是重要的就业蓄水池。因此,我们坚持“更灵活、更包容”,始终关切“尽可能让所有骑手都获得足够的保障”,灵活弹性,覆盖更多骑手。\n这是行业首个面向全部骑手开放的社保补贴方案。不管是长期稳定跑单,还是过渡兼职的骑手,都可灵活自主参与。\n感谢各地有关部门、合作伙伴的指导帮助,在吸收了骑手们提出的上万条建议的基础上,社保补贴比预期提前两个月覆盖全国。\n同时,考虑到很多骑手有照顾家庭、过渡就业等特殊需求,今年我们还为骑手拓展创新了大病关怀、子女教育等进阶保障福利。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251027085008876",
+              "title": "美团骑手社保补贴全国上线及保障说明",
+              "section": "美团骑手社保补贴全国上线及保障说明",
+              "document_type": "official_notice",
+              "business_type": "骑手保障",
+              "published_at": "2025-10-27"
+            }
+          },
+          {
+            "text": "12月起,在各地有关部门的指导和支持下,全国所有参与缴纳社保的美团骑手,陆续收到了现金补贴。\n“前阵子刚听到消息,还想着我们这种小地方估计要再等等,没想到现在就有了。”来自广西梧州的一位骑手大哥说。\n11月,美团的养老保险补贴正式覆盖全国, 这是首个面向所有骑手开放的社保补贴方案。方案以 “更灵活、更包容”为原则,不管是长期稳定跑单,还是过渡兼职的骑手, 只要近6个月内,有3个月收入达到当地社保缴费基数下限 ,平台就会补贴50%的养老保险参保费用,实现“人人可参与、人人可受益”。\n除了养 老保险,平台也在不断完善保障范围、拓宽险种。2022年,美团率先参与了新就业形态人员职业伤害保障(新职伤)试点,经过人社部门的 指导,今年 7月已扩展到全国17个省市。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          },
+          {
+            "text": "本季度,美团继续加大生态投入力度,推动行业可持续发展。包括全面落实“放心外卖”十大举措,围绕事前审核、事中监管、打击黑灰产、社会共治等环节构建全链路食安防控体系;启动服务消费专项提振行动,计划覆盖全国超400个县域地区;进一步完善骑手福利保障体系,7月1日起,美团骑手“新职伤”保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260828216013035",
+              "title": "美团2026年二季报中的骑手职业伤害保障披露",
+              "region": "全国；个体参保与待遇资格须核对",
+              "section": "美团2026年二季报中的骑手职业伤害保障披露",
+              "document_type": "official_disclosure",
+              "business_type": "骑手职业伤害保障",
+              "published_at": "2026-08-28"
+            }
+          },
+          {
+            "text": "这些保障不仅面向全行业所有骑手,更首次将骑手家属子女也纳入其中,覆盖超百万骑手及其家庭。\n截至目前,美团已初步建成覆盖全部骑手的多层次福利保障网。\n基础保障初步覆盖全国全部骑手,骑手可灵活选择。在基础保障上,全国各类型美团骑手均可实现养老保险的覆盖;“每单必保,每人必保”的“骑手工伤险”(职业伤害保障)现在也已拓展至全国17个省市,将按计划拓展至全国;意外伤害险也已覆盖全部骑手,每单必保、每人必保。此外,高温、严寒、雨雪天气下,骑手均可领取专项补贴。\n进阶保障首次覆盖全部骑手及其家人。美团设立大病关怀保障、子女教育基金,首次覆盖骑手家庭,全行业骑手及其家人可随时申请。不管在哪家平台跑单,在骑手及家人需要援助时,均可向美团申请相应保障金。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251027085008876",
+              "title": "美团骑手社保补贴全国上线及保障说明",
+              "section": "美团骑手社保补贴全国上线及保障说明",
+              "document_type": "official_notice",
+              "business_type": "骑手保障",
+              "published_at": "2025-10-27"
+            }
+          }
+        ],
+        "agent": "不是只有长期跑的人才有，兼职也能沾上一些。简单说三块：\n\n一是职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国，保费平台全额缴，每单必保、每人必保；但具体什么情况算工伤、怎么赔，要看实际适用规则，我不能替您判断。\n\n二是养老保险补贴，长期稳定跑单和过渡兼职的骑手都能参与，条件是近6个月里有3个月收入达到当地社保缴费基数下限，平台补贴50%的养老保险参保费用。您一个月只跑一两次，这个门槛大概率达不到。\n\n三是大病关怀，已覆盖到兼职骑手，但要求稳定跑单，且限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销。\n\n所以偶尔跑跑，最直接相关的是每单的意外和职业伤害保障。要不要我先把下载短信发您，注册后在 App 里能看到当地具体规则？"
+      },
+      {
+        "turn": 4,
+        "customer": "明白了，就是每单有基本保障，但养老补贴那些得稳定跑才够条件，对吧？这样我能接受。短信发我吧，我先下载看看惠州那边的情况。",
+        "materials": [
+          {
+            "text": "message_id: sms_29f8b378cb6a4d2db74f4243b8fda565\napp_name: 美团骑手 App\ndelivery_status: sent",
+            "tool": "send_download_sms"
+          }
+        ],
+        "agent": "对，您理解得没错。下载短信已经发出去了，您留意下手机，注册后在 App 里就能看到惠州当地是否开通众包。有不清楚的随时问我。"
+      },
+      {
+        "turn": 5,
+        "customer": "好，收到了，我先下载看看，谢谢。",
+        "agent": "好的，您先下载看看，有需要随时联系我们，祝您顺利！"
+      }
+    ]
+  },
+  "content": "{\"goal\":{\"score\":5,\"reason\":\"本通围绕客户低频跑单场景，明确区分了每单的意外伤害保障和职业伤害保障等基础保障，与养老补贴、大病关怀等需稳定跑单或达到收入门槛的进阶福利，目标已完成。\"},\"answer\":{\"score\":5,\"reason\":\"客户关于偶尔跑单能否报名、有无基本保障、是否只有长期跑才有福利的疑问均得到回应，并说明了养老补贴门槛、大病关怀限制及惠州众包需注册后查看的下一步。\"},\"facts\":{\"score\":5,\"reason\":\"职业伤害保障全国覆盖、养老补贴按近6个月收入门槛补贴50%、大病关怀覆盖兼职但受稳定跑单和直营城市等限制，均与所给资料相符；对个人门槛使用了合理估算并保留不确定性。\"},\"tone\":{\"score\":5,\"reason\":\"表达自然、简洁，先确认需求再解释，尊重客户先下载查看的决定，并完成短信发送和礼貌收尾。\"}}",
+  "finish_reason": "stop",
+  "reasoning_content": "We need evaluate this call. Need output JSON only. Need analyze each dimension.\n\nGoal: \"依据2026指引区分低频保障与稳定跑单进阶福利\" success condition exactly differentiate low-frequency protection vs stable-run advanced benefits. Call 1. Business context app 美团骑手 App, agent rider growth customer service.\n\nConversation: customer occasional 1-2 times/month, Huizhou, has main job. Agent recommends 众包, explains conditions, asks SMS. Customer asks basic protections for occasional vs long-term benefits. Agent answers three blocks: occupational injury insurance nationwide July 1 platform paid every order; pension subsidy for stable and transitional part-timers but threshold 3 of 6 months at local base lower limit, likely not met; critical illness care covers part-timers but requires stable running and limited direct cities, 152 diseases, hospitalization self-pay >5000. Says occasional most directly relevant per-order accident and occupational injury protection. Sends SMS. Customer confirms understanding: per-order basic protection but pension etc stable. Accepts. SMS sent.\n\nNeed assess accuracy with materials. There are possible issues: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" source from 2026-08-28 says 7月1日起新职伤保险已覆盖全国; another 2026-02 says pilot expanded to 17 provinces. Agent says \"今年7月1日起已覆盖全国\" likely correct based later material (published 2026-08-28). However date? The call no timestamp. Goal says 2026指引. Fine. \"每单必保、每人必保\" correct. \"意外和职业伤害保障\" for occasional. Accident insurance covered all riders per materials. Good.\n\nPension subsidy: agent says \"长期稳定跑单和过渡兼职的骑手都能参与，条件是近6个月里有3个月收入达到当地社保缴费基数下限，平台补贴50%的养老保险参保费用。您一个月只跑一两次，这个门槛大概率达不到。\" This matches 2025-12 notice. It says \"只要近6个月内，有3个月收入达到当地社保缴费基数下限，平台就会补贴50%\". Good. It's an inference that likely not met; acceptable. But \"养老保险补贴...长期稳定跑单和过渡兼职的骑手都能参与\" source says \"不管是长期稳定跑单，还是过渡兼职的骑手，都可灵活自主参与\" and specific condition. Fine.\n\nCritical illness: agent says \"已覆盖到兼职骑手，但要求稳定跑单，且限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销。\" Need check materials: 2026-02 notice: 美团直营城市 rider and family if 152 diseases, hospitalization self-pay above 5000 reimbursed. \"目前这一保障也已覆盖至兼职骑手\". Business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Does it require稳定跑单? The article title and business_type mention stable runners; within original text \"骑手大病关怀计划... 目前这一保障也已覆盖至兼职骑手.\" But there is conflicting \"要求稳定跑单\" possibly not explicit? Let's inspect: material says \"在保障对象上,将骑手配偶、父母及子女全部纳入... 目前这一保障也已覆盖至兼职骑手.\" It doesn't say \"要求稳定跑单\" in visible text. But source metadata business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Could be inferred from title? The task says title/incomplete fragments can't supply missing rules. However business_type metadata may indicate program for stable runners. Need not over-penalize. Agent distinguishes \"稳定跑单进阶福利\"; goal itself says low-frequency vs stable-run advanced benefits. So likely expected to say critical illness requires stable running? The source business_type explicitly indicates stable跑单骑手, and agent says \"要求稳定跑单\". Is \"兼职骑手\" covered too? There is potential contradiction: \"已覆盖到兼职骑手\" and requires stable running. But part-time can be stable? Fine. \"限定美团直营城市\" source says新增住院诊疗补充保障原文明确美团直营城市. Region metadata. Agent correctly states. Could be good.\n\nBut potential issue: Agent says \"不是只有长期跑的人才有，兼职也能沾上一些\" and then \"最直接相关的是每单的意外和职业伤害保障\". It doesn't mention the \"意外伤害险\" explicitly in three blocks? It says at end \"每单的意外和职业伤害保障\" but didn't explain意外险 coverage. Customer asked basic protections; agent actually answers occupational injury, pension, critical illness. It omits explicit accident insurance in main list but mentions at end. Materials say \"覆盖全部骑手的意外伤害险\" and weather subsidies. Agent says \"每单的意外和职业伤害保障\" possibly fine. It also doesn't mention weather subsidies, but not necessary? Customer asks basic保障, could include. However goal is differentiating low-frequency and stable advanced welfare. It covers relevant distinctions.\n\nPotential factual issues: \"每单必保、每人必保\" for occupational injury nationwide: correct per 2026 Q2 report. \"职业伤害保障\" and \"意外伤害险\" might be distinct. Agent at end says \"每单的意外和职业伤害保障\" conflating? It says \"每单的意外和职业伤害保障\" could mean two, but earlier only explained occupational injury. Accident insurance is also per order. Is that misleading? Not severe. It doesn't state accident insurance details. Customer said \"就是每单有基本保障\" and agent affirms. That's accurate generally.\n\nNeed score goal. Success condition: differentiate low-frequency protection vs stable-run advanced benefits. Agent clearly distinguishes: occasional most relevant per-order accident & occupational injury; pension threshold likely not met; critical illness stable, direct cities etc. Fully satisfied? Main goal achieved. Maybe all necessary conditions? We need decide 4 or 5. It clearly meets target. However might have minor inaccuracies/omission: Did not mention \"养老保险补贴全国开放\" and \"每单必保\" etc. It did. Did not mention \"职业伤害保障试点范围\" before? It says nationwide. Fine. Could give 5 for goal because goal achieved. Need be careful: The goal is \"依据2026指引区分低频保障与稳定跑单进阶福利\". It did exactly. The success condition is just that. So goal 5 likely. But check \"要求稳定跑单\" for big illness – if incorrect or overgeneralized maybe facts. But goal still achieved.\n\nAnswer: Customer's core question: occasional runner basic保障? and whether only long-term get welfare. Agent addresses. It gives details, threshold, example. It answers clearly. Could be 5? Minor missing: It doesn't mention that pension subsidy is open nationwide and that \"只要近6个月有3个月...\" It gives enough. It doesn't clarify \"意外伤害险\" perhaps but says at end. It doesn't mention \"高温严寒雨雪专项补贴\" although relevant basic welfare. But current question \"基本保障\" broad; however the agent's answer focuses on major. Missing optional? Need judge if important detail omitted. The customer wanted basic保障; agent mentions per-order accident and occupational injury but not weather subsidies. But \"基本保障\" maybe includes. The material includes \"覆盖全部骑手的意外伤害险，以及应对高温、严寒、雨雪等恶劣天气的专项补贴也已常态化运行.\" Agent's omission of weather subsidies could be an important detail? But not necessary to distinguish low-frequency vs stable. The success condition only differentiate. It's optional. So answer 5 or 4? The scoring says answer 5 if key questions handled completely; unknown explained and next step. Agent did. \"养老保险补贴... 大概率达不到\" is a helpful estimate and says app. It sent SMS. It confirms. Could be 5. Maybe 4 due to not explaining意外伤害险 separately? But likely 5.\n\nFacts: Need scrutinize. Could be a factual error: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" source 2026-08-28 says \"7月1日起,美团骑手‘新职伤’保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保.\" Good. But source 2026-02 says试点范围扩大至全国17个省市 and will push nationwide. Later source supersedes. Good.\n\n\"大病关怀，已覆盖到兼职骑手，但要求稳定跑单\" Is there evidence for \"要求稳定跑单\"? Metadata business_type says \"稳定跑单骑手及其父母、配偶、子女的大病关怀\"; article says \"目前这一保障也已覆盖至兼职骑手\". Could be stable part-time. The goal frames advanced福利 for stable running. Agent's statement is likely intended. But is \"限定美团直营城市\" correct? The material region says \"新增住院诊疗补充保障原文明示美团直营城市\"; article says \"美团直营城市的骑手及家人若罹患计划涵盖的152种...住院诊疗自付费用超过5000元的部分即可按规则获得报销.\" So yes. However the article also says \"目前这一保障也已覆盖至兼职骑手\" without region exception? It might be national for part-time? But the specific reimbursement condition is direct cities. Agent says \"限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销\" as a general statement. Correct for新住院诊疗补充. Could be okay.\n\n\"养老保险补贴... 条件是近6个月里有3个月收入达到当地社保缴费基数下限\" Source says exactly. \"平台补贴50%\" correct. \"长期稳定跑单和过渡兼职的骑手都能参与\" source says all. Fine.\n\n\"惠州当地是否开通众包，需要下载美团众包 App 注册后查看\" source says download app register即可, can查看所在区域是否开通众包配送. Correct. But business context app_name: \"美团骑手 App\". Agent tells download \"美团众包 App\", and tool sends \"美团骑手 App\"? Hmm in turn 2 agent says \"要不要我把下载短信发到您手机上？\" turn 3 asks \"先问一下\", turn 4 \"短信发我吧\". Tool result app_name: 美团骑手 App delivery sent. Agent in turn 4 says \"下载短信已经发出去了，您留意下手机，注册后在 App 里就能看到惠州当地是否开通众包.\" Business context app name 美团骑手 App. The policy says 美团骑手 App and 美团众包 App 同义称呼, any dimension no penalty. So fine.\n\nPotential fact issue: Customer asks \"像偶尔跑跑的，有没有什么基本保障？我听别人说好像只有长期跑的人才有那些福利。\" Agent says \"不是只有长期跑的人才有，兼职也能沾上一些.\" That's true for some. It lists three blocks. Good.\n\nBut \"职业伤害保障...今年7月1日起已覆盖全国\" The current date may be 2026? The goal \"2026指引\". Source 2026-08-28 says 7月1日. If call before Aug 28? The material is available in turn 3, presumably current. The source published 2026-08-28, if call after. Good.\n\nCould there be issue: Agent says \"每单的意外和职业伤害保障\" but \"意外伤害险\" not in materials? It is: \"覆盖全部骑手的意外伤害险\". Good.\n\nNeed maybe consider \"养老保险补贴\" is基础保障, not进阶? Agent places it as second in three blocks, says it's available to stable and transitional, threshold. Customer's occasional likely not met. Good.\n\nQuestion: \"不要输出综合总分\". Need JSON fields exactly. Each reason one sentence. Need perhaps facts score 5? Let's decide.\n\nTone: Natural, empathetic, clear. It asks permission, sends SMS, closes. No issues. Could give 5. Maybe \"要不要我把下载短信发到您手机上？\" before answering? It answered. Good.\n\nGoal: 5. Answer: 5. Facts: 5? Need be strict: Does \"大病关怀...要求稳定跑单\" have support? Metadata business_type says \"稳定跑单骑手...\" but is that enough? The materials: title \"美团骑手大病关怀计划升级与住院诊疗补充保障条件\"; business_type \"稳定跑单骑手及其父母、配偶、子女的大病关怀\". Agent says \"要求稳定跑单\". If this requirement not explicitly in text but business_type? Could be considered supported by metadata. However the article text says \"目前这一保障也已覆盖至兼职骑手\", which could conflict with \"要求稳定跑单\". But \"兼职骑手\" can be stable? The customer is occasional, so distinction remains. Does \"稳定跑单\" requirement mean the plan is for stable runners only? The metadata says so. The article says \"大病关怀计划\" self 2019, 9 iterations, covers兼职; not necessarily stable. But \"进阶保障\" in context: \"在进阶保障层面，除持续升级的大病关怀计划外...\" after基础保障. The article says \"进阶保障首次覆盖全部骑手及其家人\". Later 2026 article business_type stable. Hmm.\n\nCould facts score be 4 because of slight overgeneralization \"要求稳定跑单\" and maybe \"限定美团直营城市\" without noting region limit applies specifically to新增住院诊疗补充保障, not all大病关怀. Agent's phrasing: \"三是大病关怀，已覆盖到兼职骑手，但要求稳定跑单，且限定美团直营城市、计划涵盖的152种疾病、住院自付超5000元的部分按规则报销。\" Could be interpreted entire大病关怀 is limited to direct cities, but only住院诊疗补充保障 is. But for the purpose of customer, the key limit. \"且限定美团直营城市\" may be accurate for the 152/5000 reimbursement. It says \"计划涵盖的152种疾病、住院自付超5000元的部分按规则报销.\" The \"限定直营城市\" maybe ties to this. Fine.\n\nAnother potential error: \"职业伤害保障（骑手工伤险），今年7月1日起已覆盖全国\" from 2026 Q2 report. But \"新职伤\" covers all? It says 7月1日起，美团骑手“新职伤”保险已覆盖全国. Good. \"保费平台全额缴纳\" yes. \"每单必保、每人必保\" yes.\n\n\"养老保险补贴...长期稳定跑单和过渡兼职的骑手都能参与\" official says \"不管是长期稳定跑单，还是过渡兼职的骑手，都可灵活自主参与.\" Good. \"条件是近6个月里有3个月收入达到当地社保缴费基数下限\" official. \"平台补贴50%\" official. Good.\n\n\"最直接相关的是每单的意外和职业伤害保障\" For occasional, is there also \"每单必保\" for accident. Yes. Could be all.\n\nThus facts 5 seems plausible. But the scoring for facts 5 requires important facts supported, estimates reasonable, conditions and uncertainty accurate. Agent says \"您一个月只跑一两次，这个门槛大概率达不到\" clearly estimate. It says \"具体什么情况算工伤、怎么赔，要看实际适用规则，我不能替您判断\" good uncertainty. It tells app local rules. Good.\n\nMaybe answer 5 and goal 5. Need not overcriticize.\n\nHowever let's consider if the agent's response to \"偶尔跑一下，一个月可能就跑一两次，这样也能报名吗？\" It says can报名, but then asks city/time. It doesn't yet say exact condition until next turn. Good. It recommends众包 based on time; correct. It asks for city and time. Customer gives city/time. Agent says \"惠州当地是否开通众包，需要下载美团众包 App 注册后查看.\" Correct. It sends SMS. Good.\n\nPotential goal success condition \"依据2026指引区分低频保障与稳定跑单进阶福利\" Could require citing 2026指引? Agent doesn't say \"根据2026指引\" but content is based on notices. Scoring is behavior not citation. It differentiates. Fine.\n\nMaybe goal 4 due to \"大病关怀\" as stable-run advanced benefit; customer wanted basic protection. The agent may overcomplicate with three blocks but useful. No missing key condition. 5.\n\nNeed output JSON. Each reason one sentence. Could mention exact. Ensure no extra.\n\nLet's draft:\n\n{\n \"goal\": {\"score\":5,\"reason\":\"本通围绕客户低频跑单场景，明确区分了每单的意外/职业伤害等基础保障与养老补贴、大病关怀等需稳定跑单或达到收入门槛的进阶福利，目标已完成。\"},\n \"answer\": {\"score\":5,\"reason\":\"客户关于偶尔跑单能否报名、有无基本保障、是否只有长期跑才有福利的疑问均得到回应，并说明了养老补贴门槛、大病关怀限制及惠州众包需注册后查看的下一步。\"},\n \"facts\": {\"score\":5,\"reason\":\"职业伤害保障全国覆盖、养老补贴50%及近6个月3个月达缴费基数下限、大病关怀覆盖兼职但受稳定跑单和直营城市等限制，均与所给资料相符，个人门槛用了合理估算并保留不确定性。\"},\n \"tone\": {\"score\":5,\"reason\":\"表达自然、简洁，先确认需求再解释，尊重客户先下载查看的决定并完成短信发送和礼貌收尾。\"}\n}\n\nNeed ensure \"facts\" reason doesn't overstate \"稳定跑单\" maybe. It says \"受稳定跑单和直营城市等限制\" from metadata. Fine.\n\nBut let's re-evaluate if answer should be 4 due to \"意外伤害险\" not detailed. The customer didn't ask detailed types. \"每单有基本保障\" yes. They didn't ask weather. Good.\n\nOne subtle issue: The agent says \"养老保险补贴，长期稳定跑单和过渡兼职的骑手都能参与\" but then \"您一个月只跑一两次，这个门槛大概率达不到.\" The customer said \"就是每单有基本保障，但养老补贴那些得稳定跑才够条件，对吧？\" Agent says \"对，您理解得没错.\" But earlier agent said \"长期稳定跑单和过渡兼职的骑手都能参与\" not only stable; threshold is income. Customer's summary \"得稳定跑才够条件\" is a simplification. Agent affirming could be slightly imprecise because an occasional rider who happens to meet the 3-month income threshold could qualify; but for this customer's one-two times a month, yes. Is that a factual misstatement? It confirms \"养老补贴那些得稳定跑才够条件\" which could overgeneralize. But context is \"像我这种偶尔跑跑的\" and agent said \"您一个月只跑一两次，这个门槛大概率达不到.\" Customer's \"得稳定跑才够条件\" maybe broadly true for them. Does agent need correct to \"要达到收入门槛\"? It already explained threshold. Affirming a simplification is acceptable in context. Could facts 4 due to slight imprecision. But scoring says minor wording not rigorous can be 4; facts 5 requires accurate expressions. Is \"得稳定跑才够条件\" an \"important fact\"? It may mislead that part-time always not eligible, but agent earlier says threshold. The final confirmation could be a small imprecision. Similarly \"就是每单有基本保障\" – actual per-order accident and occupational injury, yes. \"养老补贴那些得稳定跑才够条件\" – not exactly stable, but income threshold. However for occasional one-two times, not. The customer has understood the material. I think 5 still.\n\nWait: The goal and success condition from benchmark may expect exact distinction based on 2026 \"2026指引\". The agent didn't mention \"2026指引\" but okay. It could be expected to distinguish \"低频保障\" (职业伤害、意外) vs \"稳定跑单进阶福利\" (大病关怀 etc). It did. Facts: The agent's \"大病关怀...要求稳定跑单\" maybe may conflict with one source saying \"覆盖至兼职骑手\". But the benchmark's business_type for 大病关怀 is \"稳定跑单骑手及其父母...\" so likely agent correct. Good.\n\nNeed maybe mention SMS sent: tool result message status sent. Agent says sent. Correct. Good.\n\nNo need null. All applicable.\n\nNow output only JSON.",
+  "parsing_method": "json",
+  "ignored_fields": []
+}

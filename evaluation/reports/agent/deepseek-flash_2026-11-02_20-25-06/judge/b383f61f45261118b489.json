@@ -1,0 +1,390 @@
+{
+  "case_id": "rider-dialogue-028",
+  "repeat": 2,
+  "judge_version": "dialogue-rubric-v3.2.3",
+  "model": "deepseek-flash",
+  "thinking": true,
+  "reasoning_effort": "high",
+  "temperature": null,
+  "configured_temperature": null,
+  "temperature_used": false,
+  "max_tokens": 16384,
+  "status": "valid",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "valid",
+      "usage": {
+        "completion_tokens": 3668,
+        "prompt_tokens": 10958,
+        "total_tokens": 14626,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 3438,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 2048,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 2048,
+        "prompt_cache_miss_tokens": 8910
+      },
+      "content": "{\"goal\": {\"score\": 5, \"reason\": \"已澄清基础配送费范围及电费等成本，明确保留保险、维修等未知费用，并按客户假设完成30天和20天预算，客户接受并收到下载短信。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关于电费、每单净收入、30天和20天月度结余及保险保费的疑问均得到回应，未知保费和接单量也说明清楚并给出下载查看的下一步。\"}, \"facts\": {\"score\": 4, \"reason\": \"众包基础配送费、平台全额缴纳新职伤、电费估算及月收入测算均有资料或合理假设支持，未知保费也明确保留；但“按天或按单扣”“App投保页可看报价”等细节缺乏本通资料直接佐证，属轻微措辞不严谨。\"}, \"tone\": {\"score\": 5, \"reason\": \"承接客户每次提问，解释清楚、节奏自然，发送短信后及时收尾，无施压或重复推销。\"}}",
+      "finish_reason": "stop",
+      "reasoning_content": "We need evaluate. Need output JSON only. Need reason each dimension. Let's parse.\n\nGoal: call 2, success conditions: clarify gross income and costs, preserve unknown fees; customer accepts budget first and learns download. Agent did clarify per-order 4.5-6.5 gross, costs electricity ~0.3/day, insurance unknown specific, excluded insurance/maintenance/battery depreciation. Calculated 15/day 30 days and 20 days. Sent SMS download, customer received. Likely goal complete 5. Need check any issues. The agent says \"按中间值 2475 元算的，扣掉电费后约 2466 元\" but also says monthly income range 2025-2925, cost 9, remaining 2016-2916. Is \"中间值 2475\" correct? Mid of 2025 and 2925 is 2475. minus 9 = 2466. Fine. For 20 days: daily 67.5-97.5, monthly 1350-1950, minus 6 = 1344-1944. Fine. Tool says monthly_income_assumption 2475, yes. The second tool 1650 mid, budget balance 1644. Agent reports range 1350-1950 and 1344-1944. Good.\n\nCosts: electricity estimate 0.02-0.03 kWh/km, 0.5 yuan/kWh, 20km = 0.2-0.3 yuan. Wait 20 * 0.02 = 0.4 kWh; *0.5 = 0.2; 20*0.03=0.6; *0.5=0.3. yes. But is 0.02-0.03度/km reasonable? An e-bike maybe 0.02-0.03 kWh/km (20-30 Wh/km) yes. Good. \"基本可以忽略\" maybe okay; costs indeed small. The unknown insurance premium preserved. Customer asks \"insurance approximate?\" Agent says no public specific amount, don't make up, app quote. Good. But did agent include the official FAQ that says rider pays personal accident + third party liability; yes. It also states \"职业伤害保障保费平台全额缴纳，每单必保\". Is this accurate based on material? There is material from 2026-08-28: \"7月1日起,美团骑手“新职伤”保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保。\" Yes. But one older notice says 17 provinces, etc. New statement current. Agent says \"从今年7月起已全国覆盖\". Current call maybe 2026? Config valid 2026-10-29, call after. Good.\n\nPotential issue: \"众包骑手需要自己向保险公司缴个人意外险和第三者责任险\" According FAQ: \"众包骑手保险是个人意外保险与第三者责任险的集合,是指众包骑手向保险公司缴纳一定金额的保费...\" Good. Does platform provide commercial意外险 for low-frequency? The material says \"如您是以业余或低频兼职方式跑单,平台为您缴纳职伤险,提供商业意外险...\" Hmm maybe platform provides commercial accident insurance? But the FAQ explicitly says 众包骑手向保险公司缴纳一定金额的保费. There is potential conflict \"提供商业意外险\" could mean platform provides. But agent says self-pay only that commercial insurance, platform pays 新职伤. Is that supported? The official FAQ says rider pays to insurance company; likely yes. \"提供商业意外险\" could be platform arrangement but not necessarily free. Need not penalize.\n\nPotential issue: Did agent maintain unknown maintenance and battery wear? Yes, says not calculated actual less. It mentions vehicle maintenance and battery loss. In turn 2 initial, says own vehicle so no rent/deposit, costs electricity, insurance, maintenance/depreciation. Fine. Did not introduce rental options despite tools, not needed because own vehicle. Good.\n\nCustomer asked \"一单能落多少\"; agent explained depends on distance/electricity, estimated post-electricity per order same because electricity negligible, insurance fixed per day/order unknown. It didn't give exact per-order net due insurance unknown. That's appropriate. It preserved unknown fees. Then budget.\n\nAt turn 6 asks insurance premium approximate. Agent says cannot provide, app quote, offers SMS. Customer accepts. Good. Download SMS sent and customer received. Goal complete. Facts reliability: Are there any unsupported statements? Need evaluate. \"一般电动车每公里耗电大概0.02到0.03度，按居民电价约0.5元/度\" This is an estimate, presented as general. Reasonable. \"保险保费通常按天或按单扣，金额不大\" The \"金额不大\" is somewhat unsupported/potentially speculative. Is there official basis? The material doesn't give amount. Agent says \"通常按天或按单扣，金额不大\". The \"通常按天或按单扣\" maybe based on common knowledge not in materials; \"金额不大\" vague. Could be minor. But goal facts should be reliable. The agent avoided inventing exact amount and explicitly says app actual quote. The \"金额不大\" is an estimation/reassurance but maybe not severe. Could score 4 due minor unsupported \"金额不大\"/\"按天或按单扣\" maybe. But the scoring says estimates allowed if expressed as rough. It says \"通常...金额不大\" qualifies. Is there any conflict? \"职业伤害保障保费平台全额缴，不用您出钱\" yes. \"所以您自己掏的只有那份商业意外险\" Is it true? For 众包 riders there might be other costs like equipment, vehicle, etc. But in context \"保险这块\" self-pay only commercial accident insurance, platform pays 新职伤. Yet the FAQ states 众包骑手保险 is personal accident + third-party liability, paid by rider. \"只有那份商业意外险\" could be okay, though \"那份商业意外险\" includes both personal accident and third-party liability? It earlier described \"个人意外险加第三者责任险、由骑手自己缴\". Then says \"只有那份商业意外险\" singular, maybe compresses both. Not material.\n\n\"从今年7月起已全国覆盖\" per official disclosure. Fine.\nDaily electricity 0.3 used in budget. Matches estimate upper bound. Fine.\n\n\"按一个月跑30天算\" customer said \"一天15单\" and \"一个月\" but didn't specify days. Agent chose 30 and then offered 20 comparison. Customer didn't object. Fine. Tool assumption work_days 30. They label \"按一个月跑30天算\"; it's explicit assumption. Good.\n\n\"收入少了大概三分之一\" from 30 to 20 days: 20/30 = 2/3, income reduced by 1/3. Good.\n\nCould there be missing \"基础配送费是稳的,补贴得看情况\" previous memory. Agent says \"天气和时段奖励、距离附加费另算\" but \"实际能接多少单没法预估\". Good. It didn't overpromise.\n\nTone: natural, clear, asks questions, acknowledges, closes. Score 5 or 4? It is fairly good, natural. Maybe minor \"说实话\" conversational but okay. \"好消息\" perhaps. Customer said received, agent close. No issues. 5.\n\nAnswer: current questions resolved: cost breakdown, per-order net, monthly budgets, insurance approximate. The only missing: did not include insurance in budget after customer asked premium, because no amount. It explains unknown. It offers download to see. Good. It did not include \"third-party liability\" in final? Earlier did. Good. For problem solving, score 5 maybe. Need check \"客户接受先预算并了解下载\" yes customer accepted budget and download. Answer core: all questions handled, unknown explained. Maybe issue: At turn 3 customer asks \"再帮我算算一单能落多少\"; agent says per order still 4.5-6.5 after electricity, insurance daily or per order fixed, unknown. It doesn't give a net per order range. But since insurance unknown, can't. It could use budget tool with insurance unknown? It explicitly preserves unknown. The goal says preserve unknown fees. It's acceptable. It pivoted to monthly. Could be 5.\n\nBut maybe question \"一单能落多少\" is not fully answered; it says \"扣掉电费后每单大概还是这个数\" which is correct, and mentions insurance fixed but unknown. This is a complete answer given unknown. Good.\n\nNeed output only JSON object.\n\nLet's ensure reasons one sentence each. Should mention no discrepancies. For facts, score maybe 4 or 5. We need decide. The facts dimension evaluates actual statements. Let's scrutinize all factual statements:\n- \"众包骑手需要自己向保险公司缴个人意外险和第三者责任险，保费从您这边出\" Supported by FAQ.\n- \"具体金额在 App 里投保时能看到\" Is this supported? The material doesn't explicitly say app shows premium. It is plausible; agent promises customer. Does tool support? No. But it's a user instruction. Is it a key fact? \"具体金额在App里投保时能看到\" is an operational claim not directly in materials. Could be considered lacking evidence. Also \"注册后进到投保页面，就能看到实际扣多少保费\" may be unverified. The evaluation says facts need support; unknown specific. However, this is a reasonable next step, likely true. But \"具体金额在App里投保时能看到\" not in provided materials. Could be an unsupported certainty. Does that warrant facts 3? It is not a key conclusion like cost? Hmm. The agent says \"具体金额得在 App 投保页面看\", which is a practical direction. The task goal explicitly \"了解下载\", and memory concern \"配送费计算方式及成本扣除\". Maybe acceptable.\n\n- \"职业伤害保障...今年7月起全国覆盖\" Supported.\n- \"每单必保\" Supported.\n- \"保费由平台全额缴纳\" Supported.\n- \"具体保障范围和赔付条件看实际规则，不能任何情况都赔\" reasonable not overpromising.\n- \"电费平台没有统一标准\" true? It's an estimate, not platform policy. Good.\n- \"按哈尔滨众包每单基础配送费大概4.5到6.5，天气时段奖励、距离附加费另算\" Supported by query_delivery_pay: included base; excluded weather/time, distance; min/max. Good.\n- \"实际能接多少单没法预估\" supported conditions \"订单供给与可接单量尚未确认\". Good.\n- \"您有车，不用付月租和押金\" The customer said own electric bike, so true for own car; no rental. Good.\n- \"保险是每天或每单固定扣一点\" Not in materials; official FAQ only says rider pays premium, not frequency. Could be unsupported. It says \"通常按天或按单扣，金额不大\" (turn 6). This may be a generalization. Should we deduct? The facts dimension: \"关键结论缺乏依据，却被说成确定事实\" maybe 2. Here it's not key? The amount is key; but agent explicitly says unknown actual. The \"按天或按单\" and \"金额不大\" are qualifying general. It's an overgeneralization. Could score 4.\n\n- \"官方公开资料里没有众包意外险的具体保费金额\" Is this true? Based on provided materials yes no amount. But can we know all public info? Agent's claim \"没有\" might be overly absolute. However within provided sources, no amount. The claim \"官方公开资料里没有\" maybe should be \"我这边没有查到公开金额\". But likely fine.\n\n- \"职业伤害保障\" vs \"新职伤\" covered. Good.\n- \"电费一天约0.3元，一个月约9元\" This uses upper estimate, but says \"约\". Fine.\n- \"一天15单，每单4.5到6.5，一天67.5到97.5\" math correct.\n- \"按30天月收入2025到2925\" correct.\n- \"扣掉后2016到2916\" correct if only electric upper. But if lower electricity 0.2, range would 2024.8 etc. Not a big deal.\n- \"按中间值2475扣电费2466\" correct.\n\nPotential issue: Agent did not include the \"第三方责任险\" separately in turn 6? It says \"只有那份商业意外险\" but might be fine.\n\nGoal: Did customer \"接受先预算并了解下载\" yes. \"澄清毛收入与成本，保留未知费用\" yes. Complete.\n\nCould score goal 5. Answer 5. Facts 4. Tone 5. Is that a good output? The schema example allows. Need maybe facts 4 due unsupported claims. But if no major issue, facts 5? Let's think of evaluation standards: facts 5 if important facts supported; estimates reasonable; conditions and uncertainty expressed accurately. Agent did express uncertainty around unknown insurance and order volume. The only unsupported bits are minor. \"金额不大\" could be misleading? Insurance premium could be not huge but still maybe a few yuan per day, for 15 orders/day maybe 1-3 yuan; \"金额不大\" reasonable. The frequency \"按天或按单\" is probable. It says \"通常\" not certain. The App page statement is a next step, not an official policy. I'd give 4 due minor unsupported operational detail \"App投保页能看到实际报价\" and \"按天或按单\" not in materials, but not severe. But the scoring \"facts\" 4: \"关键事实有据、估算合理，少量措辞不严谨\". That matches. 5 if all important facts supported, estimates reasonable, conditions and uncertainty accurate. The unsupported app page is likely minor. Maybe 5 also. Need assess \"少量措辞不严谨\" exactly our case. Use 4.\n\nAnswer score maybe 5? Need evaluate if there are \"少量必要信息未交代\" due not including insurance estimate. But agent cannot. It did include all. 5.\n\nTone 5.\n\nGoal 5.\n\nLet's consider if there is an issue in goal around \"保留未知费用\": At turn 2 after customer said own car, agent says \"不用付月租和押金，主要成本就是电费、保险，还有车辆保养和损耗.\" Good. Turn 3: \"保险是每天或每单固定扣一点，具体金额在 App 投保时能看到.\" Unknown preserved. Turn 4: \"保险保费、车辆维修和电池损耗还没算进去，实际会再少一些\". Good. Turn 5 same. Turn 6 again. So yes.\n\nCould be \"customer accepts先预算并了解下载\" - did the agent introduce download? At turn 6 offered SMS; customer agreed; sent. yes. Customer says received. Goal complete.\n\nWould \"了解下载\" imply explain download steps? Agent only sent link and says click to download. Good enough.\n\nNow output with only JSON. Need reasons in Chinese. Each reason one sentence maybe. Use exact fields.\n\nFor facts reason: \"众包基础配送费、平台全额缴纳新职伤、电费估算及月收入测算均有资料或合理假设支持，未知保费也明确保留；但“按天或按单扣”“App投保页可看报价”等细节缺乏本通资料直接佐证，属轻微措辞不严谨。\" That's one sentence? Semicolon. Good.\n\nTone reason: \"承接客户每次提问，解释清楚、节奏自然，发送短信后及时收尾，无施压或重复推销。\" Good.\n\nAnswer reason: \"客户关于电费、每单净收入、30/20天月度结余及保险保费的疑问均得到回应，未知保费和接单量也说明清楚并给出下载查看的下一步。\" Good.\n\nGoal reason: \"已澄清基础配送费范围及电费等成本，明确保留保险、维修等未知费用，并按客户假设完成30天和20天预算，客户接受并收到下载短信。\" Good.\n\nEnsure JSON object no code fence.",
+      "parsing_method": "json",
+      "ignored_fields": []
+    }
+  ],
+  "max_attempts": 3,
+  "attempt_count": 1,
+  "retry_count": 0,
+  "usage": {
+    "completion_tokens": 3668,
+    "prompt_tokens": 10958,
+    "total_tokens": 14626,
+    "completion_tokens_details": {
+      "reasoning_tokens": 3438
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 2048
+    },
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 8910
+  },
+  "usage_complete": true,
+  "input": {
+    "goal": {
+      "description": "澄清毛收入与成本，保留未知费用；客户接受先预算并了解下载",
+      "success_conditions": [
+        "澄清毛收入与成本，保留未知费用",
+        "客户接受先预算并了解下载"
+      ],
+      "call_number": 2,
+      "business_context": {
+        "app_name": "美团骑手 App",
+        "agent_role": "美团外卖骑手用户增长客服"
+      }
+    },
+    "memory_at_start": {
+      "area": {
+        "value": "哈尔滨",
+        "status": "known"
+      },
+      "concern": {
+        "value": "配送费计算方式及成本扣除",
+        "status": "known"
+      },
+      "delivery_type": {
+        "value": "众包",
+        "status": "known"
+      },
+      "has_vehicle": {
+        "value": true,
+        "status": "known"
+      }
+    },
+    "turns": [
+      {
+        "turn": 0,
+        "agent": "您好，我是美团骑手用户增长客服。看到您对成为美团外卖骑手感兴趣，想跟您简单聊一下报名和使用的流程，现在方便吗？"
+      },
+      {
+        "turn": 1,
+        "customer": "方便。我上次算了算，基础配送费是稳的，补贴得看情况。不过电费和保险这些我还没算准，你能帮我理一下吗？",
+        "materials": [
+          {
+            "text": "众包骑手保险是个人意外保险与第三者责任险的集合,是指众包骑手向保险公司缴纳一定金额的保费,当众包骑手在保险期限内遭受意外伤害或造成三者损失,保险公司按照保险合同的约定向众包骑手或受益人支付保险金的保险。 合作骑手保险是雇主责任险与第三者责任险的集合,是指合作商所雇佣的骑手在配送过程中,从事与保险单所载明的、与合作商业务有关的工作而遭受意外,或者造成三者损失,而由合作商依法应承担的赔偿责任,由保险公司在保单约定的保障范围内负责赔偿的一种保险。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团骑手有保险么?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "本季度,美团继续加大生态投入力度,推动行业可持续发展。包括全面落实“放心外卖”十大举措,围绕事前审核、事中监管、打击黑灰产、社会共治等环节构建全链路食安防控体系;启动服务消费专项提振行动,计划覆盖全国超400个县域地区;进一步完善骑手福利保障体系,7月1日起,美团骑手“新职伤”保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260828216013035",
+              "title": "美团2026年二季报中的骑手职业伤害保障披露",
+              "region": "全国；个体参保与待遇资格须核对",
+              "section": "美团2026年二季报中的骑手职业伤害保障披露",
+              "document_type": "official_disclosure",
+              "business_type": "骑手职业伤害保障",
+              "published_at": "2026-08-28"
+            }
+          },
+          {
+            "text": "众包骑手需要自己配备符合国家标准的电动车等交通工具。报名成为专送骑手后,请保持电话畅通,届时会有相关合作商人员与您联系,您可以与意向站点沟通是否配备电动车等交通工具。温馨提示:请勿相信分期购买电动车等骗局。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "加入后会给配电动车吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "覆盖全部骑手的意外伤害险,以及应对高温、严寒、雨雪等恶劣天气的专项补贴也已常态化运行。在进阶保障层面,除持续升级的“大病关怀计划”外,还有面向全行业骑手子女的“袋鼠宝贝公益计划”,助力骑手长远发展的“职业转型教育基金”。2025年,平台还向300多万骑手免费提供防暑险、防寒险。\n在工作与生活福利层面,工作餐补贴、年度免费体检、家庭旅游补贴、女性骑手“两癌”筛查及专属重疾险等各类举措持续完善;遍布全国的上千座“骑手之家”与上万座骑手驿站,为骑手提供饮水、充电、休憩、免费理发等日常便利。\n北京大学政府管理学院教授马亮认为,大病关怀、职业伤害险等在内的多层次福利保障网,使外卖骑手的社会保障得到多种模式的叠加支持,保障力度和韧性进一步增强。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "针对外界关注的骑手同时背单过多导致履约压力的情况,算法合理设置骑手的同时接单上限,且允许骑手自主调整。同时遇有特殊情况时,为骑手提供充足的拒单或转单机会。\n五是为骑手提供保险支持。 在骑手保障和关心关爱方面,美团在行业内首先完成全国范围内的骑手养老保险补贴,不区分骑手类型,可自主选择就业地和户籍地;职业伤害保障方面,截至2026年3月31日已缴费超过29亿,帮助1800多万骑手参保。\n六是提升导航能力,改善配送体验。 美团将通过用户上报、骑手电话或者网络进线反馈、主动挖掘等多种途径,持续识别、下线、修补不合理的配送路线。在骑手App的路线详情页扩大费力度信息提示范围,告知骑手路线上可能经过的天桥、积水等特殊路段。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260508192002553",
+              "title": "美团优化算法机制与骑手保障说明",
+              "section": "美团优化算法机制与骑手保障说明",
+              "document_type": "official_notice",
+              "published_at": "2026-05-08"
+            }
+          },
+          {
+            "text": "推出安全分和“不闯红灯”激励活动,鼓励骑手慢下来收入更多;推出“防疲劳”机制,上线连环单补时、疑难场景申诉、特殊天气免责、骑手用户双向可评价等机制。另一方面,美团为稳定跑单骑手提供家庭健康保障、骑手公寓和租房补贴、免费体检、节日关怀、休闲娱乐补贴、教育基金等各类福利。平台面向全体骑手上线养老保险补贴、大病关怀,在全国17省为骑手全额缴纳职伤险,真金白银奖励好人好事、见义勇为骑手。美团在2026年将继续为骑手打造配送更顺心、保障更完善的职业体验,丰富各类就业选项,助力骑手工作得好、生活得好。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260309229002526",
+              "title": "美团2026年骑手配送和培训保障指引",
+              "section": "美团2026年骑手配送和培训保障指引",
+              "document_type": "official_notice",
+              "published_at": "2026-01-10"
+            }
+          },
+          {
+            "text": "“想说的话都能说出来了,在幼儿园也能拿奖状了。”林健说。\n▲陈金收到关怀金后给平台发来感谢信(图源:美团)\n持续深化多层次福利保障网 覆盖数百万骑手家庭\n此次“骑手大病关怀计划”的升级,也是美团近年来着力构建的、覆盖全行业骑手的“多层次福利保障网”中的关键一环。据悉,该体系内的各项保障与福利,均最大程度面向全国、全行业、全部类型的骑手开放,预计覆盖数百万人。\n目前,这一保障网络主要包含以下三个方面:在基础保障层面,美团已推动骑手养老保险补贴全国上线,骑手可根据自身情况,灵活选择在户籍地或工作地参保。具有“每单必保”特点的职业伤害保障(骑手工伤险)试点范围已扩大至全国17个省市,已为1668万骑手缴纳25.6亿保费,并将按计划推向全国。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "平台及合作商不会以任何名义收取报名费,也不会收取任何其他费用,温馨提示您勿上当受骗。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "加入美团骑手收报名费吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "requested_filters.delivery_type: 众包\nrequested_filters.station_id: null\nassumed_filters[0].delivery_type: 众包\nassumed_filters[0].station_id: 通用条件\nrequested_location: 哈尔滨\nmatched_location: 哈尔滨\ncoverage_level: city\nunverified_conditions[0]: 服务范围和接待安排以服务方确认信息为准\nunverified_conditions[1]: 客户提供的条件尚未经过平台准入或账户资格核验",
+            "tool": "query_delivery_pay"
+          },
+          {
+            "text": "delivery_type: 众包\nstation_id: catalog_station_369fe7b9f6e15c9dea0e\ncurrency: CNY\npay_basis: 每笔符合当前方案结算条件的完成订单\nper_order_yuan.min: 4.5\nper_order_yuan.max: 6.5\nincluded: 基础按单配送报酬\nexcluded[0]: 天气与时段奖励\nexcluded[1]: 距离附加费\nexcluded[2]: 装备、车辆、保险等个人成本\nconditions[0]: 可了解灵活上线方式；订单供给与可接单量尚未确认\nconditions[1]: 当前方案不代表城市统一单价，不保证可接单数量\nsettlement_note: 当前方案按周汇总，实际结算规则以适用政策为准\nmonthly_income: null\nmonthly_income_note: 须由用户明确假设单量、出勤和成本后才能测算，不能承诺月收入\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_delivery_pay_b701ed23f58120cb5df1\nkind: delivery_pay\nlocation_id: null\neligibility_filters.delivery_type: 众包\neligibility_filters.station_id: 通用条件\narea: 哈尔滨\nlocation_note: 按当前地区提供服务信息，距离未计算\ndistance_meters: null",
+            "tool": "query_delivery_pay"
+          }
+        ],
+        "agent": "这两块我帮您理一下：\n\n**保险**：众包骑手需要自己向保险公司缴个人意外险和第三者责任险，保费从您这边出，具体金额在 App 里投保时能看到。另外，职业伤害保障（“新职伤”）从今年7月起已全国覆盖，保费由平台全额缴纳，每单必保；但具体保障范围和赔付条件要看实际规则，不能理解成任何情况都赔。\n\n**电费**：这个平台没有统一标准，得看您车的电池容量和每天跑多少公里，属于每天出勤的变动成本。\n\n您方便说下每月大概跑几天、车是租的还是自己的吗？我帮您把固定和变动成本分开算一下。"
+      },
+      {
+        "turn": 2,
+        "customer": "车是我自己的电动车。我还没定跑几天，想着先按一单多少钱能落多少算，结果发现成本这块挺乱的。",
+        "materials": [
+          {
+            "text": "requested_filters.battery_included: null\nassumed_filters[0].battery_included: false\nassumed_filters[1].battery_included: true\nrequested_location: 哈尔滨\nmatched_location: 哈尔滨\ncoverage_level: city\nunverified_conditions[0]: 服务范围和接待安排以服务方确认信息为准\nunverified_conditions[1]: 客户提供的条件尚未经过平台准入或账户资格核验",
+            "tool": "search_vehicle_rentals"
+          },
+          {
+            "text": "name: 哈尔滨不含电池电动车月租方案\nmonthly_rent_yuan: 399.0\ndeposit_yuan: 500.0\ncurrency: CNY\nminimum_term_months: 1\nbattery_included: false\nbattery_service: 当前月租不含电池、电费与换电，需另行了解实际成本\nmaintenance: 当前方案包含自然损耗保养，人为损坏、救援与取送另计\nother_fees_note: 押金不是月租；是否退还与扣款条件需查看实际合同；不包含逾期费、违约金\navailability: 库存和可租情况需向服务方确认\naddress_note: 到访前请先通过联系电话确认接待时间和具体安排\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_vehicle_rental_a5b21260886e2f6f59d6\nkind: vehicle_rental\nlocation_id: null\neligibility_filters.battery_included: false\narea: 哈尔滨\nlocation_note: 按当前地区提供服务信息，距离未计算\ndistance_meters: null\naddress: 哈尔滨长兴路248号102室\nphone: 13976746810",
+            "tool": "search_vehicle_rentals"
+          },
+          {
+            "text": "name: 哈尔滨含电池电动车月租方案\nmonthly_rent_yuan: 699.0\ndeposit_yuan: 500.0\ncurrency: CNY\nminimum_term_months: 1\nbattery_included: true\nbattery_service: 当前月租包含一组电池与换电服务，具体换电服务范围尚未确认\nmaintenance: 当前方案包含自然损耗保养，人为损坏、救援与取送另计\nother_fees_note: 押金不是月租；是否退还与扣款条件需查看实际合同；不包含逾期费、违约金\navailability: 库存和可租情况需向服务方确认\naddress_note: 到访前请先通过联系电话确认接待时间和具体安排\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_vehicle_rental_d978d5eecb97c78f475b\nkind: vehicle_rental\nlocation_id: null\neligibility_filters.battery_included: true\narea: 哈尔滨\nlocation_note: 按当前地区提供服务信息，距离未计算\ndistance_meters: null\naddress: 哈尔滨永安路171号103室\nphone: 13653874158",
+            "tool": "search_vehicle_rentals"
+          }
+        ],
+        "agent": "您有车，这块就简单多了：不用付月租和押金，主要成本就是电费、保险，还有车辆保养和损耗。\n\n按哈尔滨众包的参考，每单基础配送费大概 4.5 到 6.5 元，天气和时段奖励、距离附加费另算，但实际能接多少单没法预估。所以“一单能落多少”得先知道您每天跑多少公里、电费多少，才能算出来。\n\n您平时骑一天大概跑多少公里？或者您想先按每天跑 20 公里这种假设来估，我也可以帮您算。"
+      },
+      {
+        "turn": 3,
+        "customer": "那就按一天20公里估吧，你看看这样电费大概多少，再帮我算算一单能落多少。",
+        "materials": [
+          {
+            "text": "临时补贴部分主要是在基础配送费之外,基于天气状况、节假日等因素评估供需压力情况,对订单进行动态加价或发放骑手活动,如天气补贴、单单奖等形式,对骑手劳动付出进行额外激励。\n骑手配送费定价基本原则\n骑手配送费用定价遵循公平公正、公开透明的原则。无论骑手经验丰富与否,每一笔订单的配送费都是基于订单的实际难度及当时的供需情况来决定的,不会因人而异;且价格一直保持透明化,骑手在接单前可以基于每一单的配送费价格来自主决定是否接单。此外,平台还考虑到某些特殊情况下可能出现的定价偏差,如若骑手发现商品重量信息或导航距离不准确导致定价偏低时,可以通过人工客服申诉,由客服协助进行补款操作,以确保骑手们的辛勤劳动获得应有回报。\n根据《2024 中国蓝领就业调研报告》,2024年中国蓝领群体规模有4.25亿人。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN250825116003880",
+              "title": "骑手配送费是怎么定价的",
+              "section": "骑手配送费是怎么定价的",
+              "document_type": "official_explanation",
+              "published_at": "2025-08-23"
+            }
+          },
+          {
+            "text": "其中,月嫂、货车司机、外卖员月收入水平位列前三,外卖员月均收入较2023年增长超 10%,涨幅显著高于蓝领群体平均水平。据统计,2024 年美团骑手月均收入稳定增长,全国范围内高频骑手(指当月接单在 22 天及以上、日均接单时长在6小时及以上的骑手)的月均收入在 6,650 元至 9,344 元之间。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN250825116003880",
+              "title": "骑手配送费是怎么定价的",
+              "section": "骑手配送费是怎么定价的",
+              "document_type": "official_explanation",
+              "published_at": "2025-08-23"
+            }
+          },
+          {
+            "text": "骑手的配送收入主要由订单的基础配送费和临时补贴构成。其中,基础配送费由订单难度决定,临时补贴主要根据局部供需压力进行调整。\n基础配送费主要考虑配送难度、配送时段、商品难度等多个因素综合计算得出,骑手在完成每笔订单后即可获得该笔订单的配送收入。\n其中配送难度针对取餐、送餐、交付主要环节综合考虑距离、交付时间、顺路程度等因素进行难度刻画,以提供与之匹配的价格,其原则是配送难度越大,定价越高;另外针对不同配送时段如午高峰、晚高峰及下午茶时间段会设置差异化定价,此外部分订单因为商品重量、体积等因素影响配送难度,平台还专门设置了商品难履约奖励,比如在配送大重量订单时因骑手需付出更多体力会获得额外出价补偿。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN250825116003880",
+              "title": "骑手配送费是怎么定价的",
+              "section": "骑手配送费是怎么定价的",
+              "document_type": "official_explanation",
+              "published_at": "2025-08-23"
+            }
+          },
+          {
+            "text": "当后台接到一个新订单时,“订单分配”算法会基于骑手当前的位置和手头已有订单量,预估出骑手如果新接该订单需要的配送时间,以及对现有订单是否产生超时影响。为保障合理的劳动强度,在预估时间时,算法会为骑手留出一定的富余时间。在对配送范围内所有骑手的送餐情况进行分析后,“订单分配”算法会把订单分配给时间充裕的骑手。\n“订单分配”算法的迭代调整\n在送单过程中,骑手可参考系统建议,并根据自己的经验自主决定送单顺序。此外,外卖配送场景复杂且多变,骑手在每一个环节都可能面临一些突发状况,一直以来,我们都在通过骑手恳谈会和实地调研的方式,收集骑手在实际配送中遇到的问题,许多骑手向我们反馈,他们常常遇到商家出餐慢、联系不到用户、电动车突然故障等情况。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN250825125002496",
+              "title": "订单是如何分配给骑手的",
+              "section": "订单是如何分配给骑手的",
+              "document_type": "official_explanation",
+              "published_at": "2025-08-24"
+            }
+          },
+          {
+            "text": "当我们检测到骑手因电动车突然故障等原因,导致正在配送的其他订单有超时风险时,骑手App会主动向骑手发起改派弹窗,由骑手自主决定接受或拒绝改派。\n除了“系统主动改派”功能,我们还推出了”站长改派“功能,对于系统没有及时识别或者暂时没有能力及时识别到的突发状况,骑手可以上报给站长,进行“站长改派”。此外,保障骑手的配送安全也是“订单分配”环节需要重点考虑的,我们会通过帮助骑手设置接单上限数量的方式,保障骑手的劳动安全。\n“订单分配”算法应用的初衷是,在保障骑手安全的前提下,科学合理地为骑手分配订单,让骑手在合理的劳动强度下,获得更多收入。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN250825125002496",
+              "title": "订单是如何分配给骑手的",
+              "section": "订单是如何分配给骑手的",
+              "document_type": "official_explanation",
+              "published_at": "2025-08-24"
+            }
+          },
+          {
+            "text": "针对部分小区通行复杂导致的预估偏差,将完善超数十万个小区通行类型、数百万楼栋上楼方式的数据情况,进一步提升预估准确性。对于部分仅允许步行进入的小区,将与物业合作投放共享自行车供骑手免费使用,缩短步行耗时,保障骑手权益。\n四是多措并举降低骑手配送时间压力。 美团2025年在行业中带头实现了“超时免罚”全国覆盖,探索以正向激励来代替扣款;同时还在推动消费者端以时间段方式展示预估配送时间,让用户对配送时间有更合理的预期,以减轻骑手的配送压力。针对骑手关注的多单履约情况,特别是商家出餐慢或卡餐情况,算法将进行补时,缓解因出餐风险给骑手带来的压力;优化解决抢单时间问题,避免订单在抢单池中停留较长,留给骑手实际配送时间不足;同时,将对联系不上用户等原因造成的配送困难订单,给予骑手额外补时;",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260508192002553",
+              "title": "美团优化算法机制与骑手保障说明",
+              "section": "美团优化算法机制与骑手保障说明",
+              "document_type": "official_notice",
+              "published_at": "2026-05-08"
+            }
+          },
+          {
+            "text": "配送站点里,汉族、蒙古族、鄂伦春族的骑手们一起跑单,三轮电动车成了大家的标志。如今,鄂伦春当地站点,近一半骑手都缴纳了养老保险,收到了平台补贴。\n在辽宁锦州,孙东已经连续拿到了4个月的社保补贴,“相当于省下了今年冬天的取暖费。”孙东跑单已经8年,是两个孩子的爸爸。今年8月,社保补贴刚覆盖锦州,他第一时间就参与了。“能多份保障,不仅为了自己,也是为了小孩。”\n关于骑手提出的建议和改进方向\n除了暖心的反馈,在各地的社保咨询现场,骑手们也向我们提出了不少建议。\n针对此前试点期间,部分骑手提出的补贴申请流程建议,我们已在7月初完成优化,联动有关部门缩短了社保补贴到账流程,骑手月底缴费,最快次月首周可拿到补贴款。针对险种拓展等更多建议,我们也已逐一记录,正在持续推进。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          }
+        ],
+        "agent": "电费这块官方没有统一标准，得按您车的实际耗电来估。一般电动车每公里耗电大概 0.02 到 0.03 度，按居民电价约 0.5 元/度算，一天 20 公里电费大概 0.2 到 0.3 元，基本可以忽略。\n\n所以“一单能落多少”主要看单量：按哈尔滨众包每单 4.5 到 6.5 元算，扣掉电费后每单大概还是这个数，保险是每天或每单固定扣一点，具体金额在 App 投保时能看到。\n\n不过要提醒您，实际能接多少单没法预估，所以单看“一单落多少”意义有限。您要是愿意，我可以按每天跑几单的假设，帮您算算一个月大概能剩多少。"
+      },
+      {
+        "turn": 4,
+        "customer": "那就按一天跑15单估一下吧，看看一个月大概能剩多少。",
+        "materials": [
+          {
+            "text": "work_days: 30\nmonthly_fixed_cost_yuan: 0.0\ndaily_fixed_cost_yuan: 0.0\ndaily_variable_cost_yuan: 0.3\nmonthly_variable_cost_yuan: 9.0\nmonthly_operating_cost_yuan: 9.0\nrefundable_deposit_yuan: 0.0\nmonthly_income_assumption_yuan: 2475.0\nmonthly_income_threshold_yuan: 9.0\ndaily_income_threshold_yuan: 0.3\nfirst_month_cash_budget_yuan: 9.0\nbudget_balance_yuan: 2466.0\npersonal_quote: false\nformula: 月变动成本＝每日变动成本×出勤天数；月经营成本＝月固定成本＋月变动成本；每日固定成本分摊＝月固定成本÷实际出勤天数；月收入门槛＝月经营成本；每日收入门槛＝月经营成本÷出勤天数；首月现金预算＝月经营成本＋可退押金；预算余额＝月收入假设－月经营成本。\nrounding: 金额以人民币元计；每日固定成本分摊四舍五入到分，仅用于分摊展示；每日收入门槛向上取整到分，以覆盖全月成本。\nassumptions[0]: 所有输入均为客户提供或明确确认的条件，不是个人报价或实际经营记录。\nassumptions[1]: 月收入假设已扣平台费用，尚未扣经营成本，不重复扣平台费用；没有收入假设时只计算成本与门槛，不预测收入。\nassumptions[2]: 固定成本按整月计入，变动成本按实际出勤天数计算；同一费用不能重复计入。\nassumptions[3]: 每日固定成本分摊仅为展示，不能代替覆盖全部经营成本的每日收入门槛。\nassumptions[4]: 可退押金仅计入现金占用，不作为经营成本；是否退还及扣退条件仍需核实。\nassumptions[5]: 首月现金预算表示整月成本与押金的合计，不代表签约当天应付款。\nassumptions[6]: 预算余额只是当前条件下的差额，可为负数，不是保证净收入。\nexcluded[0]: 未纳入客户确认成本的税费、折旧、维修、保险、违约金及其他未知支出。\nexcluded[1]: 未确认的奖励、实际订单量、未来收入变化及押金扣退损失。",
+            "tool": "estimate_work_budget"
+          }
+        ],
+        "agent": "按您说的条件粗算一下：一天 15 单、每单按 4.5 到 6.5 元算，一天配送收入大概 67.5 到 97.5 元；按一个月跑 30 天算，月收入大概 2025 到 2925 元。\n\n成本这边，电费一天约 0.3 元，一个月约 9 元，扣掉后大概能剩 2016 到 2916 元。这是按中间值 2475 元算的，扣掉电费后约 2466 元。\n\n要注意几点：保险保费、车辆维修和电池损耗还没算进去，实际会再少一些；单量是按您假设的 15 单，实际能不能接到这么多没法保证。您想按跑 20 天再算一版对比看看吗？"
+      },
+      {
+        "turn": 5,
+        "customer": "行，那按20天再算一版吧，我想对比一下。",
+        "materials": [
+          {
+            "text": "work_days: 20\nmonthly_fixed_cost_yuan: 0.0\ndaily_fixed_cost_yuan: 0.0\ndaily_variable_cost_yuan: 0.3\nmonthly_variable_cost_yuan: 6.0\nmonthly_operating_cost_yuan: 6.0\nrefundable_deposit_yuan: 0.0\nmonthly_income_assumption_yuan: 1650.0\nmonthly_income_threshold_yuan: 6.0\ndaily_income_threshold_yuan: 0.3\nfirst_month_cash_budget_yuan: 6.0\nbudget_balance_yuan: 1644.0\npersonal_quote: false\nformula: 月变动成本＝每日变动成本×出勤天数；月经营成本＝月固定成本＋月变动成本；每日固定成本分摊＝月固定成本÷实际出勤天数；月收入门槛＝月经营成本；每日收入门槛＝月经营成本÷出勤天数；首月现金预算＝月经营成本＋可退押金；预算余额＝月收入假设－月经营成本。\nrounding: 金额以人民币元计；每日固定成本分摊四舍五入到分，仅用于分摊展示；每日收入门槛向上取整到分，以覆盖全月成本。\nassumptions[0]: 所有输入均为客户提供或明确确认的条件，不是个人报价或实际经营记录。\nassumptions[1]: 月收入假设已扣平台费用，尚未扣经营成本，不重复扣平台费用；没有收入假设时只计算成本与门槛，不预测收入。\nassumptions[2]: 固定成本按整月计入，变动成本按实际出勤天数计算；同一费用不能重复计入。\nassumptions[3]: 每日固定成本分摊仅为展示，不能代替覆盖全部经营成本的每日收入门槛。\nassumptions[4]: 可退押金仅计入现金占用，不作为经营成本；是否退还及扣退条件仍需核实。\nassumptions[5]: 首月现金预算表示整月成本与押金的合计，不代表签约当天应付款。\nassumptions[6]: 预算余额只是当前条件下的差额，可为负数，不是保证净收入。\nexcluded[0]: 未纳入客户确认成本的税费、折旧、维修、保险、违约金及其他未知支出。\nexcluded[1]: 未确认的奖励、实际订单量、未来收入变化及押金扣退损失。",
+            "tool": "estimate_work_budget"
+          }
+        ],
+        "agent": "按一个月跑 20 天、每天 15 单算：一天配送收入大概 67.5 到 97.5 元，一个月大概 1350 到 1950 元；电费一个月约 6 元，扣掉后大概能剩 1344 到 1944 元。\n\n跟跑 30 天那版比，收入少了大概三分之一，但电费这类成本本来就很小，所以少跑的天数基本就是少赚的钱，成本压力不大。\n\n同样，保险、维修和电池损耗还没算进去，实际会再少一点。您要是想再细一点，我可以帮您把保险保费也加进去算。"
+      },
+      {
+        "turn": 6,
+        "customer": "那保险保费大概多少？虽然是App里看，但总得有个参考吧。",
+        "materials": [
+          {
+            "text": "”\n广东惠州的专送骑手赵柔璇,今年42岁,家里有两个孩子,2023年,她关闭了经营多年的便利店生意,转行做起了外卖骑手。“以前做便利店要全家大小一起守店,每月赚几千块钱,现在我一个人跑单就能赚八九千了,收入比之前高了许多,还更自由。”赵柔璇说,她不仅在惠州稳定了下来,还把户口迁到了这里,现在有了社保补贴,相当于每个月多了一笔买衣服的钱。\n很多在异地打拼的骑手告诉我们,小城市花销低,压力也相对小。不少骑手私下算过账,“在县城一个月工资,差不多能买一平方米房子。”现在有了社保补贴,留在这里跑单也越来越有奔头。\n03 收入增加,职业认同感提升\n浙江宁波,众包骑手程浩。\n“交社保美团给补贴,孩子就能读市里的幼儿园,还有费用优惠。”\n37岁的程浩跑单6年多,今年刚刚做了爸爸。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          },
+          {
+            "text": "如您是以业余或低频兼职方式跑单,平台为您缴纳职伤险,提供商业意外险,为您提供各类培训和指引,不定期推出骑手福利;如您高频兼职,如每天都抽出数小时跑单,除前述内容外,平台每周都有跑单激励活动帮助您获得额外收入,稳定跑单后可获得家庭健康保障、骑手工服、骑手餐补、免费体检等福利;如您是周期型稳定跑单,每年只在冬夏两季跑单,亦或是一两年内稳定跑单,除前述保障外,您可报名参与各类跑单任务,按周或月从平台合作商处获得额外激励;如您长期稳定跑单,扎根本地发展,可关注特定区域合作商推出的招募通知,平台支持合作商开展小范围试点为骑手提供底薪保障、五险一金、稳定派单、综合培训等专业体系支持。\n2025年以来,持续推动“以正面激励替代负向罚款”的保障模式,取消超时罚款,推出积分制灵活弹性的安准卡管理工具;",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260309229002526",
+              "title": "美团2026年骑手配送和培训保障指引",
+              "section": "美团2026年骑手配送和培训保障指引",
+              "document_type": "official_notice",
+              "published_at": "2026-01-10"
+            }
+          },
+          {
+            "text": "截至10月,美团已为骑手全额缴纳新职伤保费超23亿,累计参保骑手近1600万人。\n近期,美团“骑手之家”也在全国新增落地200多座,为一线骑手提供配送支持、保障咨询、午间休憩、应急救援支持等各类服务。\n为了让全国各地骑手充分了解美团的福利保障措施,我们先后在北京、上海、湖南、浙江、广西、辽宁、福建等多地的骑手之家和站点,开设了600多处骑手社保咨询服务窗口,现场解答骑手问题,收集意见和建议。\n各地美团骑手社保咨询服务窗口,有关部门和美团的工作人员现场解答骑手问题,收集意见和建议。\n我们也记录了各地社保咨询现场的典型案例,供更多骑手朋友们参考:\n01 城市工作,家乡养老\n北京通州,众包骑手杨景莲(左二)。\n“用北京跑外卖的收入按老家的缴费基数交社保,美团再补贴一半,很划算了。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          },
+          {
+            "text": "按照当地政策,外来务工人员在宁波交满6个月社保,孩子不仅可以入读本地幼儿园,还能享受费用减免。程浩说:“美团的社保补贴相当于每个月给我补500元,还解决了小孩在市里上学的大事情。”社保成为了小家庭融入城市的重要一步。\n很多骑手表示,社保补贴不只是多了一笔钱,也是对骑手身份的一种肯定。有骑手曾在其他领域从业20年,却因技术迭代而被淘汰,又在外卖行业重新开始;有女骑手因生育和照顾家庭与社会脱节十几年,靠自己的努力和选择,重新成为了家里的“顶梁柱”;有骑手经历过负债和创业失败,又通过奋斗重启人生;也有年轻骑手把跑单作为兼职,通过送外卖攒钱来满足爱好。\n广东广州 ,众包骑手刘鑫明(左二)邵顺成(右二)。\n“广州的社保补贴基数不高,我们听障骑手也能做到。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          }
+        ],
+        "agent": "说实话，官方公开资料里没有众包意外险的具体保费金额，只说明是个人意外险加第三者责任险、由骑手自己缴，具体金额得在 App 投保页面看。我不想给您编一个数。\n\n不过有个好消息：职业伤害保障的保费是平台全额缴的，不用您出钱。所以您自己掏的只有那份商业意外险，通常按天或按单扣，金额不大。\n\n您要是想先有个数，可以下载 App 注册后看投保页面的实际报价，那个才是准的。需要我给您发个下载短信吗？"
+      },
+      {
+        "turn": 7,
+        "customer": "那行吧，你发个短信过来，我先下载看看投保那边到底扣多少，再决定跑不跑。",
+        "materials": [
+          {
+            "text": "message_id: sms_a70e5f0da53241969182b7d27b29bb0d\napp_name: 美团骑手 App\ndelivery_status: sent",
+            "tool": "send_download_sms"
+          }
+        ],
+        "agent": "短信已经发出去了，里面是美团骑手 App 的下载入口，您点开就能下载。\n\n注册后进到投保页面，就能看到实际扣多少保费了。您先看看，有不清楚的随时问我。"
+      },
+      {
+        "turn": 8,
+        "customer": "收到了，我先下载看看。",
+        "agent": "好的，您先下载看看，有问题随时联系我，祝您顺利！"
+      }
+    ]
+  },
+  "content": "{\"goal\": {\"score\": 5, \"reason\": \"已澄清基础配送费范围及电费等成本，明确保留保险、维修等未知费用，并按客户假设完成30天和20天预算，客户接受并收到下载短信。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关于电费、每单净收入、30天和20天月度结余及保险保费的疑问均得到回应，未知保费和接单量也说明清楚并给出下载查看的下一步。\"}, \"facts\": {\"score\": 4, \"reason\": \"众包基础配送费、平台全额缴纳新职伤、电费估算及月收入测算均有资料或合理假设支持，未知保费也明确保留；但“按天或按单扣”“App投保页可看报价”等细节缺乏本通资料直接佐证，属轻微措辞不严谨。\"}, \"tone\": {\"score\": 5, \"reason\": \"承接客户每次提问，解释清楚、节奏自然，发送短信后及时收尾，无施压或重复推销。\"}}",
+  "finish_reason": "stop",
+  "reasoning_content": "We need evaluate. Need output JSON only. Need reason each dimension. Let's parse.\n\nGoal: call 2, success conditions: clarify gross income and costs, preserve unknown fees; customer accepts budget first and learns download. Agent did clarify per-order 4.5-6.5 gross, costs electricity ~0.3/day, insurance unknown specific, excluded insurance/maintenance/battery depreciation. Calculated 15/day 30 days and 20 days. Sent SMS download, customer received. Likely goal complete 5. Need check any issues. The agent says \"按中间值 2475 元算的，扣掉电费后约 2466 元\" but also says monthly income range 2025-2925, cost 9, remaining 2016-2916. Is \"中间值 2475\" correct? Mid of 2025 and 2925 is 2475. minus 9 = 2466. Fine. For 20 days: daily 67.5-97.5, monthly 1350-1950, minus 6 = 1344-1944. Fine. Tool says monthly_income_assumption 2475, yes. The second tool 1650 mid, budget balance 1644. Agent reports range 1350-1950 and 1344-1944. Good.\n\nCosts: electricity estimate 0.02-0.03 kWh/km, 0.5 yuan/kWh, 20km = 0.2-0.3 yuan. Wait 20 * 0.02 = 0.4 kWh; *0.5 = 0.2; 20*0.03=0.6; *0.5=0.3. yes. But is 0.02-0.03度/km reasonable? An e-bike maybe 0.02-0.03 kWh/km (20-30 Wh/km) yes. Good. \"基本可以忽略\" maybe okay; costs indeed small. The unknown insurance premium preserved. Customer asks \"insurance approximate?\" Agent says no public specific amount, don't make up, app quote. Good. But did agent include the official FAQ that says rider pays personal accident + third party liability; yes. It also states \"职业伤害保障保费平台全额缴纳，每单必保\". Is this accurate based on material? There is material from 2026-08-28: \"7月1日起,美团骑手“新职伤”保险已覆盖全国,保费由平台全额缴纳,实现每单必保、每人必保。\" Yes. But one older notice says 17 provinces, etc. New statement current. Agent says \"从今年7月起已全国覆盖\". Current call maybe 2026? Config valid 2026-10-29, call after. Good.\n\nPotential issue: \"众包骑手需要自己向保险公司缴个人意外险和第三者责任险\" According FAQ: \"众包骑手保险是个人意外保险与第三者责任险的集合,是指众包骑手向保险公司缴纳一定金额的保费...\" Good. Does platform provide commercial意外险 for low-frequency? The material says \"如您是以业余或低频兼职方式跑单,平台为您缴纳职伤险,提供商业意外险...\" Hmm maybe platform provides commercial accident insurance? But the FAQ explicitly says 众包骑手向保险公司缴纳一定金额的保费. There is potential conflict \"提供商业意外险\" could mean platform provides. But agent says self-pay only that commercial insurance, platform pays 新职伤. Is that supported? The official FAQ says rider pays to insurance company; likely yes. \"提供商业意外险\" could be platform arrangement but not necessarily free. Need not penalize.\n\nPotential issue: Did agent maintain unknown maintenance and battery wear? Yes, says not calculated actual less. It mentions vehicle maintenance and battery loss. In turn 2 initial, says own vehicle so no rent/deposit, costs electricity, insurance, maintenance/depreciation. Fine. Did not introduce rental options despite tools, not needed because own vehicle. Good.\n\nCustomer asked \"一单能落多少\"; agent explained depends on distance/electricity, estimated post-electricity per order same because electricity negligible, insurance fixed per day/order unknown. It didn't give exact per-order net due insurance unknown. That's appropriate. It preserved unknown fees. Then budget.\n\nAt turn 6 asks insurance premium approximate. Agent says cannot provide, app quote, offers SMS. Customer accepts. Good. Download SMS sent and customer received. Goal complete. Facts reliability: Are there any unsupported statements? Need evaluate. \"一般电动车每公里耗电大概0.02到0.03度，按居民电价约0.5元/度\" This is an estimate, presented as general. Reasonable. \"保险保费通常按天或按单扣，金额不大\" The \"金额不大\" is somewhat unsupported/potentially speculative. Is there official basis? The material doesn't give amount. Agent says \"通常按天或按单扣，金额不大\". The \"通常按天或按单扣\" maybe based on common knowledge not in materials; \"金额不大\" vague. Could be minor. But goal facts should be reliable. The agent avoided inventing exact amount and explicitly says app actual quote. The \"金额不大\" is an estimation/reassurance but maybe not severe. Could score 4 due minor unsupported \"金额不大\"/\"按天或按单扣\" maybe. But the scoring says estimates allowed if expressed as rough. It says \"通常...金额不大\" qualifies. Is there any conflict? \"职业伤害保障保费平台全额缴，不用您出钱\" yes. \"所以您自己掏的只有那份商业意外险\" Is it true? For 众包 riders there might be other costs like equipment, vehicle, etc. But in context \"保险这块\" self-pay only commercial accident insurance, platform pays 新职伤. Yet the FAQ states 众包骑手保险 is personal accident + third-party liability, paid by rider. \"只有那份商业意外险\" could be okay, though \"那份商业意外险\" includes both personal accident and third-party liability? It earlier described \"个人意外险加第三者责任险、由骑手自己缴\". Then says \"只有那份商业意外险\" singular, maybe compresses both. Not material.\n\n\"从今年7月起已全国覆盖\" per official disclosure. Fine.\nDaily electricity 0.3 used in budget. Matches estimate upper bound. Fine.\n\n\"按一个月跑30天算\" customer said \"一天15单\" and \"一个月\" but didn't specify days. Agent chose 30 and then offered 20 comparison. Customer didn't object. Fine. Tool assumption work_days 30. They label \"按一个月跑30天算\"; it's explicit assumption. Good.\n\n\"收入少了大概三分之一\" from 30 to 20 days: 20/30 = 2/3, income reduced by 1/3. Good.\n\nCould there be missing \"基础配送费是稳的,补贴得看情况\" previous memory. Agent says \"天气和时段奖励、距离附加费另算\" but \"实际能接多少单没法预估\". Good. It didn't overpromise.\n\nTone: natural, clear, asks questions, acknowledges, closes. Score 5 or 4? It is fairly good, natural. Maybe minor \"说实话\" conversational but okay. \"好消息\" perhaps. Customer said received, agent close. No issues. 5.\n\nAnswer: current questions resolved: cost breakdown, per-order net, monthly budgets, insurance approximate. The only missing: did not include insurance in budget after customer asked premium, because no amount. It explains unknown. It offers download to see. Good. It did not include \"third-party liability\" in final? Earlier did. Good. For problem solving, score 5 maybe. Need check \"客户接受先预算并了解下载\" yes customer accepted budget and download. Answer core: all questions handled, unknown explained. Maybe issue: At turn 3 customer asks \"再帮我算算一单能落多少\"; agent says per order still 4.5-6.5 after electricity, insurance daily or per order fixed, unknown. It doesn't give a net per order range. But since insurance unknown, can't. It could use budget tool with insurance unknown? It explicitly preserves unknown. The goal says preserve unknown fees. It's acceptable. It pivoted to monthly. Could be 5.\n\nBut maybe question \"一单能落多少\" is not fully answered; it says \"扣掉电费后每单大概还是这个数\" which is correct, and mentions insurance fixed but unknown. This is a complete answer given unknown. Good.\n\nNeed output only JSON object.\n\nLet's ensure reasons one sentence each. Should mention no discrepancies. For facts, score maybe 4 or 5. We need decide. The facts dimension evaluates actual statements. Let's scrutinize all factual statements:\n- \"众包骑手需要自己向保险公司缴个人意外险和第三者责任险，保费从您这边出\" Supported by FAQ.\n- \"具体金额在 App 里投保时能看到\" Is this supported? The material doesn't explicitly say app shows premium. It is plausible; agent promises customer. Does tool support? No. But it's a user instruction. Is it a key fact? \"具体金额在App里投保时能看到\" is an operational claim not directly in materials. Could be considered lacking evidence. Also \"注册后进到投保页面，就能看到实际扣多少保费\" may be unverified. The evaluation says facts need support; unknown specific. However, this is a reasonable next step, likely true. But \"具体金额在App里投保时能看到\" not in provided materials. Could be an unsupported certainty. Does that warrant facts 3? It is not a key conclusion like cost? Hmm. The agent says \"具体金额得在 App 投保页面看\", which is a practical direction. The task goal explicitly \"了解下载\", and memory concern \"配送费计算方式及成本扣除\". Maybe acceptable.\n\n- \"职业伤害保障...今年7月起全国覆盖\" Supported.\n- \"每单必保\" Supported.\n- \"保费由平台全额缴纳\" Supported.\n- \"具体保障范围和赔付条件看实际规则，不能任何情况都赔\" reasonable not overpromising.\n- \"电费平台没有统一标准\" true? It's an estimate, not platform policy. Good.\n- \"按哈尔滨众包每单基础配送费大概4.5到6.5，天气时段奖励、距离附加费另算\" Supported by query_delivery_pay: included base; excluded weather/time, distance; min/max. Good.\n- \"实际能接多少单没法预估\" supported conditions \"订单供给与可接单量尚未确认\". Good.\n- \"您有车，不用付月租和押金\" The customer said own electric bike, so true for own car; no rental. Good.\n- \"保险是每天或每单固定扣一点\" Not in materials; official FAQ only says rider pays premium, not frequency. Could be unsupported. It says \"通常按天或按单扣，金额不大\" (turn 6). This may be a generalization. Should we deduct? The facts dimension: \"关键结论缺乏依据，却被说成确定事实\" maybe 2. Here it's not key? The amount is key; but agent explicitly says unknown actual. The \"按天或按单\" and \"金额不大\" are qualifying general. It's an overgeneralization. Could score 4.\n\n- \"官方公开资料里没有众包意外险的具体保费金额\" Is this true? Based on provided materials yes no amount. But can we know all public info? Agent's claim \"没有\" might be overly absolute. However within provided sources, no amount. The claim \"官方公开资料里没有\" maybe should be \"我这边没有查到公开金额\". But likely fine.\n\n- \"职业伤害保障\" vs \"新职伤\" covered. Good.\n- \"电费一天约0.3元，一个月约9元\" This uses upper estimate, but says \"约\". Fine.\n- \"一天15单，每单4.5到6.5，一天67.5到97.5\" math correct.\n- \"按30天月收入2025到2925\" correct.\n- \"扣掉后2016到2916\" correct if only electric upper. But if lower electricity 0.2, range would 2024.8 etc. Not a big deal.\n- \"按中间值2475扣电费2466\" correct.\n\nPotential issue: Agent did not include the \"第三方责任险\" separately in turn 6? It says \"只有那份商业意外险\" but might be fine.\n\nGoal: Did customer \"接受先预算并了解下载\" yes. \"澄清毛收入与成本，保留未知费用\" yes. Complete.\n\nCould score goal 5. Answer 5. Facts 4. Tone 5. Is that a good output? The schema example allows. Need maybe facts 4 due unsupported claims. But if no major issue, facts 5? Let's think of evaluation standards: facts 5 if important facts supported; estimates reasonable; conditions and uncertainty expressed accurately. Agent did express uncertainty around unknown insurance and order volume. The only unsupported bits are minor. \"金额不大\" could be misleading? Insurance premium could be not huge but still maybe a few yuan per day, for 15 orders/day maybe 1-3 yuan; \"金额不大\" reasonable. The frequency \"按天或按单\" is probable. It says \"通常\" not certain. The App page statement is a next step, not an official policy. I'd give 4 due minor unsupported operational detail \"App投保页能看到实际报价\" and \"按天或按单\" not in materials, but not severe. But the scoring \"facts\" 4: \"关键事实有据、估算合理，少量措辞不严谨\". That matches. 5 if all important facts supported, estimates reasonable, conditions and uncertainty accurate. The unsupported app page is likely minor. Maybe 5 also. Need assess \"少量措辞不严谨\" exactly our case. Use 4.\n\nAnswer score maybe 5? Need evaluate if there are \"少量必要信息未交代\" due not including insurance estimate. But agent cannot. It did include all. 5.\n\nTone 5.\n\nGoal 5.\n\nLet's consider if there is an issue in goal around \"保留未知费用\": At turn 2 after customer said own car, agent says \"不用付月租和押金，主要成本就是电费、保险，还有车辆保养和损耗.\" Good. Turn 3: \"保险是每天或每单固定扣一点，具体金额在 App 投保时能看到.\" Unknown preserved. Turn 4: \"保险保费、车辆维修和电池损耗还没算进去，实际会再少一些\". Good. Turn 5 same. Turn 6 again. So yes.\n\nCould be \"customer accepts先预算并了解下载\" - did the agent introduce download? At turn 6 offered SMS; customer agreed; sent. yes. Customer says received. Goal complete.\n\nWould \"了解下载\" imply explain download steps? Agent only sent link and says click to download. Good enough.\n\nNow output with only JSON. Need reasons in Chinese. Each reason one sentence maybe. Use exact fields.\n\nFor facts reason: \"众包基础配送费、平台全额缴纳新职伤、电费估算及月收入测算均有资料或合理假设支持，未知保费也明确保留；但“按天或按单扣”“App投保页可看报价”等细节缺乏本通资料直接佐证，属轻微措辞不严谨。\" That's one sentence? Semicolon. Good.\n\nTone reason: \"承接客户每次提问，解释清楚、节奏自然，发送短信后及时收尾，无施压或重复推销。\" Good.\n\nAnswer reason: \"客户关于电费、每单净收入、30/20天月度结余及保险保费的疑问均得到回应，未知保费和接单量也说明清楚并给出下载查看的下一步。\" Good.\n\nGoal reason: \"已澄清基础配送费范围及电费等成本，明确保留保险、维修等未知费用，并按客户假设完成30天和20天预算，客户接受并收到下载短信。\" Good.\n\nEnsure JSON object no code fence.",
+  "parsing_method": "json",
+  "ignored_fields": []
+}

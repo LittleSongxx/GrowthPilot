@@ -1,0 +1,220 @@
+{
+  "case_id": "rider-dialogue-085",
+  "repeat": 2,
+  "judge_version": "dialogue-rubric-v3.2.3",
+  "model": "deepseek-flash",
+  "thinking": true,
+  "reasoning_effort": "high",
+  "temperature": null,
+  "configured_temperature": null,
+  "temperature_used": false,
+  "max_tokens": 16384,
+  "status": "valid",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "valid",
+      "usage": {
+        "completion_tokens": 2693,
+        "prompt_tokens": 4241,
+        "total_tokens": 6934,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 2491,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 1920,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 2321
+      },
+      "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通更正了体检单不等同于有效健康证明，说明了平台持证要求及需向当地机构、App或站点核实的办理边界，目标已完成。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关于体检单能否替代健康证明的核心疑问得到回应，并给出了按App提示或咨询当地站点核实的明确下一步，短信也已按客户同意发送。\"}, \"facts\": {\"score\": 4, \"reason\": \"众包报名条件、免费报名及短信发送状态均有依据，但“健康证明一般指食品从业人员健康证、需到当地指定机构办理”属于未在资料中直接说明的概括性补充，措辞略绝对。\"}, \"tone\": {\"score\": 5, \"reason\": \"表达自然简洁，先解答疑问再征得同意发送短信，收尾尊重客户自行核实的安排并礼貌告别。\"}}",
+      "finish_reason": "stop",
+      "reasoning_content": "We need evaluate. Need output JSON only. Need analyze each dimension.\n\nGoal: \"更正材料状态，说明有效健康证明要求与办理核实边界\" call 2. Memory says area, vehicle, part-time. Conversation: Agent confirms part-time. Customer asks if physical exam sheet counts as health certificate. Agent says not same, health certificate generally food worker health cert, must go local designated agency; whether physical exam usable suggest check app registration or ask local station. Offers SMS, sends app download \"美团骑手 App\". Goal likely includes correcting material status (体检单不算健康证明? and maybe should explain boundary: cannot confirm acceptance, need local designated institution / site). Did they \"更正材料状态\" yes says not completely same. \"说明有效健康证明要求与办理核实边界\" yes says health certificate generally food从业人员健康证, local designated agency; app/site verify. Is it factually correct? Need check materials: only platform rule says \"配送员应具备良好健康状况,持有有效健康证明。\" Does not say food从业人员健康证. Agent says \"健康证明一般指食品从业人员健康证，得去当地指定机构办.\" Is this supported? Not directly by provided materials. But general knowledge maybe food delivery health certificate is food industry? In China, 健康证明 often 食品从业人员健康证明; delivery riders handling food may need. But materials only state valid health certificate. Is this a key fact lacking support? We need judge facts. Agent also earlier states conditions from materials okay. \"无违法犯罪记录\" from FAQ yes. \"年龄18-56, 身体健康 etc\" yes. \"报名不收费\" yes. \"有智能手机和符合国标电动车\" yes. \"通过安全测试\" yes. App name discrepancy? Business context app_name 美团骑手 App. However materials say 众包 app; agent says 美团众包 App download SMS then sent says app_name 美团骑手 App. Scoring principle says app names synonyms no deduction. Fine.\n\nNeed goal completion: The success condition only one: correct material status, explain valid health cert requirements and verification boundary. Agent did. But maybe \"更正材料状态\" implies earlier in previous call maybe wrongly recorded? We don't have prior. In this call customer asks. Agent says physical exam not same, health cert food worker, local designated; if can use check app/site. That is a correct status and boundary. Also sent SMS though customer accepted. Ends appropriately. Goal 5? Main target and necessary conditions all satisfied. Could there be minor issue: \"健康证明一般指食品从业人员健康证\" as fact maybe unsupported. But goal is \"说明有效健康证明要求与办理核实边界\"; saying it generally refers to food worker health cert and must local designated institution. If this is not supported by source, maybe fact issue. But goal achievement still likely 5, since explanation given. Does agent \"更正材料状态\" adequately? It said 体检单不算? Customer says \"原来体检单不算啊\"; Agent initially said \"不完全是一回事\" not absolute, and suggested verify. Good, avoids overclaim. It did not simply say cannot use. Good boundary.\n\nQuestion: \"有效健康证明要求\" maybe should state must be valid health certificate under platform rule. Did agent mention \"有效健康证明要求\" exact? It says service规范要求持有有效健康证明 and health certificate generally food worker health cert. Good. It doesn't mention \"有效\" maybe \"健康证明一般指...\" But enough? Could be.\n\nAnswer: Customer's core question: \"体检单算健康证明吗?\" Agent responded, explained distinction and next step. Also SMS. That fully solves. Maybe \"体检单能不能用\" not definitively answered; agent says check app/site. That's appropriate because unknown. It gave reasonable next step. 5. However could answer be 5 or 4? It says \"健康证明一般指食品从业人员健康证，得去当地指定机构办\" no specific 石河子 agency, but customer said will ask local. For current question, \"能不能用\" was resolved? Not fully definitive, but boundary. The goal is to explain boundaries, not provide local办理. So 5.\n\nFacts: Need evaluate actual statements. Conditions all supported. Health certificate \"食品从业人员健康证, local designated institution\" maybe not in materials. Is that a serious issue? We need check if it's a key conclusion lacking evidence. In review materials, only rule says \"配送员应具备良好健康状况,持有有效健康证明。\" No explicit \"食品从业人员健康证\" nor \"local designated institution\". The agent says \"健康证明一般指食品从业人员健康证，得去当地指定机构办\". This is an extra claim, could be true in practice but not supported by provided materials. The instructions: business facts need evidence; no evidence doesn't mean false; distinguish uncertain wording, unsupported definite conclusions. Agent says \"一般指\" (generally refers to) and \"得去当地指定机构办\" (must go to local designated agency). Is that over-general? Health certificate for food workers indeed issued by designated medical institutions. But no source. Does this count \"关键结论缺乏依据，却被说成确定事实\" (score 2) or \"局部事实缺乏依据、过度概括\" (3) or \"关键事实有据...少量措辞不严谨\" (4)? We need score.\n\nThe material provided includes official FAQ and platform rule. The rule says valid health certificate required, but not define issuing authority. The agent could reasonably state general requirement. The statement \"健康证明一般指食品从业人员健康证\" is a generalization with \"一般\" not absolute. \"得去当地指定机构办\" maybe general process not from material, but likely common. Since not contradicted, but unsupported. The facts dimension: \"关键事实有据、估算合理，少量措辞不严谨\" (4) vs \"局部事实缺乏依据、过度概括\" (3). This is a central fact. But agent expressed boundary \"建议在 App 注册时按提示核对，或问一下石河子的意向站点\" for applicability, and says generally. It didn't claim official confirmation of local. I think facts maybe 4: key facts supported; the health certificate specifics are general guidance, not an official quote; slight imprecision. But if strict, \"得去当地指定机构办\" is a process requirement not sourced. It may be overconfident. We need decide.\n\nAlso agent told \"短信已经发出去了，里面是美团骑手 App 的下载入口\" tool result: app_name 美团骑手 App, delivery_status sent. That's supported. But earlier agent said \"美团众包 App\" and then sent 美团骑手 App. The evaluation says 美团骑手 App and 美团众包 App same synonyms, no deduction. Fine.\n\nOne potential factual issue: Agent says \"兼职一般走众包：年龄...无违法犯罪记录...\" from FAQ. It combines sources. \"身体健康\" also. Good. \"报名不收费\" yes. \"通过安全测试\" yes.\n\nCould there be issue: \"健康证明一般指食品从业人员健康证\" - the platform rule says 配送员 should have good health and valid health certificate. It doesn't specify food从业人员; could be that these two are distinct: \"良好健康状况\" and \"有效健康证明\". \"健康证明\" in food delivery may indeed be \"食品从业人员健康证明\". Agent's health cert statement is plausible. But for evaluation, materials are evidence. If no evidence, maybe not factually wrong if common knowledge. Instructions: \"没有依据不等于事实一定错误；区分不确定措辞、无依据的确定结论与明确冲突.\" Here \"一般指\" uncertain, \"得去当地指定机构办\" somewhat definite. It also recommends verify at app/site, so not misleading. I lean facts 4 because central facts are supported, minor unsupported generalization about food worker health cert. Could facts 3? We need apply. Score 3: \"局部事实缺乏依据、过度概括或估算明显失当\". Exactly: local fact lacking basis/overgeneralization. But the supported portion is substantial; the health cert requirement is central to call. Is \"食品从业人员健康证\" a \"关键事实\"? The goal asks health certificate. It's central. If unsupported, maybe 3. But agent appropriately says \"一般\" and \"建议核对\" so it's not presented as certain local policy. The phrase \"得去当地指定机构办\" is decisive though. \"健康证明一般指食品从业人员健康证\" is a general industry fact; not necessarily needing source in material? Quality review expects use provided materials. Hmm.\n\nLet's parse case. Goal description: \"更正材料状态，说明有效健康证明要求与办理核实边界\". This seems designed to test whether agent corrects that a physical exam slip is not health certificate, and tells boundary of办理核实 (can't verify, must local). The materials include rule saying \"持有有效健康证明\". Agent should not overclaim \"体检单不算\" maybe and not say how to办? It said \"健康证明一般指食品从业人员健康证，得去当地指定机构办.\" That may be considered answer. The success condition might expect exactly \"体检单不等同健康证明; 平台要求有效健康证明; 能否用需按当地/站点核实.\" Agent did. Fact about food worker health cert may be a plausible elaboration. No contradiction. I might give facts 4 or 5. For 5, important facts have support; uncertainty expressed accurately. Did agent express uncertainty about food health cert? \"一般指\" and \"能不能用建议核对\" yes. \"得去当地指定机构办\" not marked uncertain. Could be 4.\n\nTone: Natural, clear, respectful. Sent SMS after consent. Ends acknowledging customer's plan. 5? Maybe agent repeats \"有疑问随时问我\" okay. No issue. Maybe 5.\n\nGoal: 5. Answer: 5. Facts 4. Tone 5. Need output JSON only. Need reasons one sentence.\n\nLet's ensure no \"综合总分\". Include all fields. For facts score integer 4, no null_reason. Could also consider facts 5 because no wrong. But the \"健康证明一般指食品从业人员健康证\" unsupported? Let's examine official FAQ materials: \"只要您满足身体及年龄条件...\" \"兼职骑手即众包骑手,只要身体健康...\" No health cert mention in FAQ, only platform rule. The agent says \"服务规范要求持有有效健康证明\". Correct. The health certificate could refer to \"有效健康证明\" not necessarily \"食品从业人员健康证\". Food delivery is food service; China's食品安全法 requires \"从事接触直接入口食品工作的食品生产经营人员应当每年进行健康检查，取得健康证明后方可上岗工作.\" Delivery riders maybe not direct contact? Platform rules may require. \"一般指食品从业人员健康证\" is reasonable. Local designated机构? Health certificates are issued by CDC/designated hospitals. Plausible.\n\nFact dimension in these evaluations often penalizes any uncited policy; but allowed general advice. The agent says \"得去当地指定机构办\" as a requirement; if local has specific process, cannot know. But it then says ask local. I'd mark 4 due to minor imprecision. If we give 5, would be asserting all important facts supported; but this one not in materials. Since the scoring asks \"关键事实有据...条件和不确定性表达准确.\" It says \"健康证明一般指食品从业人员健康证\" with \"一般\" maybe uncertainty. \"得去当地指定机构办\" lacks \"一般/建议\". So 4.\n\nAnswer maybe 5: They answered core and gave next step. It didn't give actual local institution details, but customer didn't ask; and boundary says can't verify. Could mention \"App注册按提示核对\" which is next. Good.\n\nGoal 5: It corrected status and explained. Good.\n\nTone 5: clear, concise, respects choice, closure. Good.\n\nLet's craft JSON. Ensure only JSON.",
+      "parsing_method": "json",
+      "ignored_fields": []
+    }
+  ],
+  "max_attempts": 3,
+  "attempt_count": 1,
+  "retry_count": 0,
+  "usage": {
+    "completion_tokens": 2693,
+    "prompt_tokens": 4241,
+    "total_tokens": 6934,
+    "completion_tokens_details": {
+      "reasoning_tokens": 2491
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 1920
+    },
+    "prompt_cache_hit_tokens": 1920,
+    "prompt_cache_miss_tokens": 2321
+  },
+  "usage_complete": true,
+  "input": {
+    "goal": {
+      "description": "更正材料状态，说明有效健康证明要求与办理核实边界",
+      "success_conditions": [
+        "更正材料状态，说明有效健康证明要求与办理核实边界"
+      ],
+      "call_number": 2,
+      "business_context": {
+        "app_name": "美团骑手 App",
+        "agent_role": "美团外卖骑手用户增长客服"
+      }
+    },
+    "memory_at_start": {
+      "area": {
+        "value": "石河子",
+        "status": "known"
+      },
+      "has_vehicle": {
+        "value": true,
+        "status": "known"
+      },
+      "work_mode": {
+        "value": "兼职",
+        "status": "known"
+      }
+    },
+    "turns": [
+      {
+        "turn": 0,
+        "agent": "您好，我是美团骑手用户增长客服。看到您有意在石河子做兼职骑手，想跟您确认一下现在方便聊两句吗？"
+      },
+      {
+        "turn": 1,
+        "customer": "方便，你说。",
+        "agent": "好的，您有车、想做兼职，那主要就是选配送类型和报名准备。我先帮您查一下石河子兼职骑手的报名条件和需要准备的材料，稍等。"
+      },
+      {
+        "turn": 2,
+        "customer": "行，你查吧。",
+        "materials": [
+          {
+            "text": "只要您满足身体及年龄的条件,且没有违法犯罪记录就可加入美团骑手。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团骑手招募条件是什么?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "平台及合作商不会以任何名义收取报名费,也不会收取任何其他费用,温馨提示您勿上当受骗。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "加入美团骑手收报名费吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "如您是以业余或低频兼职方式跑单,平台为您缴纳职伤险,提供商业意外险,为您提供各类培训和指引,不定期推出骑手福利;如您高频兼职,如每天都抽出数小时跑单,除前述内容外,平台每周都有跑单激励活动帮助您获得额外收入,稳定跑单后可获得家庭健康保障、骑手工服、骑手餐补、免费体检等福利;如您是周期型稳定跑单,每年只在冬夏两季跑单,亦或是一两年内稳定跑单,除前述保障外,您可报名参与各类跑单任务,按周或月从平台合作商处获得额外激励;如您长期稳定跑单,扎根本地发展,可关注特定区域合作商推出的招募通知,平台支持合作商开展小范围试点为骑手提供底薪保障、五险一金、稳定派单、综合培训等专业体系支持。\n2025年以来,持续推动“以正面激励替代负向罚款”的保障模式,取消超时罚款,推出积分制灵活弹性的安准卡管理工具;",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260309229002526",
+              "title": "美团2026年骑手配送和培训保障指引",
+              "section": "美团2026年骑手配送和培训保障指引",
+              "document_type": "official_notice",
+              "published_at": "2026-01-10"
+            }
+          },
+          {
+            "text": "兼职骑手即众包骑手,只要您身体健康,年龄在18-56周岁之间,有一部智能手机和交通工具,并通过安全测试就可以成为众包骑手。 招募页面报名之后,会有相关人员联系您,请您保持电话可以正常接通; 您也可以选择下载美团众包APP自行注册成为众包骑手。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "美团兼职骑手怎么做?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "众包骑手需要自己配备符合国家标准的电动车等交通工具。报名成为专送骑手后,请保持电话畅通,届时会有相关合作商人员与您联系,您可以与意向站点沟通是否配备电动车等交通工具。温馨提示:请勿相信分期购买电动车等骗局。",
+            "source": {
+              "url": "https://page.peisong.meituan.com/rider",
+              "title": "美团骑手招募常见问题",
+              "section": "加入后会给配电动车吗?",
+              "document_type": "official_faq",
+              "business_type": "众包与专送",
+              "published_at": null
+            }
+          },
+          {
+            "text": "”\n6年累计发放2.1亿关怀金 70%用于帮扶骑手家属\n据悉,此次升级后,美团直营城市的骑手及家人若罹患计划涵盖的152种轻症与重症疾病,住院诊疗自付费用超过5000元的部分即可按规则获得报销。\n记者了解到,美团“骑手大病关怀计划”自2019年1月启动以来,历经9次迭代升级,已形成涵盖疾病确诊、手术、住院等多方面的骑手轻重疾医疗保障体系。在病种覆盖上,将保障范围从原有的101种重症,扩展至涵盖101种重症、51种轻症以及非特定大病的住院情形,共152种疾病;在保障对象上,将骑手配偶、父母及子女全部纳入,实现了“一人跑单,全家有保”的保障模式,目前这一保障也已覆盖至兼职骑手。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN260206171003625",
+              "title": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "region": "新增住院诊疗补充保障原文明示美团直营城市",
+              "section": "美团骑手大病关怀计划升级与住院诊疗补充保障条件",
+              "document_type": "official_notice",
+              "business_type": "稳定跑单骑手及其父母、配偶、子女的大病关怀",
+              "published_at": "2026-02-06"
+            }
+          },
+          {
+            "text": "按照当地政策,外来务工人员在宁波交满6个月社保,孩子不仅可以入读本地幼儿园,还能享受费用减免。程浩说:“美团的社保补贴相当于每个月给我补500元,还解决了小孩在市里上学的大事情。”社保成为了小家庭融入城市的重要一步。\n很多骑手表示,社保补贴不只是多了一笔钱,也是对骑手身份的一种肯定。有骑手曾在其他领域从业20年,却因技术迭代而被淘汰,又在外卖行业重新开始;有女骑手因生育和照顾家庭与社会脱节十几年,靠自己的努力和选择,重新成为了家里的“顶梁柱”;有骑手经历过负债和创业失败,又通过奋斗重启人生;也有年轻骑手把跑单作为兼职,通过送外卖攒钱来满足爱好。\n广东广州 ,众包骑手刘鑫明(左二)邵顺成(右二)。\n“广州的社保补贴基数不高,我们听障骑手也能做到。",
+            "source": {
+              "url": "https://www.meituan.com/news/NN251212179001927",
+              "title": "美团骑手社保补贴到账及咨询服务说明",
+              "section": "美团骑手社保补贴到账及咨询服务说明",
+              "document_type": "official_notice",
+              "published_at": "2025-12-12"
+            }
+          },
+          {
+            "text": "(二)配送员应具备良好健康状况,持有有效健康证明。",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/694?activeRule=1",
+              "title": "美团外卖平台送餐服务管理规范",
+              "section": "(二)配送员应具备良好健康状况,持有有效健康证明。",
+              "document_type": "platform_rule",
+              "business_type": "外卖配送",
+              "published_at": "2022-06-14"
+            }
+          }
+        ],
+        "agent": "查到了。兼职一般走众包：年龄18到56周岁、身体健康、无违法犯罪记录，有智能手机和符合国标的电动车，通过安全测试就能注册，报名不收费。\n\n另外服务规范要求持有有效健康证明，这个您准备了吗？"
+      },
+      {
+        "turn": 3,
+        "customer": "我前阵子做过体检，有张体检单，这个应该就算健康证明了吧？",
+        "agent": "体检单和健康证明不完全是一回事，健康证明一般指食品从业人员健康证，得去当地指定机构办。您那张体检单能不能用，建议在 App 注册时按提示核对，或问一下石河子的意向站点。\n\n要不要我先给您发个美团众包 App 的下载短信？"
+      },
+      {
+        "turn": 4,
+        "customer": "哦，原来体检单不算啊。那短信你发吧，我先下载看看。",
+        "materials": [
+          {
+            "text": "message_id: sms_d4e3b487967b4af9833902bc6b0c14f4\napp_name: 美团骑手 App\ndelivery_status: sent",
+            "tool": "send_download_sms"
+          }
+        ],
+        "agent": "短信已经发出去了，里面是美团骑手 App 的下载入口，您留意查收一下。下载后按提示注册，健康证明那块有疑问随时问我。"
+      },
+      {
+        "turn": 5,
+        "customer": "好，收到了。那我先下载，关于健康证明我再去问问当地怎么办。",
+        "agent": "好的，那您先下载注册，健康证明的事问清当地机构就行，有需要随时找我，祝您顺利！"
+      }
+    ]
+  },
+  "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通更正了体检单不等同于有效健康证明，说明了平台持证要求及需向当地机构、App或站点核实的办理边界，目标已完成。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户关于体检单能否替代健康证明的核心疑问得到回应，并给出了按App提示或咨询当地站点核实的明确下一步，短信也已按客户同意发送。\"}, \"facts\": {\"score\": 4, \"reason\": \"众包报名条件、免费报名及短信发送状态均有依据，但“健康证明一般指食品从业人员健康证、需到当地指定机构办理”属于未在资料中直接说明的概括性补充，措辞略绝对。\"}, \"tone\": {\"score\": 5, \"reason\": \"表达自然简洁，先解答疑问再征得同意发送短信，收尾尊重客户自行核实的安排并礼貌告别。\"}}",
+  "finish_reason": "stop",
+  "reasoning_content": "We need evaluate. Need output JSON only. Need analyze each dimension.\n\nGoal: \"更正材料状态，说明有效健康证明要求与办理核实边界\" call 2. Memory says area, vehicle, part-time. Conversation: Agent confirms part-time. Customer asks if physical exam sheet counts as health certificate. Agent says not same, health certificate generally food worker health cert, must go local designated agency; whether physical exam usable suggest check app registration or ask local station. Offers SMS, sends app download \"美团骑手 App\". Goal likely includes correcting material status (体检单不算健康证明? and maybe should explain boundary: cannot confirm acceptance, need local designated institution / site). Did they \"更正材料状态\" yes says not completely same. \"说明有效健康证明要求与办理核实边界\" yes says health certificate generally food从业人员健康证, local designated agency; app/site verify. Is it factually correct? Need check materials: only platform rule says \"配送员应具备良好健康状况,持有有效健康证明。\" Does not say food从业人员健康证. Agent says \"健康证明一般指食品从业人员健康证，得去当地指定机构办.\" Is this supported? Not directly by provided materials. But general knowledge maybe food delivery health certificate is food industry? In China, 健康证明 often 食品从业人员健康证明; delivery riders handling food may need. But materials only state valid health certificate. Is this a key fact lacking support? We need judge facts. Agent also earlier states conditions from materials okay. \"无违法犯罪记录\" from FAQ yes. \"年龄18-56, 身体健康 etc\" yes. \"报名不收费\" yes. \"有智能手机和符合国标电动车\" yes. \"通过安全测试\" yes. App name discrepancy? Business context app_name 美团骑手 App. However materials say 众包 app; agent says 美团众包 App download SMS then sent says app_name 美团骑手 App. Scoring principle says app names synonyms no deduction. Fine.\n\nNeed goal completion: The success condition only one: correct material status, explain valid health cert requirements and verification boundary. Agent did. But maybe \"更正材料状态\" implies earlier in previous call maybe wrongly recorded? We don't have prior. In this call customer asks. Agent says physical exam not same, health cert food worker, local designated; if can use check app/site. That is a correct status and boundary. Also sent SMS though customer accepted. Ends appropriately. Goal 5? Main target and necessary conditions all satisfied. Could there be minor issue: \"健康证明一般指食品从业人员健康证\" as fact maybe unsupported. But goal is \"说明有效健康证明要求与办理核实边界\"; saying it generally refers to food worker health cert and must local designated institution. If this is not supported by source, maybe fact issue. But goal achievement still likely 5, since explanation given. Does agent \"更正材料状态\" adequately? It said 体检单不算? Customer says \"原来体检单不算啊\"; Agent initially said \"不完全是一回事\" not absolute, and suggested verify. Good, avoids overclaim. It did not simply say cannot use. Good boundary.\n\nQuestion: \"有效健康证明要求\" maybe should state must be valid health certificate under platform rule. Did agent mention \"有效健康证明要求\" exact? It says service规范要求持有有效健康证明 and health certificate generally food worker health cert. Good. It doesn't mention \"有效\" maybe \"健康证明一般指...\" But enough? Could be.\n\nAnswer: Customer's core question: \"体检单算健康证明吗?\" Agent responded, explained distinction and next step. Also SMS. That fully solves. Maybe \"体检单能不能用\" not definitively answered; agent says check app/site. That's appropriate because unknown. It gave reasonable next step. 5. However could answer be 5 or 4? It says \"健康证明一般指食品从业人员健康证，得去当地指定机构办\" no specific 石河子 agency, but customer said will ask local. For current question, \"能不能用\" was resolved? Not fully definitive, but boundary. The goal is to explain boundaries, not provide local办理. So 5.\n\nFacts: Need evaluate actual statements. Conditions all supported. Health certificate \"食品从业人员健康证, local designated institution\" maybe not in materials. Is that a serious issue? We need check if it's a key conclusion lacking evidence. In review materials, only rule says \"配送员应具备良好健康状况,持有有效健康证明。\" No explicit \"食品从业人员健康证\" nor \"local designated institution\". The agent says \"健康证明一般指食品从业人员健康证，得去当地指定机构办\". This is an extra claim, could be true in practice but not supported by provided materials. The instructions: business facts need evidence; no evidence doesn't mean false; distinguish uncertain wording, unsupported definite conclusions. Agent says \"一般指\" (generally refers to) and \"得去当地指定机构办\" (must go to local designated agency). Is that over-general? Health certificate for food workers indeed issued by designated medical institutions. But no source. Does this count \"关键结论缺乏依据，却被说成确定事实\" (score 2) or \"局部事实缺乏依据、过度概括\" (3) or \"关键事实有据...少量措辞不严谨\" (4)? We need score.\n\nThe material provided includes official FAQ and platform rule. The rule says valid health certificate required, but not define issuing authority. The agent could reasonably state general requirement. The statement \"健康证明一般指食品从业人员健康证\" is a generalization with \"一般\" not absolute. \"得去当地指定机构办\" maybe general process not from material, but likely common. Since not contradicted, but unsupported. The facts dimension: \"关键事实有据、估算合理，少量措辞不严谨\" (4) vs \"局部事实缺乏依据、过度概括\" (3). This is a central fact. But agent expressed boundary \"建议在 App 注册时按提示核对，或问一下石河子的意向站点\" for applicability, and says generally. It didn't claim official confirmation of local. I think facts maybe 4: key facts supported; the health certificate specifics are general guidance, not an official quote; slight imprecision. But if strict, \"得去当地指定机构办\" is a process requirement not sourced. It may be overconfident. We need decide.\n\nAlso agent told \"短信已经发出去了，里面是美团骑手 App 的下载入口\" tool result: app_name 美团骑手 App, delivery_status sent. That's supported. But earlier agent said \"美团众包 App\" and then sent 美团骑手 App. The evaluation says 美团骑手 App and 美团众包 App same synonyms, no deduction. Fine.\n\nOne potential factual issue: Agent says \"兼职一般走众包：年龄...无违法犯罪记录...\" from FAQ. It combines sources. \"身体健康\" also. Good. \"报名不收费\" yes. \"通过安全测试\" yes.\n\nCould there be issue: \"健康证明一般指食品从业人员健康证\" - the platform rule says 配送员 should have good health and valid health certificate. It doesn't specify food从业人员; could be that these two are distinct: \"良好健康状况\" and \"有效健康证明\". \"健康证明\" in food delivery may indeed be \"食品从业人员健康证明\". Agent's health cert statement is plausible. But for evaluation, materials are evidence. If no evidence, maybe not factually wrong if common knowledge. Instructions: \"没有依据不等于事实一定错误；区分不确定措辞、无依据的确定结论与明确冲突.\" Here \"一般指\" uncertain, \"得去当地指定机构办\" somewhat definite. It also recommends verify at app/site, so not misleading. I lean facts 4 because central facts are supported, minor unsupported generalization about food worker health cert. Could facts 3? We need apply. Score 3: \"局部事实缺乏依据、过度概括或估算明显失当\". Exactly: local fact lacking basis/overgeneralization. But the supported portion is substantial; the health cert requirement is central to call. Is \"食品从业人员健康证\" a \"关键事实\"? The goal asks health certificate. It's central. If unsupported, maybe 3. But agent appropriately says \"一般\" and \"建议核对\" so it's not presented as certain local policy. The phrase \"得去当地指定机构办\" is decisive though. \"健康证明一般指食品从业人员健康证\" is a general industry fact; not necessarily needing source in material? Quality review expects use provided materials. Hmm.\n\nLet's parse case. Goal description: \"更正材料状态，说明有效健康证明要求与办理核实边界\". This seems designed to test whether agent corrects that a physical exam slip is not health certificate, and tells boundary of办理核实 (can't verify, must local). The materials include rule saying \"持有有效健康证明\". Agent should not overclaim \"体检单不算\" maybe and not say how to办? It said \"健康证明一般指食品从业人员健康证，得去当地指定机构办.\" That may be considered answer. The success condition might expect exactly \"体检单不等同健康证明; 平台要求有效健康证明; 能否用需按当地/站点核实.\" Agent did. Fact about food worker health cert may be a plausible elaboration. No contradiction. I might give facts 4 or 5. For 5, important facts have support; uncertainty expressed accurately. Did agent express uncertainty about food health cert? \"一般指\" and \"能不能用建议核对\" yes. \"得去当地指定机构办\" not marked uncertain. Could be 4.\n\nTone: Natural, clear, respectful. Sent SMS after consent. Ends acknowledging customer's plan. 5? Maybe agent repeats \"有疑问随时问我\" okay. No issue. Maybe 5.\n\nGoal: 5. Answer: 5. Facts 4. Tone 5. Need output JSON only. Need reasons one sentence.\n\nLet's ensure no \"综合总分\". Include all fields. For facts score integer 4, no null_reason. Could also consider facts 5 because no wrong. But the \"健康证明一般指食品从业人员健康证\" unsupported? Let's examine official FAQ materials: \"只要您满足身体及年龄条件...\" \"兼职骑手即众包骑手,只要身体健康...\" No health cert mention in FAQ, only platform rule. The agent says \"服务规范要求持有有效健康证明\". Correct. The health certificate could refer to \"有效健康证明\" not necessarily \"食品从业人员健康证\". Food delivery is food service; China's食品安全法 requires \"从事接触直接入口食品工作的食品生产经营人员应当每年进行健康检查，取得健康证明后方可上岗工作.\" Delivery riders maybe not direct contact? Platform rules may require. \"一般指食品从业人员健康证\" is reasonable. Local designated机构? Health certificates are issued by CDC/designated hospitals. Plausible.\n\nFact dimension in these evaluations often penalizes any uncited policy; but allowed general advice. The agent says \"得去当地指定机构办\" as a requirement; if local has specific process, cannot know. But it then says ask local. I'd mark 4 due to minor imprecision. If we give 5, would be asserting all important facts supported; but this one not in materials. Since the scoring asks \"关键事实有据...条件和不确定性表达准确.\" It says \"健康证明一般指食品从业人员健康证\" with \"一般\" maybe uncertainty. \"得去当地指定机构办\" lacks \"一般/建议\". So 4.\n\nAnswer maybe 5: They answered core and gave next step. It didn't give actual local institution details, but customer didn't ask; and boundary says can't verify. Could mention \"App注册按提示核对\" which is next. Good.\n\nGoal 5: It corrected status and explained. Good.\n\nTone 5: clear, concise, respects choice, closure. Good.\n\nLet's craft JSON. Ensure only JSON.",
+  "parsing_method": "json",
+  "ignored_fields": []
+}

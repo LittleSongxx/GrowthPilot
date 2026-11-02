@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.0",
+  "kind": "engineering_regression",
+  "run_id": "engineering-full-20261102",
+  "generated_at": "2026-11-02T20:32:44.408553+08:00",
+  "status": "completed_with_failures",
+  "passed": false,
+  "source_code_modified": false,
+  "checks": [
+    {
+      "name": "配置校验",
+      "command": "uv run growth validate",
+      "status": "passed",
+      "exit_code": 0,
+      "scenarios": 4,
+      "elapsed_seconds": 1.08,
+      "log": "logs/growth-validate.log"
+    },
+    {
+      "name": "前端测试",
+      "command": "npm --prefix frontend test",
+      "status": "passed",
+      "exit_code": 0,
+      "passed": 38,
+      "failed": 0,
+      "elapsed_seconds": 63.68,
+      "log": "logs/frontend-test.log"
+    },
+    {
+      "name": "前端生产构建",
+      "command": "npm --prefix frontend run build",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 126.15,
+      "log": "logs/frontend-build.log"
+    },
+    {
+      "name": "四场景契约检查",
+      "command": "uv run growth evaluate --suite contracts --run contracts-full-20261102-2023",
+      "status": "passed",
+      "exit_code": 0,
+      "scenarios": [
+        "didi_driver",
+        "financial_consultation",
+        "meituan_merchant",
+        "meituan_rider"
+      ],
+      "elapsed_seconds": 4.16,
+      "report": "../contracts/report.json",
+      "log": "logs/contracts.log"
+    },
+    {
+      "name": "业务工具覆盖检查",
+      "command": "uv run growth evaluate --suite business-coverage --run business-coverage-full-20261102-2023",
+      "status": "passed",
+      "exit_code": 0,
+      "expected_cases": 509,
+      "executed_cases": 509,
+      "passed_cases": 509,
+      "assertions_executed": 12043,
+      "tool_calls": 996,
+      "elapsed_seconds": 38.66,
+      "report": "../business-coverage/report.json",
+      "log": "logs/business-coverage.log"
+    },
+    {
+      "name": "完整 pytest（含真实模型冒烟）",
+      "command": "GROWTH_RUN_LIVE=1 uv run pytest -q -ra",
+      "status": "failed",
+      "exit_code": 1,
+      "collected": 1138,
+      "passed": 1136,
+      "failed": 2,
+      "skipped": 0,
+      "live_tests": {
+        "total": 12,
+        "passed": 11,
+        "failed": 1
+      },
+      "non_live_tests": {
+        "total": 1126,
+        "passed": 1125,
+        "failed": 1
+      },
+      "pytest_elapsed_seconds": 211.87,
+      "process_elapsed_seconds": 214.44,
+      "log": "logs/pytest-live-full.log"
+    }
+  ],
+  "failures": [
+    {
+      "test": "tests/integration/test_cli_and_models.py::test_judge_generation_configuration_reaches_settings_and_changes_snapshot",
+      "classification": "test_environment_isolation",
+      "first_result": "failed",
+      "assertion": "before.judge_extra_body == {}",
+      "actual": {
+        "thinking": {
+          "type": "enabled"
+        }
+      },
+      "root_cause": "前序业务覆盖测试调用 Settings.from_env()，将真实 .env 的 JUDGE_EXTRA_BODY 写入进程环境；本用例只切换临时项目根目录，没有清除 JUDGE_* 环境覆盖，导致其默认 YAML 断言失败。",
+      "evidence": [
+        "tests/evaluation/test_business_coverage.py:21",
+        "evaluation/checks/business_coverage.py:261",
+        "backend/settings.py:155",
+        "backend/settings.py:174",
+        "tests/integration/test_cli_and_models.py:62"
+      ],
+      "targeted_recheck": {
+        "passed": 1,
+        "failed": 0,
+        "pytest_elapsed_seconds": 0.19,
+        "process_elapsed_seconds": 5.27,
+        "environment_change": {
+          "PYTHON_DOTENV_DISABLED": "1",
+          "unset": [
+            "JUDGE_EXTRA_BODY",
+            "JUDGE_REASONING_EFFORT",
+            "JUDGE_TEMPERATURE"
+          ]
+        },
+        "log": "logs/pytest-judge-isolated.log"
+      },
+      "original_failure_preserved": true
+    },
+    {
+      "test": "tests/runtime/test_download_sms_live.py::test_model_sends_requested_download_sms_and_respects_refusal[financial_consultation]",
+      "classification": "live_model_call_closure_behavior",
+      "first_result": "failed",
+      "sms_send": {
+        "send_download_sms_calls": 1,
+        "successful_send_records": 1
+      },
+      "customer_confirmation": "好的，收到了。",
+      "actual_reply": "好的，那您先下载安装，有需要随时找我。",
+      "actual_end_after_playback": false,
+      "expected_end_after_playback": true,
+      "root_cause": "短信发送成功，失败发生在确认收信后的自然收尾：模型给出告别文本，但没有成功登记 end_call 结束意图。原日志没有保留第二轮完整工具轨迹，因此无法进一步断定是未调用还是调用被拒绝；没有网络异常证据。",
+      "evidence": [
+        "tests/runtime/test_download_sms_live.py:58",
+        "backend/agent_harness/prompts/system.md:27",
+        "backend/agent_harness/tools/common.py:49",
+        "backend/agent_harness/conversation.py:85"
+      ],
+      "rerun": false,
+      "original_failure_preserved": true
+    }
+  ],
+  "targeted_rechecks_change_original_totals": false,
+  "notes": [
+    "本报告保存完整执行的工程检查和完整 pytest 首次结果；定向复测仅用于诊断，不替换首次失败。",
+    "真实模型冒烟共 12 项：对话与记忆 2 项、短信与收尾 6 项、画像 4 项；11 项通过，金融收尾 1 项失败。",
+    "业务短信按项目设计写入模拟发送审计，不代表真实外发。",
+    "RAG 和 400 客户、800 通话的正式质量成绩分别由 rag-full-20261102 与 dialogue-full-20261102 报告提供。",
+    "本报告没有修改源码或配置；日志保留原始测试内容，仅脱敏本机绝对路径和可能出现的凭据。"
+  ],
+  "logs": [
+    {
+      "path": "logs/growth-validate.log",
+      "sha256": "172dbd95f62d6692087e226a7d08317b96a1efe69c0d578d752cfc5bbd7f8b1f",
+      "redacted_local_paths_or_secrets": false
+    },
+    {
+      "path": "logs/frontend-test.log",
+      "sha256": "07a2d938beaa538422a1db3794fbb6b3fd506d90924342541a7b5b8fc47461c5",
+      "redacted_local_paths_or_secrets": false
+    },
+    {
+      "path": "logs/frontend-build.log",
+      "sha256": "ab74491fe881b70aac7f3863495e6d2e1b0883f1597e0226a293cd5183b37603",
+      "redacted_local_paths_or_secrets": false
+    },
+    {
+      "path": "logs/contracts.log",
+      "sha256": "3bbaac25d19c52ab603887dd133ea6eebafae416379af8f6680f8ca77821147c",
+      "redacted_local_paths_or_secrets": false
+    },
+    {
+      "path": "logs/business-coverage.log",
+      "sha256": "3122c8278a2d09d0e629531947c8829362c466c9b4422bae9530ec1c3262783f",
+      "redacted_local_paths_or_secrets": false
+    },
+    {
+      "path": "logs/pytest-live-full.log",
+      "sha256": "5da3f5555e95489d0802c7bb0d73e40573875d73b5ab615b143433fa372bc363",
+      "redacted_local_paths_or_secrets": true
+    },
+    {
+      "path": "logs/pytest-judge-isolated.log",
+      "sha256": "f69b41b567fe2583118441e8e8390afa756eecb8625fa01f5e10bcff2c1cef10",
+      "redacted_local_paths_or_secrets": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/live-dialogue-probes/runtime-text-smoke-growth-agent-7.8-1793622354.json",
+      "sha256": "c6de02fa9719ae3c66376b0423aa41b1462f10d283cb85a6ab2250c53cdb1059",
+      "bytes": 155041,
+      "type": "real_text_model_new_project_smoke",
+      "scenario": "didi_driver",
+      "events": 278
+    },
+    {
+      "path": "artifacts/live-dialogue-probes/runtime-typed-memory-1793622363.json",
+      "sha256": "d6498df3d8caf3c392d94a804ac6b97c6d5636157b7aa3be55433965fb765d2b",
+      "bytes": 24786,
+      "type": "real_text_typed_memory",
+      "scenario": "meituan_rider",
+      "events": 50
+    }
+  ]
+}

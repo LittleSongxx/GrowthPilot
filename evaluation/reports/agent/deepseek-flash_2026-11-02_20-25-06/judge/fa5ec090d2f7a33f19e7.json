@@ -1,0 +1,248 @@
+{
+  "case_id": "merchant-dialogue-070",
+  "repeat": 1,
+  "judge_version": "dialogue-rubric-v3.2.3",
+  "model": "deepseek-flash",
+  "thinking": true,
+  "reasoning_effort": "high",
+  "temperature": null,
+  "configured_temperature": null,
+  "temperature_used": false,
+  "max_tokens": 16384,
+  "status": "valid",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "valid",
+      "usage": {
+        "completion_tokens": 1228,
+        "prompt_tokens": 5770,
+        "total_tokens": 6998,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 928,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 1920,
+          "image_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_cache_hit_tokens": 1920,
+        "prompt_cache_miss_tokens": 3850
+      },
+      "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通围绕费用、单笔贡献和入驻材料完成了咨询：包装更正为2元后按最新数字重算，得出单笔贡献14元；客户确认“14块，这回对了”“明白了”，材料清单和下一步也交代清楚，短信发送有回执，没有把下载或提交当成本次咨询的额外条件。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户问的费用结构、26元到账后单笔贡献、5.5%是否重复扣除、入驻所需材料及提交信息均得到直接回应，重算后也说明了单笔贡献不等于净利润等口径，没有遗留关键疑问。\"}, \"facts\": {\"score\": 5, \"reason\": \"5.5%技术服务费和每单3～8元配送费与查询到的通用方案一致，并明确标注为参考、非最终报价；26元已扣平台及配送费，符合估算工具口径，因此5.5%不再另扣的说法有据；执照与食品经营许可证的要求、有效期晚于提审日60天以上、登记信息等均有平台规则或FAQ支持。\"}, \"tone\": {\"score\": 5, \"reason\": \"开场照顾客户忙碌、表达简短；每轮自然承接客户更正与追问，收尾尊重客户“回头有空再弄”的安排并礼貌告别，没有反复推销。\"}}",
+      "finish_reason": "stop",
+      "reasoning_content": "Let me evaluate.\n\nGoal: consultation with correct recalculation. Conditions:\n1. 包装更正为2元，采用最新数字重算 — done (14元).\n2. 客户能确认疑问已得到解释或知道下一项 — customer said \"嗯，14块，这回对了\" and \"明白了\", then asked materials, agent answered. Done.\n3. 不编造审核/资格/活动/费用 — check facts.\n4. 最终单笔贡献14.00 — done.\n\nGoal score: 5? All conditions met. Closing asked about download SMS, customer agreed, SMS sent per receipt. Fine.\n\nFacts: \n- Turn 1: \"入驻本身不收费，但上线后平台会按品类和配送方式收技术服务费\" — supported by FAQ: 免费开店，服务费. OK.\n- Turn 2: 5.5% 技术服务费, 配送费3-8元/单, 分开算, 通用方案参考, 不是最终报价 — matches tool result. Notes it's 通用条件参考. Good, though the tool said 未查到完全对应的方案，按通用条件说明. Agent said \"武汉快餐小吃按平台配送的通用方案参考\" — arguably fine, says 通用方案. Slight? It's honest.\n- Turn 5: \"26块已扣完平台和配送费，5.5%已经包含在里面扣过了，不会再另外扣一次\" — this is an inference: the amount_basis is after_fees, so platform fees already deducted; consistent. Reasonable.\n- Turn 6: qualifications: 营业执照 + 食品经营许可证. Material only lists 仅销售预包装食品 case (营业执照+备案凭证 or 食品经营许可证). For 快餐小吃/餐饮, 食品经营许可证 needed — the FAQ mentions 食品经营许可证 needed (\"缺少资质的商家无法通过审核\"，答 references 卫生许可证、食品经营许可证). Business type 外卖餐饮. Saying 餐饮类主要看营业执照和食品经营许可证 is reasonable. \"食品经营许可证是缺了就没法过审的\" — supported by FAQ. License 有效期晚于提审日60天以上 — that's from 营业执照 requirement actually: \"(3)证件有效期截止日期晚于提审日期且大于60天\" is under 营业执照图片要求. Agent said 营业执照要... 有效期截止日要晚于提审日60天以上 — correct.\n- Turn 7: \"提交时注意执照和许可证上的名称、地址、主体要一致\" — mild generalization, reasonable advice; not strictly in materials but reasonable suggestion. Not a hard claim. Acceptable.\n- \"在商家App里按流程填经营名称、地址、负责人和联系方式\" — supported by 第八条.\n\nSo facts: 5, maybe 4 due to slight overgeneralization. I'd give 5 or 4. The generalization \"名称、地址、主体要一致\" is advice, not exactly a rule claim. I'd give 4 or 5. Let's give 5? Hmm, the fee plan said 未查到完全对应方案，按通用条件说明；不代表该类目已经符合要求。Agent said \"武汉快餐小吃按平台配送的通用方案参考\" — discloses 通用方案 and says 参考不是最终报价. Good.\n\nOne nuance: Agent in turn 2 didn't mention that the 5.5% applies to 计费交易额 and the 26元 example—but customer said 26 is 到账 already after fees. Fine.\n\nI'll give facts 5 with slight note? Actually the answer about \"5.5%已经包含在里面扣过了\" — is it certain? The order contribution tool says 到账金额已扣完平台及配送费用. So yes, consistent.\n\nGive facts 5.\n\nAnswer: customer's questions all answered: fee structure, calculation, recalculation, whether 5.5% additional, materials needed, next steps. Complete. Score 5. Maybe 4 because agent didn't explain 技术服务费 calculation base clearly? In turn 2 agent said 按计费交易额算. Fine. Score 5.\n\nTone: clear, concise, respectful of busy customer, closes politely. Score 5.\n\nWait—one thing: agent offered download SMS; goal condition says \"不要求额外同意下载作为咨询完成条件\" — agent did ask, customer agreed, so no pressure. Fine.\n\nGoal 5.",
+      "parsing_method": "json",
+      "ignored_fields": []
+    }
+  ],
+  "max_attempts": 3,
+  "attempt_count": 1,
+  "retry_count": 0,
+  "usage": {
+    "completion_tokens": 1228,
+    "prompt_tokens": 5770,
+    "total_tokens": 6998,
+    "completion_tokens_details": {
+      "reasoning_tokens": 928
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 1920
+    },
+    "prompt_cache_hit_tokens": 1920,
+    "prompt_cache_miss_tokens": 3850
+  },
+  "usage_complete": true,
+  "input": {
+    "goal": {
+      "description": "围绕客户当前问题给出有依据、条件清楚且可执行的咨询结论。",
+      "success_conditions": [
+        "在核对算式时将包装更正为2元，助手采用最新数字重算",
+        "客户能够确认疑问已得到解释或知道需要核对的下一项；不要求额外同意下载作为咨询完成条件。",
+        "不编造本店审核、账户资格、活动领取、费用报价或外部执行结果。",
+        "采用更正后的包装2元，最终单笔贡献为14.00元。"
+      ],
+      "call_number": 1,
+      "business_context": {
+        "app_name": "美团外卖商家 App",
+        "agent_role": "美团外卖商家用户增长客服"
+      }
+    },
+    "memory_at_start": {},
+    "turns": [
+      {
+        "turn": 0,
+        "agent": "您好，我是美团外卖商家用户增长的客服。看到您有意向入驻美团外卖，想跟您简单沟通一下入驻和商家App使用的事，请问现在方便吗？"
+      },
+      {
+        "turn": 1,
+        "customer": "方便是方便，不过我先问一下，你们这个入驻是不是有什么费用？我现在店里正忙着呢。",
+        "agent": "理解，您忙的话我尽量简短说。入驻本身不收费，但上线后平台会按品类和配送方式收技术服务费，具体费率要看您的门店类目和所在城市。\n\n您方便说下门店在哪个城市、做什么品类吗？我帮您查个参考范围。"
+      },
+      {
+        "turn": 2,
+        "customer": "武汉的，做快餐小吃。你先跟我说说大概怎么扣费吧，我心里好有个数。",
+        "materials": [
+          {
+            "text": "requested_filters.store_category: 快餐小吃\nrequested_filters.delivery_mode: 平台配送\nassumed_filters[0].store_category: 通用条件\nassumed_filters[0].delivery_mode: 平台配送\nrequested_location: 武汉\nmatched_location: 武汉\ncoverage_level: city\nunverified_conditions[0]: 服务范围和接待安排以服务方确认信息为准\nunverified_conditions[1]: 客户提供的条件尚未经过平台准入或账户资格核验\nunverified_conditions[2]: 暂未查到完全对应的方案，以下按通用条件说明；不代表该车型、类目或用途已经符合要求",
+            "tool": "query_merchant_fee_plans"
+          },
+          {
+            "text": "store_category: 通用业态方案\ndelivery_mode: 平台配送\ntechnical_service_fee_percent: 5.5\ndelivery_fee_yuan_per_order.min: 3.0\ndelivery_fee_yuan_per_order.max: 8.0\ncurrency: CNY\nconditions[0]: 技术服务费按当前方案约定的计费交易额计算，百分比与每单配送费分别计算\nconditions[1]: 配送方式未明确时不默认存在或免收配送费\nconditions[2]: 实际合同和订单结算规则优先\nexcluded[0]: 商家自行配送成本\nexcluded[1]: 可选营销支出\nexcluded[2]: 包装费\nexcluded[3]: 税费\nexcluded[4]: 其他未明确合同费用\nquote_note: 当前参数仅用于估算，不是门店最终报价或统一费率；实际费用以最终协议为准\nvalid_from: 2026-10-01T00:00:00Z\nvalid_until: 2027-11-01T00:00:00Z\nupdated_at: 2026-10-29T00:00:00Z\nid: catalog_merchant_fee_plan_b82486474e8aa604f967\nkind: merchant_fee_plan\nlocation_id: null\neligibility_filters.store_category: 通用条件\neligibility_filters.delivery_mode: 平台配送\narea: 武汉\nlocation_note: 按当前地区提供服务信息，距离未计算\ndistance_meters: null",
+            "tool": "query_merchant_fee_plans"
+          }
+        ],
+        "agent": "武汉快餐小吃按平台配送的通用方案参考：技术服务费约5.5%，按计费交易额算；配送费每单大概3到8元，两项分开算。这只是参考范围，不是最终报价，实际以签约和结算规则为准。\n\n您店里是打算用平台配送，还是自己送？"
+      },
+      {
+        "turn": 3,
+        "customer": "先按平台配送算吧。我举个例子你帮我算算，假设一单到账26块，食材成本10块，包装1块，其他没有，那我这单到手多少？",
+        "materials": [
+          {
+            "text": "amount_basis: after_fees\namount_basis_note: 已扣完平台及配送费用、尚未扣货品等经营成本的到账金额。\nreceived_amount_yuan: 26.0\nfee_base_yuan: null\nservice_fee_percent: null\nservice_fee_yuan: null\ndelivery_cost_yuan: null\ngoods_cost_yuan: 10.0\npackaging_cost_yuan: 1.0\nother_variable_cost_yuan: 0.0\nadditional_cost_to_deduct_yuan: 11.0\ntotal_variable_cost_yuan: null\norder_contribution_yuan: 15.0\npersonal_quote: false\nformula: 待扣经营成本＝货品成本＋包装成本＋其他变动成本；单笔贡献＝已扣平台及配送费用的到账金额－待扣经营成本。\nrounding: 金额以人民币元计；扣费前口径的技术服务费按四舍五入保留到分。\nassumptions[0]: 所有输入均为客户提供或明确确认的条件，不是个人报价，未核验后台经营记录。\nassumptions[1]: 到账金额已减去商家承担的优惠，并已扣完平台及配送费用；这些费用不再扣除。\nassumptions[2]: 货品、包装和其他变动成本尚未从本次到账金额中扣除，必须逐项确认。\nassumptions[3]: 无需反推扣费前金额或平台计费规则；已扣费用明细未知，不能推导全部变动成本。\nassumptions[4]: 单笔贡献可为负数，不等于门店净利润。\nexcluded[0]: 门店租金、固定人员成本、税费和未提供的其他支出。\nexcluded[1]: 未确认的活动补贴、未结算费用和其他未知支出。",
+            "tool": "estimate_order_contribution"
+          }
+        ],
+        "agent": "按您说的26块是已经扣完平台和配送费后的到账金额，那再减食材10块、包装1块，这单剩下15块。这15块是单笔贡献，还没算房租、人工这些固定成本，也不等于净利润。"
+      },
+      {
+        "turn": 4,
+        "customer": "等一下，包装我刚才说错了，是2块不是1块。你按2块重新给我算一遍。",
+        "materials": [
+          {
+            "text": "amount_basis: after_fees\namount_basis_note: 已扣完平台及配送费用、尚未扣货品等经营成本的到账金额。\nreceived_amount_yuan: 26.0\nfee_base_yuan: null\nservice_fee_percent: null\nservice_fee_yuan: null\ndelivery_cost_yuan: null\ngoods_cost_yuan: 10.0\npackaging_cost_yuan: 2.0\nother_variable_cost_yuan: 0.0\nadditional_cost_to_deduct_yuan: 12.0\ntotal_variable_cost_yuan: null\norder_contribution_yuan: 14.0\npersonal_quote: false\nformula: 待扣经营成本＝货品成本＋包装成本＋其他变动成本；单笔贡献＝已扣平台及配送费用的到账金额－待扣经营成本。\nrounding: 金额以人民币元计；扣费前口径的技术服务费按四舍五入保留到分。\nassumptions[0]: 所有输入均为客户提供或明确确认的条件，不是个人报价，未核验后台经营记录。\nassumptions[1]: 到账金额已减去商家承担的优惠，并已扣完平台及配送费用；这些费用不再扣除。\nassumptions[2]: 货品、包装和其他变动成本尚未从本次到账金额中扣除，必须逐项确认。\nassumptions[3]: 无需反推扣费前金额或平台计费规则；已扣费用明细未知，不能推导全部变动成本。\nassumptions[4]: 单笔贡献可为负数，不等于门店净利润。\nexcluded[0]: 门店租金、固定人员成本、税费和未提供的其他支出。\nexcluded[1]: 未确认的活动补贴、未结算费用和其他未知支出。",
+            "tool": "estimate_order_contribution"
+          }
+        ],
+        "agent": "按包装2块重算：26减食材10、包装2，这单剩14块。同样只是单笔贡献，没算房租人工这些固定成本。"
+      },
+      {
+        "turn": 5,
+        "customer": "嗯，14块，这回对了。那这个5.5%是包含在26块里已经扣掉了，还是另外再扣？",
+        "agent": "您说的26块是已经扣完平台和配送费后的到账，所以5.5%的技术服务费已经包含在里面扣过了，不会再另外扣一次。"
+      },
+      {
+        "turn": 6,
+        "customer": "明白了。那入驻的话我需要准备啥材料？",
+        "materials": [
+          {
+            "text": "第一节 入驻要求",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/386012?activeRule=1",
+              "title": "美团外卖平台入网餐饮服务提供者审查登记规范",
+              "section": "第一节 入驻要求",
+              "document_type": "platform_rule",
+              "business_type": "外卖餐饮",
+              "published_at": "2026-06-05"
+            }
+          },
+          {
+            "text": "第二章 商户入驻规则",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/386012?activeRule=1",
+              "title": "美团外卖平台入网餐饮服务提供者审查登记规范",
+              "section": "第二章 商户入驻规则",
+              "document_type": "platform_rule",
+              "business_type": "外卖餐饮",
+              "published_at": "2026-06-05"
+            }
+          },
+          {
+            "text": "销售类型 | 资质要求 — 仅销售预包装食品的(指销售预先定量包装或者制作在包装材料和容器中的食品,包括预先定量包装以及预先定量制作在包装材料和容器中并且在一定量限范围内具有统一的质量或体积标识的食品) | 须提供营业执照及有效备案凭证(实际经营事项与仅销售预包装食品备案信息采集表中相关内容相符)。已经取得食品经营许可证的,可提供有效的食品经营许可证,且经营范围需含“预包装食品销售”;",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/386012?activeRule=1",
+              "title": "美团外卖平台入网餐饮服务提供者审查登记规范",
+              "section": "第六条【资质信息】 / 销售类型 | 资质要求 / 仅销售预包装食品的(指销售预先定量包装或者制作在包装材料和容器中的食品,包括预先",
+              "document_type": "platform_rule",
+              "business_type": "外卖餐饮",
+              "published_at": "2026-06-05"
+            }
+          },
+          {
+            "text": "第八条 商户入驻美团外卖平台均应按照平台登记流程和要求,在美团外卖平台登记其真实有效的实际经营名称、经营资质、经营地址、法定代表人或者负责人及联系方式等信息。",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/386012?activeRule=1",
+              "title": "美团外卖平台入网餐饮服务提供者审查登记规范",
+              "section": "第八条 商户入驻美团外卖平台均应按照平台登记流程和要求,在美团外卖平台登记其真实有效的实际经营名称、经营资质、经营地址、法定代表人或者负责人",
+              "document_type": "platform_rule",
+              "business_type": "外卖餐饮",
+              "published_at": "2026-06-05"
+            }
+          },
+          {
+            "text": "答 缺少资质的商家无法通过平台审核。若您缺少某个资质,请您前往当地工商管理部门或食药监局办理;若您的资质还在办理中,建议您将资质拿到后,再提交开店申请。若您提交了错误的资质信息,平台也会驳回或暂不合作您的开店申请,请谨慎填写和提交。",
+            "source": {
+              "url": "https://123.meituan.com/serve/web/business/167?moduleMenuCode=0",
+              "title": "美团外卖商家入驻常见问题",
+              "section": "问 没有卫生许可证、食品经营许可证可以入驻吗?",
+              "document_type": "official_faq",
+              "business_type": "美团外卖",
+              "published_at": null
+            }
+          },
+          {
+            "text": "答 您可以在美团外卖平台免费开店,平台不会收取任何开店费用。开店后,平台仅会对您在平台上产生的完成订单收取服务费。收费标准会根据您选择的配送方式、经营品类及门店所在地区差异而有所不同。",
+            "source": {
+              "url": "https://123.meituan.com/serve/web/business/167?moduleMenuCode=0",
+              "title": "美团外卖商家入驻常见问题",
+              "section": "问 我想入驻美团,开店需要收费吗?",
+              "document_type": "official_faq",
+              "business_type": "美团外卖",
+              "published_at": null
+            }
+          },
+          {
+            "text": "答 “6大权益,开店立享”只针对新入驻的餐饮品类商家。",
+            "source": {
+              "url": "https://123.meituan.com/serve/web/business/167?moduleMenuCode=0",
+              "title": "美团外卖商家入驻常见问题",
+              "section": "问 6大特权,是面向所有商家吗?",
+              "document_type": "official_faq",
+              "business_type": "美团外卖",
+              "published_at": null
+            }
+          },
+          {
+            "text": "资质项目 | 图片要求 — 营业执照 | (1)营业执照需提供原件; (2)营业执照的复印件可以替代营业执照原件,复印件必须加盖红色公章,公章文字需清晰且与营业执照名称一致(合同章不可); (3)证件有效期截止日期晚于提审日期且大于60天; (4)营业执照的经营范围需与餐饮相关(如:餐饮服务、餐饮业、小餐饮、餐饮、快餐;食品制售、食品小作、食品加工、糕点、甜点、饮品制售、小食杂、小吃等); (5)营业执照需边框、国徽完整,拍摄清晰; (6)营业执照中注册号、名称、经营地址、法定代表人、经营范围、有效期、发证日期、登记机关等重要信息不能被遮挡或涂改; (7)营业执照不可出现无关信息,如除执照以外的二维码等; (8)营业执照图片中不得出现除美团网及商户自己品牌以外的其他水印;",
+            "source": {
+              "url": "https://rules-center.meituan.com/m/detail/guize/386012?activeRule=1",
+              "title": "美团外卖平台入网餐饮服务提供者审查登记规范",
+              "section": "第六条【资质信息】 / 资质项目 | 图片要求 / 营业执照",
+              "document_type": "platform_rule",
+              "business_type": "外卖餐饮",
+              "published_at": "2026-06-05"
+            }
+          }
+        ],
+        "agent": "餐饮类入驻主要看两样：营业执照和食品经营许可证。营业执照要原件或加盖红章的复印件，经营范围得跟餐饮相关，有效期截止日要晚于提审日60天以上；食品经营许可证是缺了就没法过审的，还在办的话建议拿到再提交。\n\n您现在这两样都有了吗？"
+      },
+      {
+        "turn": 7,
+        "customer": "执照有，食品经营许可证也在店里挂着呢，都有。",
+        "agent": "那材料这块基本齐了，提交时注意执照和许可证上的名称、地址、主体要一致，照片拍清楚别遮挡。接下来在商家App里按流程填经营名称、地址、负责人和联系方式就行。\n\n要不要我给您发条下载短信，您直接装App开始提交？"
+      },
+      {
+        "turn": 8,
+        "customer": "行，你发吧，我回头有空再弄。",
+        "materials": [
+          {
+            "text": "message_id: sms_07af13b1fe07494cb6d4265f45911867\napp_name: 美团外卖商家 App\ndelivery_status: sent",
+            "tool": "send_download_sms"
+          }
+        ],
+        "agent": "好的，短信已发到您手机上，您忙完有空再下载提交就行，有问题随时找我们，祝生意兴隆！"
+      }
+    ]
+  },
+  "content": "{\"goal\": {\"score\": 5, \"reason\": \"本通围绕费用、单笔贡献和入驻材料完成了咨询：包装更正为2元后按最新数字重算，得出单笔贡献14元；客户确认“14块，这回对了”“明白了”，材料清单和下一步也交代清楚，短信发送有回执，没有把下载或提交当成本次咨询的额外条件。\"}, \"answer\": {\"score\": 5, \"reason\": \"客户问的费用结构、26元到账后单笔贡献、5.5%是否重复扣除、入驻所需材料及提交信息均得到直接回应，重算后也说明了单笔贡献不等于净利润等口径，没有遗留关键疑问。\"}, \"facts\": {\"score\": 5, \"reason\": \"5.5%技术服务费和每单3～8元配送费与查询到的通用方案一致，并明确标注为参考、非最终报价；26元已扣平台及配送费，符合估算工具口径，因此5.5%不再另扣的说法有据；执照与食品经营许可证的要求、有效期晚于提审日60天以上、登记信息等均有平台规则或FAQ支持。\"}, \"tone\": {\"score\": 5, \"reason\": \"开场照顾客户忙碌、表达简短；每轮自然承接客户更正与追问，收尾尊重客户“回头有空再弄”的安排并礼貌告别，没有反复推销。\"}}",
+  "finish_reason": "stop",
+  "reasoning_content": "Let me evaluate.\n\nGoal: consultation with correct recalculation. Conditions:\n1. 包装更正为2元，采用最新数字重算 — done (14元).\n2. 客户能确认疑问已得到解释或知道下一项 — customer said \"嗯，14块，这回对了\" and \"明白了\", then asked materials, agent answered. Done.\n3. 不编造审核/资格/活动/费用 — check facts.\n4. 最终单笔贡献14.00 — done.\n\nGoal score: 5? All conditions met. Closing asked about download SMS, customer agreed, SMS sent per receipt. Fine.\n\nFacts: \n- Turn 1: \"入驻本身不收费，但上线后平台会按品类和配送方式收技术服务费\" — supported by FAQ: 免费开店，服务费. OK.\n- Turn 2: 5.5% 技术服务费, 配送费3-8元/单, 分开算, 通用方案参考, 不是最终报价 — matches tool result. Notes it's 通用条件参考. Good, though the tool said 未查到完全对应的方案，按通用条件说明. Agent said \"武汉快餐小吃按平台配送的通用方案参考\" — arguably fine, says 通用方案. Slight? It's honest.\n- Turn 5: \"26块已扣完平台和配送费，5.5%已经包含在里面扣过了，不会再另外扣一次\" — this is an inference: the amount_basis is after_fees, so platform fees already deducted; consistent. Reasonable.\n- Turn 6: qualifications: 营业执照 + 食品经营许可证. Material only lists 仅销售预包装食品 case (营业执照+备案凭证 or 食品经营许可证). For 快餐小吃/餐饮, 食品经营许可证 needed — the FAQ mentions 食品经营许可证 needed (\"缺少资质的商家无法通过审核\"，答 references 卫生许可证、食品经营许可证). Business type 外卖餐饮. Saying 餐饮类主要看营业执照和食品经营许可证 is reasonable. \"食品经营许可证是缺了就没法过审的\" — supported by FAQ. License 有效期晚于提审日60天以上 — that's from 营业执照 requirement actually: \"(3)证件有效期截止日期晚于提审日期且大于60天\" is under 营业执照图片要求. Agent said 营业执照要... 有效期截止日要晚于提审日60天以上 — correct.\n- Turn 7: \"提交时注意执照和许可证上的名称、地址、主体要一致\" — mild generalization, reasonable advice; not strictly in materials but reasonable suggestion. Not a hard claim. Acceptable.\n- \"在商家App里按流程填经营名称、地址、负责人和联系方式\" — supported by 第八条.\n\nSo facts: 5, maybe 4 due to slight overgeneralization. I'd give 5 or 4. The generalization \"名称、地址、主体要一致\" is advice, not exactly a rule claim. I'd give 4 or 5. Let's give 5? Hmm, the fee plan said 未查到完全对应方案，按通用条件说明；不代表该类目已经符合要求。Agent said \"武汉快餐小吃按平台配送的通用方案参考\" — discloses 通用方案 and says 参考不是最终报价. Good.\n\nOne nuance: Agent in turn 2 didn't mention that the 5.5% applies to 计费交易额 and the 26元 example—but customer said 26 is 到账 already after fees. Fine.\n\nI'll give facts 5 with slight note? Actually the answer about \"5.5%已经包含在里面扣过了\" — is it certain? The order contribution tool says 到账金额已扣完平台及配送费用. So yes, consistent.\n\nGive facts 5.\n\nAnswer: customer's questions all answered: fee structure, calculation, recalculation, whether 5.5% additional, materials needed, next steps. Complete. Score 5. Maybe 4 because agent didn't explain 技术服务费 calculation base clearly? In turn 2 agent said 按计费交易额算. Fine. Score 5.\n\nTone: clear, concise, respectful of busy customer, closes politely. Score 5.\n\nWait—one thing: agent offered download SMS; goal condition says \"不要求额外同意下载作为咨询完成条件\" — agent did ask, customer agreed, so no pressure. Fine.\n\nGoal 5.",
+  "parsing_method": "json",
+  "ignored_fields": []
+}
