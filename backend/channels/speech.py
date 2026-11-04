@@ -36,6 +36,8 @@ class SpeechAPI:
                 return response.json()
         except httpx.HTTPError:
             raise SpeechUnavailable("云端语音服务暂不可用，请检查配置或稍后重试。") from None
+        except (ValueError, KeyError, TypeError):
+            raise SpeechUnavailable("云端语音服务返回格式异常，请稍后重试。") from None
 
     async def transcribe(self, audio, mime_type):
         data = await self._generate(
@@ -60,7 +62,11 @@ class SpeechAPI:
                 "stream": False,
             },
         )
-        return (data["choices"][0]["message"]["content"] or "").strip(), data.get("usage")
+        try:
+            content = data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError):
+            raise SpeechUnavailable("云端语音服务返回格式异常，请稍后重试。") from None
+        return (content or "").strip(), data.get("usage")
 
     async def stream_synthesize(self, text, *, on_usage=None):
         """直接转发供应商的单声道 24 kHz、16 位小端 PCM，不等待完整文件。"""

@@ -25,7 +25,7 @@ class StrictBody(BaseModel):
 class SessionInput(StrictBody):
     scenario_id: str
     customer_id: str = Field(min_length=1, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
-    run_id: str | None = None
+    run_id: str | None = Field(default=None, max_length=150, pattern=r"^[A-Za-z0-9_-]+$")
 
 
 class StopInput(StrictBody):
@@ -105,13 +105,29 @@ def create_app(settings=None, sessions=None):
                 "testserver",
             } or parsed.port not in {None, settings.app_port}:
                 return JSONResponse({"detail": "same_origin_required"}, status_code=403)
-        if request.client and request.client.host not in {"127.0.0.1", "::1", "testclient"}:
+        # Docker 端口映射后，容器内看到的客户端地址是网桥网关而不是回环地址。
+        # 仅当部署方显式设置 GROWTH_ALLOW_PROXY_CLIENT=1 时跳过客户端地址检查；
+        # Host/Origin 仍必须是本机，端口映射也只绑定 127.0.0.1。
+        allow_proxied_client = os.environ.get("GROWTH_ALLOW_PROXY_CLIENT") == "1"
+        if (
+            not allow_proxied_client
+            and request.client
+            and request.client.host not in {"127.0.0.1", "::1", "testclient"}
+        ):
             return JSONResponse({"detail": "loopback_required"}, status_code=403)
         return await call_next(request)
 
     def runtime(request, sid):
         token = request.headers.get("authorization", "").removeprefix("Bearer ")
-        if not token or not hmac.compare_digest(token, sessions.token(sid)):
+        # 请求头按 latin-1 解码，非 ASCII 值会让 compare_digest 抛 TypeError；
+        # 这类畸形 token 按未授权处理，不能变成 500。
+        try:
+            matched = bool(token) and hmac.compare_digest(
+                token.encode("utf-8"), sessions.token(sid).encode("ascii")
+            )
+        except (TypeError, UnicodeError):
+            matched = False
+        if not matched:
             raise HTTPException(401, "session_token_required")
         try:
             return sessions.get(sid)
@@ -196,12 +212,15 @@ def create_app(settings=None, sessions=None):
         return await public_state(runtime(request, sid))
 
     @app.get("/api/sessions/{sid}/events")
-    async def events(sid: str, request: Request, after: int = 0):
+    async def events(sid: str, request: Request, after: int = 0, limit: int = 300):
         runtime(request, sid)
-        values = sessions.store.events(sid, max(0, after))
+        page = sessions.store.events_page(sid, max(0, after), max(1, min(limit, 500)))
         return {
-            "events": [value for value in values if value["type"] != "business_query_audit"],
-            "last_seq": values[-1]["seq"] if values else after,
+            "events": [
+                value for value in page["events"] if value["type"] != "business_query_audit"
+            ],
+            "last_seq": page["last_seq"],
+            "has_more": page["has_more"],
         }
 
     def check_generation(rt, generation):

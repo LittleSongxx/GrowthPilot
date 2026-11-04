@@ -13,6 +13,8 @@ class ConversationEvents:
     def __init__(self, conversation):
         self.conversation = conversation
         self.text = ""
+        self.pending_text = ""
+        self.pending_reply_id = ""
         self.first_text_at = None
         self.last_message_id = None
         self.tool_calls = {}
@@ -20,6 +22,17 @@ class ConversationEvents:
     @property
     def last_assistant_text(self):
         return self.text
+
+    def flush_text(self):
+        """把一次模型调用内的流式文本聚合成一条事件；空文本不落库。"""
+        if not self.pending_text:
+            return
+        text, reply_id = self.pending_text, self.pending_reply_id
+        self.pending_text = ""
+        self.conversation.emit(
+            "framework",
+            {"type": "TEXT_BLOCK_DELTA", "reply_id": reply_id, "delta": text, "aggregated": True},
+        )
 
     def record_reply(self, text, reply_id, finished_reason="completed"):
         self.text = text
@@ -109,7 +122,8 @@ class ConversationEvents:
             data.update(source="end_call", model_name=None)
         self.observe_tool_event(data)
         if kind in {"REPLY_START", "MODEL_CALL_START"}:
-            # 只播报模型的最终回答；工具调用过程中的说明保留在追踪记录中。
+            # 只播报模型的最终回答；工具调用过程中的说明聚合成一条后保留在追踪记录中。
+            self.flush_text()
             self.text = ""
             self.first_text_at = None
             self.last_message_id = None
@@ -119,14 +133,20 @@ class ConversationEvents:
             if self.first_text_at is None and delta.strip():
                 self.first_text_at = time.monotonic()
             self.text += delta
+            self.pending_text += delta
+            self.pending_reply_id = data.get("reply_id", "")
         elif kind == "REPLY_END":
+            self.flush_text()
             if self.text:
                 self.record_reply(self.text, rid, data.get("finished_reason"))
             self.conversation.checkpoint()
         # 音频的 Base64 数据既不持久化，也不返回浏览器调试通道。
+        # 流式文本增量只用于拼装最终回复与首 token 计时；最终文本由
+        # reply_outcome 与 messages 表持久化，逐块落库会放大事件表并撑爆分页。
         if kind not in {
             "DATA_BLOCK_DELTA",
             "THINKING_BLOCK_DELTA",
+            "TEXT_BLOCK_DELTA",
             "TOOL_CALL_DELTA",
             "TOOL_RESULT_TEXT_DELTA",
             "TOOL_RESULT_DATA_DELTA",

@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import re
 import time
 from dataclasses import replace
 
@@ -104,7 +105,16 @@ async def test_text_final_answer_excludes_intermediate_tool_narration(setup):
         rt.service.snapshot(rt.ctx)["messages"][-1]["text"]
         == "可以按官方说明下载 App，操作遇到问题时告诉我页面提示。"
     )
-    assert any("I'll query" in str(event) for event in host.store.events(sid))
+    stored = host.store.events(sid)
+    assert any("I'll query" in str(event) for event in stored)
+    framework_text = [
+        event
+        for event in stored
+        if event["type"] == "framework" and event["data"].get("type") == "TEXT_BLOCK_DELTA"
+    ]
+    # 每次模型调用聚合一条，而不是每个流式增量落一行。
+    assert len(framework_text) == 2
+    assert all(event["data"].get("aggregated") is True for event in framework_text)
 
 
 @pytest.mark.asyncio
@@ -340,7 +350,10 @@ async def test_native_model_payload_is_business_language_including_tool_results(
     if scenario_id in {"meituan_rider", "didi_driver"}:
         contacts = [(item["address"], item["phone"]) for item in dynamic["data"]["items"]]
         assert contacts == [(item["address"], item["phone"]) for item in audit["data"]["items"]]
-        assert all(address and len(phone) == 11 for address, phone in contacts)
+        assert all(
+            address and re.fullmatch(r"000-\d{4}-\d{4}", phone)
+            for address, phone in contacts
+        )
         assert len(set(contacts)) == len(contacts)
         assert all(item["distance_meters"] is None for item in dynamic["data"]["items"])
     for hidden_key in [
@@ -667,6 +680,7 @@ async def test_business_audit_is_private_and_public_event_cursor_advances(setup)
     public = response.json()
     assert public["events"] == []
     assert public["last_seq"] == stored[0]["seq"]
+    assert public["has_more"] is False
     seq = runtime.emit("tool_result", {"name": "search_nearby_stations", "result": result})
     response = await http.get(f"/api/sessions/{sid}/events?after={after}", headers=auth)
     public = response.json()
@@ -674,6 +688,54 @@ async def test_business_audit_is_private_and_public_event_cursor_advances(setup)
     assert public["last_seq"] == seq
     assert "template_provenance" not in response.text
     assert "source_type" not in response.text
+
+
+@pytest.mark.asyncio
+async def test_events_pagination_advances_without_skipping(setup):
+    host, http, _ = setup
+    sid, auth, _ = await new_session(http)
+    start = host.store.events(sid)[-1]["seq"] if host.store.events(sid) else 0
+    for index in range(5):
+        host.store.emit(sid, "test_event", {"index": index})
+    first = (
+        await http.get(f"/api/sessions/{sid}/events?after={start}&limit=2", headers=auth)
+    ).json()
+    assert [event["data"]["index"] for event in first["events"]] == [0, 1]
+    assert first["has_more"] is True
+    second = (
+        await http.get(
+            f"/api/sessions/{sid}/events?after={first['last_seq']}&limit=2", headers=auth
+        )
+    ).json()
+    assert [event["data"]["index"] for event in second["events"]] == [2, 3]
+    assert second["has_more"] is True
+    third = (
+        await http.get(
+            f"/api/sessions/{sid}/events?after={second['last_seq']}&limit=200", headers=auth
+        )
+    ).json()
+    assert [event["data"]["index"] for event in third["events"]] == [4]
+    assert third["has_more"] is False
+
+
+@pytest.mark.asyncio
+async def test_malformed_authorization_and_run_id_are_rejected(setup):
+    _, http, _ = setup
+    sid, _auth, _ = await new_session(http)
+    # 非 ASCII token 不能把 compare_digest 的 TypeError 变成 500。
+    bad = await http.get(
+        f"/api/sessions/{sid}/state", headers={"Authorization": b"Bearer t\xf6k\xe9n"}
+    )
+    assert bad.status_code == 401
+    too_long = await http.post(
+        "/api/sessions",
+        json={
+            "scenario_id": "meituan_rider",
+            "customer_id": "run-id-check",
+            "run_id": "x" * 200,
+        },
+    )
+    assert too_long.status_code == 422
 
 
 @pytest.mark.asyncio

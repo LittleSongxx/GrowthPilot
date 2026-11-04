@@ -370,6 +370,24 @@ async def test_stream_tts_yields_before_provider_finishes_and_closes_connection(
     assert closed.is_set()
 
 
+async def test_transcribe_provider_malformed_response_is_sanitized():
+    speech = SpeechAPI(
+        type(
+            "Settings",
+            (),
+            {
+                "dashscope_api_key": "private-key",
+                "dashscope_base_url": "https://example.invalid",
+                "asr_model": "asr",
+            },
+        )(),
+        transport=httpx.MockTransport(lambda request: httpx.Response(200, json={"choices": []})),
+    )
+    with pytest.raises(SpeechUnavailable) as error:
+        await speech.transcribe(b"RIFF", "audio/wav")
+    assert "list index" not in str(error.value)
+
+
 @pytest.mark.parametrize(
     "event",
     [
