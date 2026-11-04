@@ -165,11 +165,16 @@ export function publicTraceEvents(events: unknown[]): unknown[] {
 export function renderToolCalls(events: unknown[]): string {
   const calls = collectToolCalls(events).filter(call => call.name !== 'end_call');
   if (!calls.length) return '<div class="muted">Agent 会按问题查询政策或业务资料，查询内容会显示在这里。</div>';
-  return calls.map(call => {
+  return calls.map((call, index) => {
     const result = resultForDisplay(call.name, call.result);
     const args = businessQueries.has(call.name) ? businessView(call.arguments, resultProductNames(call.result)) : call.arguments;
-    return `<details class="query-result" ${call.complete ? 'open' : ''}>
-    <summary>${escapeHTML(labels[call.name] ?? call.name)} <span class="mini">${call.complete ? '已返回' : call.state === 'error' ? '查询失败' : '查询中'}</span></summary>
+    const items = object(object(result)?.data)?.items;
+    const count = Array.isArray(items) ? items.length : 0;
+    const meta = call.complete ? `已返回${count ? ' · ' + count + ' 项' : ''}` : call.state === 'error' ? '查询失败' : '查询中';
+    // 默认只展开第一张卡；其余收起，避免长结果把页面撑开。
+    const open = call.complete && index === 0 ? 'open' : '';
+    return `<details class="query-result" ${open}>
+    <summary>${escapeHTML(labels[call.name] ?? call.name)} <span class="mini">${meta}</span></summary>
     ${queryContext(result)}
     ${args !== undefined ? `<div class="query-section"><h3>查询条件</h3>${renderValue(args)}</div>` : ''}
     ${result !== undefined ? `<div class="query-section"><h3>返回内容</h3>${renderValue(result)}</div>` : ''}

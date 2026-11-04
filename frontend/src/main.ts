@@ -5,31 +5,94 @@ import {installAcceptance} from './acceptance';
 import {escapeHTML as escape, publicTraceEvents, renderToolCalls} from './tool-results';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
-app.innerHTML = `
-<div class="layout">
- <aside class="sidebar"><div class="brand"><span class="brandmark">↗</span> Growth Agent</div>
-  <nav aria-label="业务场景"><div class="eyebrow">SCENARIO WORKSPACE</div><div id="scenarios" class="scenarios"></div></nav>
-  <div class="side-note"><strong>客户增长工作台</strong>了解客户需求，解答业务问题，引导下载、注册和使用 App。<br><br>01 / 需求 → 解惑 → 引导</div>
- </aside>
- <main class="workspace">
-  <header class="topbar"><span class="breadcrumb">客户工作台 / 通用外呼 Agent</span><span class="badge">用增对话工作台</span></header>
-  <section class="hero"><div><div class="eyebrow">CONVERSATION TO ACTION</div><h1 id="title">从一个问题，走向下一步。</h1><p id="subtitle">了解需求、解答顾虑，帮助客户下载、注册和使用 App。</p></div>
-   <div class="session-control"><label>客户标识<input id="customer" value="customer-001" maxlength="80" autocomplete="off" aria-label="客户标识"/></label><button id="start" class="primary">开始通话 ↗</button></div>
-  </section>
-  <div id="notice" class="notice" role="alert"></div>
-  <div class="grid"><section class="panel conversation" aria-label="Agent 对话">
-   <div class="panel-title"><span>对话空间 <span id="session-label" class="label"></span></span><span class="label">语音交流</span></div>
-   <div id="voice" class="voice"><div id="voice-orb" class="voice-orb">◉</div><div id="voice-status" role="status">点击开始通话，允许使用麦克风</div><p>开始通话后直接说话，停顿后自动发送 · 回复时也可以开口打断 · 建议使用耳机</p><p>转写、回复与工具查询会同步显示在下方。</p><div class="voice-actions"><button id="mute" class="secondary" disabled>静音</button><button id="replay" class="secondary" disabled>重播回复</button><button id="voice-stop" class="primary" disabled>结束通话</button></div></div>
-   <div id="messages" class="messages" aria-live="polite"><div class="empty"><div class="empty-icon">✳</div><h2>从一个真实问题开始</h2><p>选择场景并开始会话。Agent 会按需要查询政策、当地业务资料和沟通技能。</p></div></div>
-  </section>
-  <aside class="right-column">
-   <section class="panel"><div class="panel-title">业务查询 <span class="label">TOOL RESULTS</span></div><p class="data-note">按客户问题查询政策、服务和费用信息，请结合结果中的适用条件理解。</p><div id="queries" class="panel-content"><div class="muted">Agent 会根据客户的问题查询所需资料。</div></div></section>
-   <section class="panel"><div class="panel-title">客户画像 <span class="label">WITH SOURCE</span></div><p id="profile-status" class="data-note">通话前自动载入，通话结束后更新。</p><div id="memory" class="panel-content"><div class="muted">有来源的自述会跨会话保留。</div></div></section>
-  </aside></div>
-  <details class="panel evidence"><summary>查看证据与调用轨迹 <span class="label">仅展示当前会话公开状态</span></summary><pre id="evidence">尚无轨迹</pre></details>
-  <details id="acceptance" class="panel evidence"></details>
-  <footer class="footer"><span id="connection" class="statusline"><span class="pulse"></span> 业务工作空间</span><span>AgentScope · ASR → Agent → TTS · 用增对话</span></footer>
- </main>
+app.innerHTML = `<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brandmark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-7"/><path d="M20 8h-4"/><path d="M20 8v4"/></svg></span>
+      <span class="brand-text"><span class="brand-name">Growth Agent</span><span class="brand-sub">语音用增工作台</span></span>
+    </div>
+    <nav class="nav" aria-label="业务场景">
+      <div class="eyebrow">业务场景</div>
+      <div id="scenarios" class="scenarios"></div>
+    </nav>
+    <div class="side-note">
+      <div class="side-note-title"><span class="status-dot"></span>本机运行 · 数据不出机</div>
+      <p>四场景语音外呼 · 政策原文检索 · 本地业务目录 · 客户画像记忆</p>
+      <div class="side-meta"><span>ASR → Agent → TTS</span><span>单通 300s</span></div>
+    </div>
+  </aside>
+  <main class="workspace">
+    <header class="topbar">
+      <div class="crumbs"><span>客户工作台</span><span class="sep">/</span><span>通用外呼 Agent</span></div>
+      <div class="top-status">
+        <span id="service-pill" class="status-pill"><span class="status-dot"></span><span id="service-status">服务运行中</span></span>
+        <span class="badge">用增对话工作台</span>
+      </div>
+    </header>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">CONVERSATION TO ACTION</div>
+        <h1 id="title">从一个问题，走向下一步。</h1>
+        <p id="subtitle">了解需求、解答顾虑，帮助客户下载、注册和使用 App。</p>
+        <div class="hero-meta"><span>4 个业务场景</span><span>17 个问题型 Skill</span><span>政策原文 + 本地目录</span></div>
+      </div>
+      <div class="session-control">
+        <label>客户标识<input id="customer" value="customer-001" maxlength="80" autocomplete="off" aria-label="客户标识"/></label>
+        <button id="start" class="primary">开始通话 <span class="btn-arrow">↗</span></button>
+      </div>
+    </section>
+    <div id="notice" class="notice" role="alert"></div>
+    <div class="grid">
+      <section class="panel conversation" aria-label="Agent 对话">
+        <div class="panel-title">
+          <span class="panel-heading"><span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>对话空间<span id="session-label" class="label"></span></span>
+          <span class="label">实时语音</span>
+        </div>
+        <div id="voice" class="voice">
+          <div class="voice-stage">
+            <div id="voice-orb" class="voice-orb"><span class="orb-core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg></span></div>
+            <div id="voice-status" class="voice-status" role="status">点击开始通话，允许使用麦克风</div>
+            <p class="voice-hint">开始通话后直接说话，停顿后自动发送 · 回复时也可以开口打断 · 建议使用耳机</p>
+            <p class="voice-hint muted">转写、回复与工具查询会同步显示在下方。</p>
+          </div>
+          <div class="voice-actions">
+            <button id="mute" class="secondary" disabled>静音</button>
+            <button id="replay" class="secondary" disabled>重播回复</button>
+            <button id="voice-stop" class="danger" disabled>结束通话</button>
+          </div>
+        </div>
+        <div id="messages" class="messages" aria-live="polite">
+          <div class="empty">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4"/><path d="M21 5h-4"/></svg></div>
+            <h2>从一个真实问题开始</h2>
+            <p>选择场景并开始会话，Agent 会按需查询政策、当地业务资料和沟通技能。</p>
+            <div class="empty-tags"><span>附近有站点吗？</span><span>没有车能租吗？</span><span>报名要交钱吗？</span></div>
+          </div>
+        </div>
+      </section>
+      <aside class="right-column">
+        <section class="panel">
+          <div class="panel-title"><span class="panel-heading"><span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>业务查询</span><span class="label">TOOL RESULTS</span></div>
+          <p class="data-note">按客户问题查询政策、服务与费用；结果附带适用条件、有效期与必要的估算假设。</p>
+          <div id="queries" class="panel-content"><div class="muted">Agent 会根据客户的问题查询所需资料。</div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-title"><span class="panel-heading"><span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>客户画像</span><span class="label">WITH SOURCE</span></div>
+          <p id="profile-status" class="data-note">通话前自动载入，通话结束后更新。</p>
+          <div id="memory" class="panel-content"><div class="muted">有来源的自述会跨会话保留。</div></div>
+        </section>
+      </aside>
+    </div>
+    <details class="panel evidence">
+      <summary><span class="panel-heading"><span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>查看证据与调用轨迹</span><span class="label">仅展示当前会话公开状态</span></summary>
+      <pre id="evidence">尚无轨迹</pre>
+    </details>
+    <details id="acceptance" class="panel evidence"></details>
+    <footer class="footer">
+      <span id="connection" class="statusline"><span class="pulse"></span>业务工作空间</span>
+      <span class="foot-note">AgentScope · ASR → Agent → TTS · 用增对话</span>
+    </footer>
+  </main>
 </div>`;
 
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id)! as T;
@@ -99,6 +162,21 @@ function scenarioList() {
   }));
   el('title').textContent = scenarios.find(s => s.id === selected)?.title ?? '';
 }
+// 画像字段的短标签：目录里的 description 是给模型看的完整说明，直接展示会过长。
+const FIELD_LABELS: Record<string, string> = {
+  area: '城市 / 区域', work_mode: '工作意向', materials_ready: '资料准备',
+  delivery_type: '配送类型', has_vehicle: '已有车辆', concern: '当前关注',
+};
+function fieldLabel(state: SessionState | null, field: string) {
+  const definition = state?.field_definitions?.find(item => item.id === field);
+  return FIELD_LABELS[field] ?? definition?.description?.slice(0, 16) ?? field;
+}
+function fieldValue(value: unknown) {
+  if (value === true) return '是';
+  if (value === false) return '否';
+  if (value === null || value === undefined || value === '') return '未提供';
+  return String(value);
+}
 function render(value: SessionState | null) {
   state = value;
   if (value && isClosed() && transport) closeLocalCall();
@@ -108,19 +186,24 @@ function render(value: SessionState | null) {
     lastMessages = fingerprint;
     el('messages').innerHTML = messages.map(m => {
       const user = m.origin !== 'agent';
-      return `<div class="message ${user ? 'user' : ''}"><span class="avatar">${user ? '你' : '✳'}</span><div><div class="bubble">${escape(m.text)}</div><div class="message-note">${user ? '客户' : 'Agent'}</div></div></div>`;
-    }).join('') || '<div class="empty"><div class="empty-icon">✳</div><h2>从一个真实问题开始</h2><p>开始通话，了解业务并解答下载、注册和使用中的问题。</p></div>';
+      const agentAvatar = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-7"/><path d="M20 8h-4"/><path d="M20 8v4"/></svg>';
+      return `<div class="message ${user ? 'user' : ''}"><span class="avatar">${user ? '你' : agentAvatar}</span><div><div class="bubble">${escape(m.text)}</div><div class="message-note">${user ? '客户' : 'Agent'}</div></div></div>`;
+    }).join('') || '<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4"/><path d="M21 5h-4"/></svg></div><h2>从一个真实问题开始</h2><p>选择场景并开始会话，Agent 会按需查询政策、当地业务资料和沟通技能。</p><div class="empty-tags"><span>附近有站点吗？</span><span>没有车能租吗？</span><span>报名要交钱吗？</span></div></div>';
     el('messages').scrollTop = el('messages').scrollHeight;
   }
   const profileStatus: Record<string, string> = {collecting: '已载入历史画像，本次内容将在通话结束后整理。', pending: '通话已结束，正在准备更新画像。', running: '正在整理本次通话中的客户资料…', retrying: '画像更新暂未完成，稍后自动重试。', completed: '已完成本次通话的画像整理。', skipped: '本次没有客户发言，画像未变更。', failed: '本次画像更新失败，历史画像仍保留。', cancelled: '本次会话已清理，画像更新已取消。'};
   el('profile-status').textContent = profileStatus[value?.profile_update?.status ?? ''] ?? '通话前自动载入，通话结束后更新。';
   const fieldStatus: Record<string, string> = {expired: '已过期，待确认', unknown: '尚不明确', declined: '客户拒答', not_asked: '尚未询问'};
-  el('memory').innerHTML = value?.memory?.length ? value.memory.map(m => `<div class="fact-row"><span>${escape(value.field_definitions?.find(f => f.id === m.field)?.description ?? m.field)}</span><span>${escape(m.status === 'known' ? m.value : fieldStatus[m.status] ?? m.status)}${m.version !== undefined ? `<br><span class="mini">版本 ${m.version}</span>` : ''}</span></div>`).join('') : '<div class="muted">尚无客户画像。</div>';
+  el('memory').innerHTML = value?.memory?.length ? value.memory.map(m => `<div class="fact-row"><span>${escape(fieldLabel(value, m.field))}</span><span>${escape(m.status === 'known' ? fieldValue(m.value) : fieldStatus[m.status] ?? m.status)}${m.version !== undefined ? `<br><span class="mini">版本 ${m.version}</span>` : ''}</span></div>`).join('') : '<div class="muted">尚无客户画像。</div>';
   const queries = renderToolCalls(traceEvents);
   if (queries !== lastQueries) { el('queries').innerHTML = queries; lastQueries = queries; }
   el('evidence').textContent = JSON.stringify({session: value?.session, audit: value?.audit ?? [], trace: publicTraceEvents(traceEvents)}, null, 2);
   el('session-label').textContent = session ? `· ${session.slice(-8)}` : '';
   el('connection').textContent = value ? `语音 · ${value.session.state}` : '业务工作空间';
+  const servicePill = document.getElementById('service-pill');
+  if (servicePill) servicePill.classList.toggle('live', !!value && !isClosed());
+  const serviceStatus = document.getElementById('service-status');
+  if (serviceStatus) serviceStatus.textContent = value && !isClosed() ? '通话进行中' : '服务运行中';
   controls();
 }
 async function refresh() {
@@ -128,12 +211,21 @@ async function refresh() {
   const sid = session;
   refreshing.add(sid);
   try {
-    const [value, trace] = await Promise.all([
+    const [value, first] = await Promise.all([
       request<SessionState>(`/api/sessions/${sid}/state`),
       request<Trace>(`/api/sessions/${sid}/events?after=${traceSeq}`),
     ]);
     if (sid !== session) return;
-    traceEvents.push(...trace.events); traceSeq = trace.last_seq;
+    // 事件按页拉取：单页有上限，只推进到本页末尾会丢掉中间事件。
+    let trace = first;
+    for (;;) {
+      traceEvents.push(...trace.events);
+      const previous = traceSeq;
+      traceSeq = trace.last_seq;
+      if (!trace.has_more || traceSeq <= previous) break;
+      trace = await request<Trace>(`/api/sessions/${sid}/events?after=${traceSeq}`);
+      if (sid !== session) return;
+    }
     render(value);
     if (value.session.state !== 'active' && !['pending', 'running', 'retrying'].includes(value.profile_update?.status ?? '')) clearInterval(poll);
   } finally { refreshing.delete(sid); }
@@ -163,7 +255,8 @@ async function playReply(id: string, generation: number, signal: AbortSignal) {
   transport?.clearReplay();
   voiceStatus('正在准备语音，仍可直接说话');
   const voice = transport, sid = session;
-  const audio = await response(endpoint(`/voice/audio/${encodeURIComponent(id)}?stream=true&generation=${serverGeneration}`), undefined, signal);
+  // 音频响应本身就是长流：客户端超时会在播放中途截断，交给服务端与打断信号收尾。
+  const audio = await response(endpoint(`/voice/audio/${encodeURIComponent(id)}?stream=true&generation=${serverGeneration}`), undefined, signal, 0);
   if (generation === turnGeneration && sid === session && voice === transport && !signal.aborted) await voice?.playPcm(audio, signal);
   else void audio.body?.cancel();
 }
@@ -198,7 +291,9 @@ async function runTurn(path: string, body: unknown, generation = turnGeneration,
     controller = new AbortController(); turnAbort = controller; processing = true;
     notice('');
     voiceStatus(path === '/voice/turn' ? '正在转写并处理，仍可直接说话' : 'Agent 正在接通，您可以直接说话');
-    const result = await request<Turn>(`/api/sessions/${sid}${path}?generation=${serverGeneration}${inputOnly ? '&input_only=true' : ''}`, body, controller.signal);
+    // 一轮包含 ASR、多轮模型调用与工具执行，不能用 45 秒整体超时截断；
+    // 上限与服务端 300 秒会话预算对齐，真正的卡死由服务端超时和用户打断处理。
+    const result = await request<Turn>(`/api/sessions/${sid}${path}?generation=${serverGeneration}${inputOnly ? '&input_only=true' : ''}`, body, controller.signal, 300_000);
     if (generation !== turnGeneration || sid !== session || controller.signal.aborted) return;
     // 必须先登记再开始播放，极短语音的完成回调可能早于 playPcm 返回。
     endAfterPlayback = result.end_after_playback && result.reply_message_id
