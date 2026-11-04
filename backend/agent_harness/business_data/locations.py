@@ -2,10 +2,18 @@
 
 import re
 
+# 口语里常见“湖南长沙”“广东深圳”这类不带“省”的写法；列出省级名称后，
+# 省名本身也成为城市别名的合法前缀，不再依赖“省”字。
+PROVINCE_NAMES = (
+    "河北", "山西", "辽宁", "吉林", "黑龙江", "江苏", "浙江", "安徽", "福建",
+    "江西", "山东", "河南", "湖北", "湖南", "广东", "海南", "四川", "贵州",
+    "云南", "陕西", "甘肃", "青海", "台湾", "香港", "澳门",
+)
 CITY_PREFIX_ENDINGS = (
     "省",
     "自治区",
     "自治州",
+    *PROVINCE_NAMES,
     "广西",
     "新疆",
     "宁夏",
@@ -64,6 +72,16 @@ class LocationResolver:
             )
         if cities:
             return self._known_city(next(iter(cities)), cleaned, details)
+        localities = self._matching_localities(cleaned)
+        if len(localities) > 1:
+            return None, self.result(
+                "needs_clarification",
+                reason="conflicting_locations",
+                candidate_cities=sorted({item["city"] for item in localities}),
+                **details,
+            )
+        if localities:
+            return self._curated_locality(localities[0], details), None
         return self._unknown_location(cleaned, details)
 
     def _matching_cities(self, text):
@@ -78,6 +96,33 @@ class LocationResolver:
                     if (boundary or adjacent_city) and not street:
                         cities.add(profile["city"])
         return cities
+
+    def _matching_localities(self, text):
+        """城市未命中时按商圈名解析；“望京路”这类街道名不能当成商圈。"""
+        found = {}
+        for locality in self.locations:
+            names = {locality.get("locality") or "", *(locality.get("aliases") or [])}
+            for name in names:
+                if not name:
+                    continue
+                for match in re.finditer(re.escape(name), text):
+                    after = text[match.end() :]
+                    if re.match(r"(?:[东西南北中]?(?:路|街)|大街|大道|镇|乡|村)", after):
+                        continue
+                    found[locality["id"]] = locality
+        return list(found.values())
+
+    def _curated_locality(self, locality, details):
+        return {
+            **details,
+            "scope_key": locality["id"],
+            "location_id": locality["id"],
+            "city": locality["city"],
+            "matched_location": locality["label"],
+            "coverage_level": "locality",
+            "match_type": "curated_locality",
+            "fallback_reason": None,
+        }
 
     def _known_city(self, city, text, details):
         localities = [

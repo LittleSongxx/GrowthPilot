@@ -52,6 +52,27 @@ def test_roads_and_counties_do_not_misidentify_other_cities(text, city):
     assert result["data"]["match_type"] == "city_profile"
 
 
+@pytest.mark.parametrize("text,city", [("湖南长沙", "长沙"), ("广东深圳", "深圳"), ("浙江杭州", "杭州"), ("江苏南京", "南京")])
+def test_province_names_are_valid_city_prefixes(text, city):
+    result = catalog().query("rider_station", location=text)
+    assert result["status"] == "success"
+    assert result["data"]["matched_location"] == city
+    assert result["data"]["match_type"] == "city_profile"
+
+
+@pytest.mark.parametrize("text", ["望京", "我在望京", "中关村"])
+def test_locality_alone_resolves_to_curated_locality(text):
+    result = catalog().query("rider_station", location=text)
+    assert result["status"] == "success"
+    assert result["data"]["match_type"] == "curated_locality"
+    assert result["data"]["coverage_level"] == "locality"
+
+
+def test_street_name_is_not_treated_as_locality():
+    result = catalog().query("rider_station", location="望京路")
+    assert result["data"]["match_type"] == "generic_fallback"
+
+
 def test_multiple_localities_fall_back_to_known_city_without_guessing_one():
     result = catalog().query("rider_station", location="北京中关村或望京")
     assert result["data"]["match_type"] == "city_profile"
@@ -388,7 +409,9 @@ def test_contact_fields_are_available_without_role_breaking_notes(location):
         result = catalog(scenario).query(kind, location=location)
         assert result["status"] == "success"
         for item in result["data"]["items"]:
-            assert re.fullmatch(r"1[3-9]\d{9}", item["phone"])
+            assert re.fullmatch(r"000-\d{4}-\d{4}", item["phone"])
+            assert item["phone_dialable"] is False
+            assert not re.fullmatch(r"1[3-9]\d{9}", item["phone"])
             assert result["data"]["matched_location"] in item["address"]
             assert "号" in item["address"]
             assert "未提供" not in item.get("address_note", "")
@@ -398,6 +421,21 @@ def test_contact_fields_are_available_without_role_breaking_notes(location):
                 assert "需向服务方确认" in item["availability"]
             assert item.get("distance_meters") is None
             assert not re.search(r"演示|样例|示例|课程", _business_text(item))
+
+
+def test_contacts_never_expose_a_dialable_mobile_number():
+    for scenario, kind in [
+        ("meituan_rider", "rider_station"),
+        ("meituan_rider", "vehicle_rental"),
+        ("didi_driver", "driver_service_point"),
+        ("didi_driver", "car_rental"),
+    ]:
+        for location in ["北京朝阳区望京", "长沙", "云南南华县龙川镇"]:
+            result = catalog(scenario).query(kind, location=location)
+            assert result["status"] == "success"
+            for item in result["data"]["items"]:
+                assert re.fullmatch(r"000-\d{4}-\d{4}", item["phone"])
+                assert item["phone_dialable"] is False
 
 
 def test_existing_unknown_store_offer_has_business_value_without_claiming_eligibility():

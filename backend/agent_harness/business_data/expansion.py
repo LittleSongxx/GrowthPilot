@@ -17,16 +17,23 @@ CONTACT_KINDS = {"rider_station", "driver_service_point", "vehicle_rental", "car
 
 
 def entity_contact(entity_id, location):
-    """根据实体标识生成稳定的联系方式，并在目录元数据中保留来源。"""
+    """生成稳定、唯一但不可拨打的占位联系方式。
+
+    中国没有官方预留的虚构手机号段，任何 1[3-9]xxxxxxxxx 都可能对应真人号码；
+    这里用 000 前缀的占位格式，并显式标记 phone_dialable=False，避免演示时被当成
+    真实业务线索。接入真实数据源时应替换本适配器，而不是恢复假号码。
+    """
     seed = hashlib.sha256(("contacts-v1:" + entity_id + ":" + location).encode()).hexdigest()
     number = int(seed, 16)
     streets = ("兴业路", "新兴路", "创业路", "民和路", "富康路", "永安路", "顺达路", "长兴路")
     street = streets[(number >> 32) % len(streets)]
     building = (number >> 40) % 298 + 1
     room = (number >> 48) % 18 + 101
+    placeholder = f"000-{(number >> 12) % 10000:04d}-{number % 10000:04d}"
     return {
         "address": f"{location}{street}{building}号{room}室",
-        "phone": "13" + f"{number % 1_000_000_000:09d}",
+        "phone": placeholder,
+        "phone_dialable": False,
     }
 
 
@@ -268,4 +275,7 @@ class BusinessExpansion:
                 item["name"] = context["matched_location"] + item["name"]
             contact_key = stable_id("contact", kind, context["scope_key"], contact_conditions)
             item.update(entity_contact(contact_key, context["matched_location"]))
-            item["address_note"] = "到访前请先通过联系电话确认接待时间和具体安排"
+            item["address_note"] = (
+                "到访前请先通过官方渠道确认接待时间和具体安排；"
+                "地址与电话为教学占位，不可直接到访或拨打"
+            )

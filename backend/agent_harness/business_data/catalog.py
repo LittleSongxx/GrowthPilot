@@ -234,6 +234,8 @@ class BusinessCatalog:
         )
         item["eligibility_filters"] = copy.deepcopy(row["conditions"])
         item["generated"] = False
+        if "phone" in item:
+            item["phone_dialable"] = False
         return item
 
     @staticmethod
