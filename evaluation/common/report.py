@@ -285,6 +285,16 @@ def write_report(output, suite, summary, manifest):
                 f"| {k} | {_number(metrics.get(f'recall_at_{k}'), percent=True)} | "
                 f"{_number(metrics.get(f'precision_at_{k}'), percent=True)} |"
             )
+        index = summary.get("index") or {}
+        if index:
+            lines += [
+                "",
+                (
+                    f"知识索引：`{index.get('source', 'unknown')}`，namespace "
+                    f"`{index.get('namespace', '')}`；复用现有索引："
+                    f"{'是' if index.get('reused') else '否'}。"
+                ),
+            ]
         lines += [
             "",
             "按全部计划题目宏平均；执行失败保留分母。Precision@k 不足 k 条的空位按不相关处理。",

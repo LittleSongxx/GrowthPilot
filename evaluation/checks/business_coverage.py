@@ -133,7 +133,9 @@ def assess(case, result):
         check("item_current:" + prefix, valid)
         if tool in {"search_nearby_stations", "search_driver_service_points"}:
             check("contact_fields_usable:" + prefix, isinstance(item.get("address"), str)
-                  and bool(item["address"].strip()) and re.fullmatch(r"1[3-9]\d{9}", str(item.get("phone", ""))))
+                  and bool(item["address"].strip())
+                  and re.fullmatch(r"000-\d{4}-\d{4}", str(item.get("phone", "")))
+                  and item.get("phone_dialable") is False)
             check("no_real_distance:" + prefix, item.get("distance_meters") is None
                   and bool(item.get("distance_note")) and bool(item.get("address_note")))
         elif tool == "query_delivery_pay":
