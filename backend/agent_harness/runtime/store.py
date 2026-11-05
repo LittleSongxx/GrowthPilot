@@ -68,21 +68,31 @@ class RuntimeStore:
             )
             return cursor.fetchone()["seq"]
 
-    def events(self, sid, after=0, limit=300):
+    def events_page(self, sid, after=0, limit=300):
+        """返回一页事件和下一页游标；调用方必须按 has_more 继续拉取。"""
         with self.connect() as db:
+            # 多取一条用于判断是否还有下一页，返回时截断。
             rows = db.execute(
                 "SELECT * FROM runtime_events WHERE session_id=%s AND seq>%s ORDER BY seq LIMIT %s",
-                (sid, after, limit),
+                (sid, after, limit + 1),
             ).fetchall()
-        return [
+        page = [
             {
                 "seq": row["seq"],
                 "type": row["type"],
                 "at": row["at"],
                 "data": json.loads(row["data_json"]),
             }
-            for row in rows
+            for row in rows[:limit]
         ]
+        return {
+            "events": page,
+            "last_seq": page[-1]["seq"] if page else after,
+            "has_more": len(rows) > limit,
+        }
+
+    def events(self, sid, after=0, limit=300):
+        return self.events_page(sid, after, limit)["events"]
 
     def reply_annotations(self, sid, fallback_channel):
         """将生成结果整理为回复标注，不推断声学表现或是否完整播放。"""

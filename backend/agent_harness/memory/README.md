@@ -6,7 +6,7 @@
 
 1. `BackendService.create_session()` 在同一事务中创建会话和 `profile_jobs` 记录，冻结本次有效画像。过期字段不注入，未知和拒答保留状态。
 2. `Conversation.business_summary()` 将画像放入系统上下文，每次模型推理均可见。同一通电话里，客户最新的明确表达优先于历史画像，不需要先保存再查询。
-3. `end_session()` 将任务从 `collecting` 改成 `pending`；仅有宿主开场、Agent 发言或中间转写时标记 `skipped`。此时不调用模型，所以结束通话无需等待提取。
+3. `end_session()` 将任务从 `collecting` 改成 `pending`；没有最终客户发言（只有宿主开场或 Agent 发言）时标记 `skipped`。打断时保留的中间转写以 `customer_transcript`、`final=1` 保存，仍算客户发言，会进入 `pending`。此时不调用模型，所以结束通话无需等待提取。
 4. `ProfileWorker` 在后台读取冻结的场景定义、通话前画像及完整的最终对话，调用一次独立模型提取字段变化。
 5. `ProfileStore.apply()` 校验整批字段、类型、客户消息 ID 和逐字引用，然后在同一事务中追加画像版本、写审计并完成任务。未提到的字段保持原样。
 

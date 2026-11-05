@@ -45,6 +45,11 @@ class ProfileWorker:
                 worked = await self.run_once()
             except (DatabaseError, OSError):
                 worked = False
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("画像任务循环异常，稍后继续")
+                worked = False
             await asyncio.sleep(0 if worked else 1)
 
     def claim(self):
