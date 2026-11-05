@@ -44,7 +44,7 @@ RAG 报告 Recall/Precision@1、3、5、8 和 MRR@8；对话报告目标完成�
 
 ## 兼容探针与当前评分口径
 
-[工程检查说明](../evaluation/checks/README.md)保留知识覆盖和语音探针命令。ASR/TTS 观察见[语音验证](voice-acceptance.md)，不混入文本评测分数。
+[工程检查说明](../evaluation/checks/README.md)保留知识覆盖和语音探针命令。ASR/TTS 观察见[语音验证](voice-acceptance.md)，不混入文本评测分数。语音验收以 `evaluation/checks/config/acceptance.yaml` 的人工记录为准；当前 `observations` 为空，`growth evaluate --suite voice` 只会返回 pending，不能当作已完成验收。
 
 2026-11-02 的全量评测记录已按 RAG 与 Agent 分类，详见[本轮评测记录](../evaluation/reports/README.md)。RAG 已完成 400 道检索题；Agent 全量运行保留 800 条记录，其中 799 通完成并取得有效评分，另 1 通客户模型输出异常。该客户的两次连续通话已独立补跑，原全量运行仍保留未完成状态，不能用补跑结果覆盖原始记录。报告作为教学成果保留运行清单、案例快照、原始结果、裁判记录与汇总，完整产物说明见[评测说明](../evaluation/README.md#三看报告和追溯一次失败)。
 

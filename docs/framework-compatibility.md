@@ -8,7 +8,9 @@ AgentScope 固定提交为 `e4c1e074dee3f0f6cca28ca29e934c4ec0605354`。`Agent.r
 
 [SpeechAPI](../backend/channels/speech.py) 通过 HTTP 调用 ASR `qwen3-asr-flash` 和 TTS `qwen3-tts-flash`。`DASHSCOPE_BASE_URL` 为 HTTPS 根域名，凭据只在后端。ASR 接收录音，TTS 接收已存储的最终回复；业务决策由 Agent 完成。
 
-浏览器使用 `MediaRecorder` 和原生 audio。单段最大 2 MiB、录音最多 60 秒，会话最多 300 秒，默认不保存音频。较长回复由后端分段合成并合并为一个 WAV。
+浏览器用 WebAudio + AudioWorklet 持续采集，按音量与停顿自动断句，把单次发言编码为单声道 16 bit WAV 上传；服务端按整段录音调用 ASR。回复音频由服务端按 600 字分块请求 TTS，以 24 kHz、16 bit 小端 PCM 分片返回，浏览器边收边播。单段最大 2 MiB、录音最多 60 秒，会话最多 300 秒，默认不保存音频。
+
+普通 HTTP 请求前端 45 秒超时；语音轮次与音频流不设该短超时，由服务端 300 秒会话预算、超时响应和用户打断收尾，避免正常的长回合或长音频被客户端截断。
 
 ## HTTP
 
@@ -21,9 +23,10 @@ AgentScope 固定提交为 `e4c1e074dee3f0f6cca28ca29e934c4ec0605354`。`Agent.r
 | POST `/api/sessions` | `{scenario_id,customer_id,run_id?}`，创建语音会话 |
 | POST `/api/sessions/{id}/voice/start` | 通过 `host_control` 触发开场 |
 | POST `/api/sessions/{id}/voice/turn` | 录音 → ASR → 保存客户转写 → Agent |
+| POST `/api/sessions/{id}/voice/interrupt` | 打断当前轮：停止旧 Agent 与 TTS，递增语音代数，迟到的结果不再播放 |
 | GET `/api/sessions/{id}/voice/audio/{message_id}` | 合成当前会话已保存的 Agent 回复，可独立重试 |
 | GET `/api/sessions/{id}/state`、`/events?after=N` | 会话、消息、客户画像、`profile_update` 任务状态、审计及执行事件 |
-| POST `/api/sessions/{id}/stop` | `{reason}`，宿主停止当前请求并释放资源 |
+| POST `/api/sessions/{id}/stop` | `{reason,generation?}`，宿主停止当前请求并释放资源；`reason=agent_completed` 时还要求 generation 与已登记的结束意图匹配，否则 409 |
 | POST `/api/sessions/{id}/telemetry` | 浏览器播放与可选体验记录 |
 
 文本评测使用内部 `Conversation.message(text, origin='customer')`；公共界面通过语音入口发送客户消息。

@@ -22,7 +22,7 @@
 | [channels/speech.py](../backend/channels/speech.py) | ASR/TTS HTTP 适配 |
 | [evaluation/datasets/](../evaluation/datasets/) | 四场景各 100 道 RAG 题、100 个动态客户案例及完整语料 |
 | [evaluation/rag/](../evaluation/rag/) | 检索执行、Recall、Precision 与 MRR |
-| [evaluation/dialogue/](../evaluation/dialogue/) | 普通模型模拟客户、真实文本 Agent 与三项端到端指标 |
+| [evaluation/dialogue/](../evaluation/dialogue/) | 普通模型模拟客户、真实文本 Agent、四项质量评分与 token/首 token 时延 |
 | [evaluation/judges/](../evaluation/judges/) | 事实来源整理、目标与事实评审 |
 | [evaluation/common/](../evaluation/common/) | 数据选择、完整 trace、运行清单与报告 |
 

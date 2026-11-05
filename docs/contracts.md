@@ -14,11 +14,11 @@
 
 [scenario.py](../backend/agent_harness/scenario.py) 直接读取自维护 YAML 和引用资源；配置约定由测试覆盖。字段与资源正文参与快照哈希，会话绑定创建时的版本。
 
-工具从函数签名生成参数 Schema，返回 `status/data/evidence/retryable`。业务查询可能返回 `success`、`needs_clarification`、`no_data`、`expired` 或 `denied`；本次调用包含完整结果和原因。
+工具从函数签名生成参数 Schema，返回 `status/data/evidence/retryable`。业务查询可能返回 `success`、`needs_clarification`、`no_data`、`expired` 或 `denied`；参数不合法返回 `denied`，工具超时返回 `unknown`。本次调用包含完整结果和原因。`retryable` 目前为保留字段，所有工具路径均为 false。
 
 `send_download_sms()` 不接收模型参数，客户与场景取自当前会话。结果提供下载短信的业务状态，同一会话重复调用复用发送回执。Agent 在客户同意后调用，并以工具结果判断是否已发送。
 
-原始业务查询的来源、命中层级与模板信息保存到 `business_query_audit`。[model_projection](../backend/agent_harness/tools/boundary.py) 提供模型使用的业务结果：方案、地址电话、金额、有效期、原始条件与适用条件。来源诊断不进入客户页面；政策工具的正文与出处保持完整。
+原始业务查询的来源、命中层级与模板信息保存到 `business_query_audit`。[model_projection](../backend/agent_harness/tools/boundary.py) 为模型筛选业务结果：保留方案、地址电话、金额、有效期、原始条件与适用条件，同时移除 `source`、`generated`、`disclosure`、`template_*` 等内部标记，模型与客户页面都看不到这些诊断字段。目录中的联系方式是教学占位（形如 `000-XXXX-XXXX`，并带 `phone_dialable: false`），不可拨打；政策工具的正文与出处不受该投影影响。
 
 `requested_location`、`requested_filters` 保存原始输入，`matched_location`、`assumed_filters` 说明采用范围。未知金融产品的费用试算区分请求产品与计算产品；技术 ID 只用于跨工具引用。无位置或多城市冲突需澄清，非法参数和过期数据不能自动转为成功。
 
