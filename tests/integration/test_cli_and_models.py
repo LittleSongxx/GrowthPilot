@@ -54,6 +54,14 @@ def test_model_profile_snapshot_preserves_the_configuration_content_hash():
 
 
 def test_judge_generation_configuration_reaches_settings_and_changes_snapshot(tmp_path, monkeypatch):
+    # 前序用例或真实 .env 可能把角色环境变量留在进程里；本用例只验证 YAML 默认值，
+    # 必须先清理，否则断言会依赖测试执行顺序。
+    for role in ("AGENT", "JUDGE", "CUSTOMER", "PROFILE"):
+        for field in (
+            "API_KEY", "BASE_URL", "MODEL", "TEMPERATURE", "MAX_TOKENS",
+            "MAX_TOKENS_PARAM", "REASONING_EFFORT", "EXTRA_BODY",
+        ):
+            monkeypatch.delenv(f"{role}_{field}", raising=False)
     config = tmp_path / "backend/config"
     config.mkdir(parents=True)
     source = ROOT / "backend/config"
