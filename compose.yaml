@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: pgvector/pgvector:pg17
+    image: ${POSTGRES_IMAGE:-pgvector/pgvector:pg17}
     environment:
       POSTGRES_DB: growth
       POSTGRES_USER: growth
@@ -16,5 +16,23 @@ services:
       retries: 20
     restart: unless-stopped
 
+  app:
+    image: growth-agent:local
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://growth:${POSTGRES_PASSWORD}@postgres:5432/growth
+      DATABASE_SCHEMA: growth
+      # 仅用于本地端口映射：容器内客户端地址是网桥网关，Host/Origin 仍限本机。
+      GROWTH_ALLOW_PROXY_CLIENT: "1"
+    ports:
+      - "127.0.0.1:${GROWTH_APP_PORT:-8787}:8787"
+    volumes:
+      - growth_runtime:/app/.run
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   postgres_data:
+  growth_runtime:
