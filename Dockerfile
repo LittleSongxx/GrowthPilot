@@ -27,5 +27,5 @@ RUN uv sync --locked --no-dev
 COPY --from=frontend /web/dist ./frontend/dist
 EXPOSE 8787
 # 启动：校验/初始化数据库 → 校验并恢复四场景知识索引 → 前台运行服务。
-# 业务进程不使用 growth up（它固定绑定 127.0.0.1 并在后台拉起子进程）。
+# 业务进程不使用 growthpilot up（它固定绑定 127.0.0.1 并在后台拉起子进程）。
 CMD ["sh", "-c", "set -e; uv run python -c 'from backend.settings import Settings; from backend.cli import prepare_database, prepare_knowledge_once; s = Settings.from_env(); prepare_database(s); prepare_knowledge_once(s)'; exec uv run uvicorn backend.api.app:create_app --factory --host 0.0.0.0 --port 8787 --no-access-log --log-config backend/config/logging.json"]

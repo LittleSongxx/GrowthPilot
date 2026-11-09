@@ -62,11 +62,11 @@ skills/
 ## 验证
 
 ```sh
-uv run growth validate
+uv run growthpilot validate
 uv run pytest -q tests/agent_harness/test_native_skills.py tests/agent_harness/test_scenario_v2.py tests/agent_harness/test_budget_tools.py
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-preview
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-preview
 # 显式调用完整 Agent、动态客户模型与独立 judge
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-run --execute
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-run --execute
 ```
 
 Skill 作为完整 Agent 的能力参与统一动态客户评测，不设独立 Skill suite、强制加载评分或消融实验。工程测试继续保护声明、原生加载与工具权限；对话 trace 保留实际加载事件，供失败排查使用。成功加载不等于解决客户问题。

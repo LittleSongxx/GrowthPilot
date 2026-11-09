@@ -76,7 +76,7 @@ def test_modified_catalog_is_rejected(copied_corpus):
         load_corpus(copied_corpus)
 
 
-@pytest.mark.parametrize("relative", ["../../outside.json", "/growth-agent/outside.json"])
+@pytest.mark.parametrize("relative", ["../../outside.json", "/growthpilot/outside.json"])
 def test_manifest_cannot_reference_files_outside_its_package(copied_corpus, relative):
     rewrite_catalog(copied_corpus, lambda value: value["documents"][0]["files"]["chunks.json"].update(
         path=relative
@@ -109,7 +109,7 @@ def test_unlisted_files_and_symbolic_links_are_rejected(copied_corpus, tmp_path)
 def test_private_home_path_is_rejected_even_with_matching_file_checksums(copied_corpus):
     catalog = json.loads((copied_corpus / "catalog.json").read_text())
     relative = catalog["documents"][0]["files"]["clean.txt"]["path"]
-    content = b"/Users/example/private-project/growth-agent"
+    content = b"/Users/example/private-project/growthpilot"
     (copied_corpus / relative).write_bytes(content)
     rewrite_catalog(copied_corpus, lambda value: value["documents"][0]["files"]["clean.txt"].update(
         sha256=hashlib.sha256(content).hexdigest()

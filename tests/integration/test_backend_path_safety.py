@@ -26,7 +26,7 @@ def test_snapshot_persists_relative_root_and_restores_legacy_location(database_c
                 "SELECT root FROM snapshots WHERE hash=%s", (scenario.snapshot_hash,)
             ).fetchone()
             assert row["root"] == relative
-            legacy_root = tmp_path / "previous-machine" / "growth-agent" / relative
+            legacy_root = tmp_path / "previous-machine" / "growthpilot" / relative
             db.execute(
                 "UPDATE snapshots SET root=%s WHERE hash=%s",
                 (str(legacy_root), scenario.snapshot_hash),
@@ -63,7 +63,7 @@ def test_external_scenario_snapshot_is_self_contained_without_its_original_direc
         service.close()
 
 
-@pytest.mark.parametrize("reference", [SCENARIO_PATH, "/growth-agent/" + SCENARIO_PATH])
+@pytest.mark.parametrize("reference", [SCENARIO_PATH, "/growthpilot/" + SCENARIO_PATH])
 def test_scenario_paths_are_resolved_from_project_in_another_working_directory(
     monkeypatch, tmp_path, reference
 ):

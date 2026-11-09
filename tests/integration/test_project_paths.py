@@ -17,8 +17,8 @@ def test_relative_and_display_paths_resolve_after_relocation(tmp_path, monkeypat
 
     expected = project / "backend/scenarios/meituan_rider/scenario.yaml"
     assert resolve_project_path("backend/scenarios/meituan_rider/scenario.yaml", project) == expected
-    assert resolve_project_path("/growth-agent/backend/scenarios/meituan_rider/scenario.yaml", project) == expected
-    assert resolve_project_path("/growth-agent", project) == project
+    assert resolve_project_path("/growthpilot/backend/scenarios/meituan_rider/scenario.yaml", project) == expected
+    assert resolve_project_path("/growthpilot", project) == project
     assert resolve_project_path(other / "explicit-custom.yaml", project) == other / "explicit-custom.yaml"
 
 
@@ -28,7 +28,7 @@ def test_display_path_cannot_escape_through_parent_or_symlink(tmp_path):
     project.mkdir()
     external.mkdir()
     (project / "linked").symlink_to(external, target_is_directory=True)
-    for value in ("/growth-agent/../external/file.json", "/growth-agent/linked/file.json"):
+    for value in ("/growthpilot/../external/file.json", "/growthpilot/linked/file.json"):
         with pytest.raises(ValueError, match="不能超出项目目录"):
             resolve_project_path(value, project)
 
@@ -44,7 +44,7 @@ def test_scenario_selection_does_not_use_same_named_file_in_current_directory(tm
     monkeypatch.chdir(other)
     settings = SimpleNamespace(project_root=project)
     assert scenario_path(settings, relative) == project / relative
-    assert scenario_path(settings, "/growth-agent/" + relative) == project / relative
+    assert scenario_path(settings, "/growthpilot/" + relative) == project / relative
     assert scenario_path(settings, "meituan_rider") == project / relative
 
 

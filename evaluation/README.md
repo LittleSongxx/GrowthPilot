@@ -10,17 +10,17 @@
 
 在项目根目录执行。默认只生成计划与预览，**加 `--execute` 才执行**。`--run` 可选：RAG 用它指定本轮目录名；Agent 用它记录运行标签，实际目录始终按模型名和评测日期自动生成。
 
-执行前启动 PostgreSQL + pgvector：`docker compose up -d --wait postgres`，再运行 `uv run growth database init`。连接使用 `.env` 中的 `DATABASE_URL` 与 `DATABASE_SCHEMA`。预览会只读检查知识版本，不创建索引或临时业务 schema；数据库初始化和隔离说明见[数据库文档](../docs/database.md)。
+执行前启动 PostgreSQL + pgvector：`docker compose up -d --wait postgres`，再运行 `uv run growthpilot database init`。连接使用 `.env` 中的 `DATABASE_URL` 与 `DATABASE_SCHEMA`。预览会只读检查知识版本，不创建索引或临时业务 schema；数据库初始化和隔离说明见[数据库文档](../docs/database.md)。
 
 ```sh
 # 预览骑手场景的前 3 道检索题，不加载检索模型
-uv run growth evaluate --suite rag --scenario meituan_rider --limit 3 --run rider-rag-preview
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --limit 3 --run rider-rag-preview
 # 使用真实本地检索器执行，无须云端模型密钥
-uv run growth evaluate --suite rag --scenario meituan_rider --limit 3 --run rider-rag-run --execute
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --limit 3 --run rider-rag-run --execute
 # 预览 3 个动态客户案例，每位客户计划连续通话 2 次
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3
 # 小规模观察链路，调用 Agent、独立客户模型会话及独立 judge
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --repeats 1 --execute
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --repeats 1 --execute
 ```
 
 `--scenario` 可选 `meituan_rider`、`meituan_merchant`、`didi_driver` 或 `financial_consultation`；省略时运行四场景。`--limit N` 表示**每个场景**最多 N 题。`--case <案例 ID>` 可以重复使用，只选指定案例；ID 从预览产物 `cases.json` 获取。`--repeats` 指同一客户在本轮评测中的连续通话次数，默认 2；同一客户各次通话使用稳定的客户 ID。
@@ -30,14 +30,14 @@ uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --rep
 准备全量对话评测时，先生成无模型请求的计划；报告应显示 400 位客户、每位客户连续通话 2 次、共 800 次计划通话、客户并发上限 16：
 
 ```sh
-uv run growth evaluate --suite dialogue --concurrency 16
+uv run growthpilot evaluate --suite dialogue --concurrency 16
 ```
 
 正式全量运行时显式加上 `--execute`，结果与预览分别保存：
 
 ```sh
-uv run growth evaluate --suite rag --run rag-baseline --execute
-uv run growth evaluate --suite dialogue --concurrency 16 --execute
+uv run growthpilot evaluate --suite rag --run rag-baseline --execute
+uv run growthpilot evaluate --suite dialogue --concurrency 16 --execute
 ```
 
 对话执行需要已配置的 `AGENT_API_KEY` 及运行时知识索引。业务 Agent、模拟客户、通话后画像提取和裁判分别读取 `AGENT_*`、`CUSTOMER_*`、`PROFILE_*`、`JUDGE_*` 环境变量，也可在 `backend/config/models.yaml` 的 `agent`、`customer`、`profile`、`judge` 分组设置模型、温度和输出预算。辅助角色未指定模型、地址或密钥时沿用 Agent 的有效配置，设置对应角色的 `MODEL`、`BASE_URL`、`API_KEY` 即可独立切换 GPT、Qwen 或其他 OpenAI 兼容模型；各角色上下文保持独立。特殊能力通过各自的 `EXTRA_BODY` 显式配置，默认不发送供应商专用参数；不支持温度的模型使用对应角色的 `TEMPERATURE=null`，要求新预算字段的模型设置 `MAX_TOKENS_PARAM=max_completion_tokens`。运行清单记录实际参数，原始用量保留供应商返回的思考 token。无须部署客户专用模型，没有客户角色检查、校准套件、固定客户脚本或消融实验。
@@ -138,8 +138,8 @@ Agent 主动开场后，客户模型根据真实回复生成下一句话；后�
 对话已成功完成、但裁判未取得有效结果时，可以复用原始对话，只重新请求失败的裁判。先预览，再显式执行；把示例中的目录名替换为实际来源运行：
 
 ```bash
-uv run growth evaluate --suite dialogue --retry-judge-from agent/deepseek-flash_2026-11-02_20-25-06
-uv run growth evaluate --suite dialogue --retry-judge-from agent/deepseek-flash_2026-11-02_20-25-06 --execute
+uv run growthpilot evaluate --suite dialogue --retry-judge-from agent/deepseek-flash_2026-11-02_20-25-06
+uv run growthpilot evaluate --suite dialogue --retry-judge-from agent/deepseek-flash_2026-11-02_20-25-06 --execute
 ```
 
 `--retry-judge-from` 接受 `agent/<目录名>`，也接受能够唯一定位的目录名，并兼容旧版平铺目录。补跑结果使用来源中的 Agent 模型名和本次日期新建目录；预览仍写入 `.run/evaluation-previews/agent/`。
@@ -173,7 +173,7 @@ uv run growth evaluate --suite dialogue --retry-judge-from agent/deepseek-flash_
 
 压缩仅改变聚合轨迹的保存格式，不改变对话、评分或记录顺序；回放和裁判补跑均能直接读取两种格式，报告链接也会指向实际文件。逐通 `traces/` 与 `judge/` 文件保持可直接阅读的 JSON。
 
-查看某轮结果时可以直接打开 `report.md`；回放 Agent 对话使用 `uv run growth replay --run agent/deepseek-flash_2026-11-02_20-25-06`，也支持能够唯一定位的目录名和旧版平铺目录。RAG 的逐题检索结果保存在对应目录的 `rag_results.json` 中。
+查看某轮结果时可以直接打开 `report.md`；回放 Agent 对话使用 `uv run growthpilot replay --run agent/deepseek-flash_2026-11-02_20-25-06`，也支持能够唯一定位的目录名和旧版平铺目录。RAG 的逐题检索结果保存在对应目录的 `rag_results.json` 中。
 
 对话运行清单只读记录实际知识索引的语料版本、模型签名和分块数量；执行结束再次核对知识与代码资源。若运行期间版本变化，状态标为 `invalidated`，保留轨迹但不发布正式指标。预览不会创建索引或加载向量模型。
 
@@ -198,4 +198,4 @@ evaluation/
 
 `tests/evaluation/` 测试评测程序本身的分母、异常、证据与协议；`tests/agent_harness/` 继续保护 Memory 持久化、Skill 加载权限及业务计算等运行时功能。它们不评价某个 Memory/Skill 开关的收益。
 
-工程契约、知识覆盖和语音探针的代码与输入统一放在 `evaluation/checks/`，新检查产物写入 `.run/checks/`，仅用于工程检查与问题定位，现有 `growth` 工程命令保留。本轮已经取得的工程检查证据保存在对应 Agent 运行的 `checks/` 下，与该轮评测一起追溯。知识探针的固定追问不是第二套正式对话评测。不同口径的报告不能直接比较。具体兼容命令见 [工程检查说明](checks/README.md)。
+工程契约、知识覆盖和语音探针的代码与输入统一放在 `evaluation/checks/`，新检查产物写入 `.run/checks/`，仅用于工程检查与问题定位，现有 `growthpilot` 工程命令保留。本轮已经取得的工程检查证据保存在对应 Agent 运行的 `checks/` 下，与该轮评测一起追溯。知识探针的固定追问不是第二套正式对话评测。不同口径的报告不能直接比较。具体兼容命令见 [工程检查说明](checks/README.md)。

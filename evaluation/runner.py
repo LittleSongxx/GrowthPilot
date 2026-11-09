@@ -236,7 +236,7 @@ def run_suite(
     datasets = loader(settings.project_root, scenario)
     if portable_data(datasets, settings.project_root) != datasets:
         raise ValueError(
-            "评测题集包含本机绝对路径；请改为相对路径或 /growth-agent/... 后再运行。"
+            "评测题集包含本机绝对路径；请改为相对路径或 /growthpilot/... 后再运行。"
         )
     cases = select_cases(datasets, limit=limit, case_ids=case_ids)
     manifest = make_manifest(settings, datasets, cases, suite, repeats, concurrency)

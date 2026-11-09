@@ -18,13 +18,13 @@ from tests.evaluation.test_report import dialogue_summary, render_dialogue
 
 
 def test_json_and_report_redact_nested_paths_without_mutating_inputs(tmp_path):
-    local_file = "/Users/teacher/work/growth-agent/backend/scenarios/example.yaml"
+    local_file = "/Users/teacher/work/growthpilot/backend/scenarios/example.yaml"
     payload = {"error": f"无法读取 {local_file}", "nested": [{"source": local_file}]}
     before = digest(payload)
     output = tmp_path / "result.json"
     dump(output, payload)
     saved = json.loads(output.read_text())
-    assert saved["nested"][0]["source"] == "/growth-agent/backend/scenarios/example.yaml"
+    assert saved["nested"][0]["source"] == "/growthpilot/backend/scenarios/example.yaml"
     assert "/Users/" not in output.read_text()
     assert digest(payload) == before
     assert _error_record(ValueError(local_file))["message"] == saved["nested"][0]["source"]
@@ -34,12 +34,12 @@ def test_json_and_report_redact_nested_paths_without_mutating_inputs(tmp_path):
         quality["low_score_cases"][0]["reason"] = f"参考资料缺失：{local_file}"
     report = render_dialogue(tmp_path, summary)
     assert "/Users/" not in report
-    assert "/growth-agent/backend/scenarios/example.yaml" in report
+    assert "/growthpilot/backend/scenarios/example.yaml" in report
     assert "(traces/" in report
 
 
 @pytest.mark.parametrize("filename,content", [
-    ("report.md", "日志位置：/Users/teacher/work/growth-agent/.run/application.log"),
+    ("report.md", "日志位置：/Users/teacher/work/growthpilot/.run/application.log"),
     ("judge/original.json", '{"content":"\\u002fUsers\\u002fteacher\\u002fprivate.json"}'),
     ("judge/original.json.gz", '{"content":"\\u002fUsers\\u002fteacher\\u002fprivate.json"}'),
     ("judge/raw.txt", "File C:\\Users\\teacher\\project\\output.json"),
@@ -67,7 +67,7 @@ def test_judge_retry_reads_relocated_report_and_preserves_frozen_hashes(tmp_path
     assert retry.run_retry(settings, "original", run_id="portable-preview") == 0
     published = json.loads(capsys.readouterr().out)
     assert published["path"].startswith(
-        "/growth-agent/.run/evaluation-previews/agent/original-agent_"
+        "/growthpilot/.run/evaluation-previews/agent/original-agent_"
     )
     output = paths.resolve_project_path(published["path"], relocated)
     manifest = json.loads((output / "manifest.json").read_text())
@@ -82,7 +82,7 @@ def test_judge_retry_reads_relocated_report_and_preserves_frozen_hashes(tmp_path
 
 
 @pytest.mark.parametrize("output_path", [
-    ".run/checks/contracts.json", "/growth-agent/.run/checks/contracts.json",
+    ".run/checks/contracts.json", "/growthpilot/.run/checks/contracts.json",
 ])
 def test_check_cli_resolves_output_from_project_root(tmp_path, monkeypatch, capsys, output_path):
     project = tmp_path / "student-project"
@@ -96,7 +96,7 @@ def test_check_cli_resolves_output_from_project_root(tmp_path, monkeypatch, caps
     monkeypatch.setattr(contracts, "experiments", experiments)
     contracts.main()
     output = project / ".run/checks/contracts.json"
-    assert json.loads(output.read_text())["source"] == "/growth-agent/backend/example.yaml"
+    assert json.loads(output.read_text())["source"] == "/growthpilot/backend/example.yaml"
     assert str(tmp_path) not in capsys.readouterr().out
     assert not (tmp_path / ".run").exists()
 
@@ -112,6 +112,6 @@ def test_check_questions_use_project_root_from_another_working_directory(tmp_pat
     monkeypatch.setattr(paths, "PROJECT_ROOT", project)
     monkeypatch.chdir(tmp_path)
     relative = knowledge_probe.load_questions("evaluation/questions.yaml")
-    displayed = knowledge_probe.load_questions("/growth-agent/evaluation/questions.yaml")
+    displayed = knowledge_probe.load_questions("/growthpilot/evaluation/questions.yaml")
     assert relative == displayed
     assert relative[0]["question"] == "如何报名？"

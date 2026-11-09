@@ -15,14 +15,14 @@ uv run python -m evaluation.checks.knowledge_probe --agent --output .run/checks/
 
 `data/knowledge_questions.yaml` 为 16 道历史业务问题，`data/policy_coverage.yaml` 为 40 道政策覆盖检查。它们没有完整相关片段标注，不计入正式 400 道 RAG 题。`data/skill-knowledge.yaml` 是已撤销 skills 套件的历史输入，当前没有代码引用，只保留来源。
 
-`data/business-coverage-v1.json` 是确定性业务工具输入矩阵，不是对话客户题集。`growth evaluate --suite contracts` 和 `--suite business-coverage` 继续用于工程检查，不调用模型，也不接受 `--execute`；结果写入 `.run/checks/<run>/`，可用 `--run` 指定本轮名称。`config/acceptance.yaml` 保存语音验收设置。
+`data/business-coverage-v1.json` 是确定性业务工具输入矩阵，不是对话客户题集。`growthpilot evaluate --suite contracts` 和 `--suite business-coverage` 继续用于工程检查，不调用模型，也不接受 `--execute`；结果写入 `.run/checks/<run>/`，可用 `--run` 指定本轮名称。`config/acceptance.yaml` 保存语音验收设置。
 
-语音探针同样不属于文本 Agent 正式评测；它只验证一次 ASR/TTS 链路可用。人工验收记录保存在 `config/acceptance.yaml`，当前 `observations` 为空，`growth evaluate --suite voice` 会返回 pending，不能当作已验收：
+语音探针同样不属于文本 Agent 正式评测；它只验证一次 ASR/TTS 链路可用。人工验收记录保存在 `config/acceptance.yaml`，当前 `observations` 为空，`growthpilot evaluate --suite voice` 会返回 pending，不能当作已验收：
 
 ```sh
 # 调用云端 ASR、文本模型和 TTS
 uv run python -m evaluation.checks.speech_probe --output .run/checks/speech-check.json
-uv run growth evaluate --suite voice
+uv run growthpilot evaluate --suite voice
 ```
 
-输入和输出的相对路径均从项目根目录解析；`/growth-agent/...` 展示路径也会映射到当前项目。上述命令把工程检查的临时报告放在 `.run/checks/`，真实模型的对话探针也写入该目录，无需随教学源码提交。`evaluation/reports/` 只设 `rag/` 与 `agent/` 两个分类目录。本轮已保存的工程、契约与业务覆盖证据归档到对应 Agent 运行的 `checks/` 下，详见[本轮评测记录](../reports/README.md)。所有执行使用新输出路径。旧 `skills` suite 已移除；原 48 个固定对话与 20 个 Skill 案例中的业务问题可在新客户集追溯，固定台词和强制 Skill 加载评分不再使用。
+输入和输出的相对路径均从项目根目录解析；`/growthpilot/...` 展示路径也会映射到当前项目。上述命令把工程检查的临时报告放在 `.run/checks/`，真实模型的对话探针也写入该目录，无需随教学源码提交。`evaluation/reports/` 只设 `rag/` 与 `agent/` 两个分类目录。本轮已保存的工程、契约与业务覆盖证据归档到对应 Agent 运行的 `checks/` 下，详见[本轮评测记录](../reports/README.md)。所有执行使用新输出路径。旧 `skills` suite 已移除；原 48 个固定对话与 20 个 Skill 案例中的业务问题可在新客户集追溯，固定台词和强制 Skill 加载评分不再使用。

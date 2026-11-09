@@ -1,3 +1,5 @@
+name: growthpilot
+
 services:
   postgres:
     image: ${POSTGRES_IMAGE:-pgvector/pgvector:pg17}
@@ -17,7 +19,7 @@ services:
     restart: unless-stopped
 
   app:
-    image: growth-agent:local
+    image: growthpilot:local
     env_file: .env
     environment:
       DATABASE_URL: postgresql://growth:${POSTGRES_PASSWORD}@postgres:5432/growth
@@ -27,7 +29,7 @@ services:
     ports:
       - "127.0.0.1:${GROWTH_APP_PORT:-8787}:8787"
     volumes:
-      - growth_runtime:/app/.run
+      - growthpilot_runtime:/app/.run
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,4 +37,4 @@ services:
 
 volumes:
   postgres_data:
-  growth_runtime:
+  growthpilot_runtime:

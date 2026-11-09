@@ -19,7 +19,7 @@ def test_cli_forwards_dialogue_concurrency_with_preview_default(monkeypatch, opt
     monkeypatch.setattr(cli.Settings, "from_env", lambda: settings)
     monkeypatch.setattr(runner, "run_suite", run_suite)
     monkeypatch.setattr(
-        "sys.argv", ["growth", "evaluate", "--suite", "dialogue", "--run", "preview", *options]
+        "sys.argv", ["growthpilot", "evaluate", "--suite", "dialogue", "--run", "preview", *options]
     )
     with pytest.raises(SystemExit) as raised:
         cli.main()
@@ -36,7 +36,7 @@ def test_cli_rejects_invalid_concurrency_before_loading_settings(monkeypatch, va
     monkeypatch.setattr(cli.Settings, "from_env", forbidden)
     monkeypatch.setattr(
         "sys.argv",
-        ["growth", "evaluate", "--suite", "dialogue", "--run", "preview", "--concurrency", value],
+        ["growthpilot", "evaluate", "--suite", "dialogue", "--run", "preview", "--concurrency", value],
     )
     with pytest.raises(SystemExit) as raised:
         cli.main()

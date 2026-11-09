@@ -9,7 +9,7 @@ from pathlib import Path, PurePath
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PROJECT_PREFIX = "/growth-agent"
+PROJECT_PREFIX = "/growthpilot"
 
 # 只匹配独立的本机路径；公开网站 URL 中的 /home/ 等业务路由保持原样。
 _LOCAL_PATH = re.compile(

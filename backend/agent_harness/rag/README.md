@@ -14,32 +14,32 @@
 
 ## 先运行美团骑手
 
-在项目根 `growth-agent/` 执行：
+在项目根 `GrowthPilot/` 执行：
 
 ```sh
 uv sync --locked
 docker compose up -d --wait postgres
-uv run growth database init
-uv run growth up --build --scenario meituan_rider
-uv run growth knowledge search --scenario meituan_rider --query '报名要交钱吗'
-uv run growth knowledge status
+uv run growthpilot database init
+uv run growthpilot up --build --scenario meituan_rider
+uv run growthpilot knowledge search --scenario meituan_rider --query '报名要交钱吗'
+uv run growthpilot knowledge status
 ```
 
-`growth up` 先初始化数据库结构，校验 `backend/agent_harness/rag/knowledge/v1/` 的文件哈希，再比对当前 schema 的 `production` namespace 与固定教学语料的四场景版本。索引缺失或版本不一致时，从固定分块恢复教学索引，并确保本地向量模型可用后继续启动。索引更新使用事务；语料校验失败时停止，不联网抓取资料来替代缺失文件。
+`growthpilot up` 先初始化数据库结构，校验 `backend/agent_harness/rag/knowledge/v1/` 的文件哈希，再比对当前 schema 的 `production` namespace 与固定教学语料的四场景版本。索引缺失或版本不一致时，从固定分块恢复教学索引，并确保本地向量模型可用后继续启动。索引更新使用事务；语料校验失败时停止，不联网抓取资料来替代缺失文件。
 
-默认构建不访问官方资料网站。首次构建或启动准备仍可能下载 `BAAI/bge-small-zh-v1.5` 模型，可能需要几分钟。向量计算在本机进行，不需要额外的 Embedding API Key。搜索只加载已缓存模型，不在客户通话时下载；状态查询不联网，也不加载模型。模型缓存缺失时重新运行构建或 `growth up`。
+默认构建不访问官方资料网站。首次构建或启动准备仍可能下载 `BAAI/bge-small-zh-v1.5` 模型，可能需要几分钟。向量计算在本机进行，不需要额外的 Embedding API Key。搜索只加载已缓存模型，不在客户通话时下载；状态查询不联网，也不加载模型。模型缓存缺失时重新运行构建或 `growthpilot up`。
 
 省略 `--scenario` 构建全部四场景；场景分别是 `didi_driver`、`meituan_rider`、`meituan_merchant`、`financial_consultation`：
 
 ```sh
-uv run growth knowledge build
+uv run growthpilot knowledge build
 # 显式联网采集最新资料并建立实验索引
-uv run growth knowledge build --refresh
+uv run growthpilot knowledge build --refresh
 # 使用上次在线采集的分块，不重新采集网页
-uv run growth knowledge build --scenario meituan_rider --from-cache
+uv run growthpilot knowledge build --scenario meituan_rider --from-cache
 ```
 
-不加选项时始终使用固定教学语料。`--from-cache` 是兼容选项，读取 `.run/knowledge/catalog.json` 指向的上次在线采集分块；没有采集缓存时会报错。`--refresh` 与 `--from-cache` 互斥，都不会修改 `backend/agent_harness/rag/knowledge/v1/`。修改解析或分块代码后，用 `--refresh` 检验新逻辑。项目没有定时采集任务，下一次 `growth up` 会将实验索引恢复为固定教学版本；需要预先准备全部教学场景时，应不带 `--scenario` 运行默认构建。
+不加选项时始终使用固定教学语料。`--from-cache` 是兼容选项，读取 `.run/knowledge/catalog.json` 指向的上次在线采集分块；没有采集缓存时会报错。`--refresh` 与 `--from-cache` 互斥，都不会修改 `backend/agent_harness/rag/knowledge/v1/`。修改解析或分块代码后，用 `--refresh` 检验新逻辑。项目没有定时采集任务，下一次 `growthpilot up` 会将实验索引恢复为固定教学版本；需要预先准备全部教学场景时，应不带 `--scenario` 运行默认构建。
 
 ## 采集与分块
 
@@ -60,7 +60,7 @@ documents/<来源 ID>/
   chunks.json                        与评测冻结语料一致的分块
 ```
 
-教学包不包含原始网页、PDF 或 JSON 响应，也不包含本地模型。文件中的项目路径只使用相对路径或以 `/growth-agent` 开头的项目路径，不保存作者的用户目录。这里仅冻结知识输入，政策有效期仍按实际日期过滤，不同日期的候选和结果可能变化；模型采样和云端服务也不保证逐字输出相同答案。
+教学包不包含原始网页、PDF 或 JSON 响应，也不包含本地模型。文件中的项目路径只使用相对路径或以 `/growthpilot` 开头的项目路径，不保存作者的用户目录。这里仅冻结知识输入，政策有效期仍按实际日期过滤，不同日期的候选和结果可能变化；模型采样和云端服务也不保证逐字输出相同答案。
 
 显式 `--refresh` 的结果和模型缓存继续位于被 Git 忽略的 `.run/knowledge/`，与随 Git 发布的教学语料分开：
 
@@ -98,7 +98,7 @@ RRF 把各路名次转换为倒数后相加，不直接混合 BM25 和余弦相�
 
 ## 增加或更新资料
 
-先在 `sources.yaml` 添加可信官方来源，再运行 `growth knowledge build --refresh` 并检查原文、清洗和查询结果。必需信息是 `id`、`scenario_id`、`title`、`url`；域名需包含在 `allowed_hosts`。根据网页结构填写正文 `selector` 或 FAQ 的 `faq_selector`，按实际资料填写 `published_at`、`region`、`business_type`、`document_type`、`scope_note` 等元数据，未知则留空，不推测。
+先在 `sources.yaml` 添加可信官方来源，再运行 `growthpilot knowledge build --refresh` 并检查原文、清洗和查询结果。必需信息是 `id`、`scenario_id`、`title`、`url`；域名需包含在 `allowed_hosts`。根据网页结构填写正文 `selector` 或 FAQ 的 `faq_selector`，按实际资料填写 `published_at`、`region`、`business_type`、`document_type`、`scope_note` 等元数据，未知则留空，不推测。
 
 内容接口用 `format: json_faq/json_html` 与 `json_path` 指定字段；必要时配置官网真实使用的 `method: POST` 和 `form_data`。`page_url` 是用户可打开的官方页面，实际响应地址保留为 `fetch_url`。公报类 PDF 可用已核验的 `pdf_pages`（从 1 开始、包含两端）和 `pdf_start_text` 只提取目标文件，整份 PDF 仍保留以供核验。
 
@@ -114,11 +114,11 @@ Skill 指导如何查证，Memory 保存客户自述，业务目录提供地区�
 
 ```sh
 # 预览单场景问题；正式数据每场景 100 题
-uv run growth evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
 # 使用与标注匹配的完整语料执行真实检索
-uv run growth evaluate --suite rag --scenario meituan_rider --run rag-run --execute
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --run rag-run --execute
 # 由动态客户观察完整文本 Agent 的检索和回答，会调用云模型
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-run --execute
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --run dialogue-run --execute
 uv run pytest -q tests/rag tests/evaluation
 ```
 
@@ -130,7 +130,7 @@ RAG 只报告 Recall/Precision@1、3、5、8 和 MRR@8。每题有相关片段�
 
 ## 维护边界
 
-`sources.yaml` 是明确的采集清单，不是品牌全部政策目录。地方规则不能外推其他城市，合同只适用于其资方、渠道和还款模式，历史公告不能直接转为当前承诺。当前来源和刷新状态通过 `growth knowledge status` 查看。
+`sources.yaml` 是明确的采集清单，不是品牌全部政策目录。地方规则不能外推其他城市，合同只适用于其资方、渠道和还款模式，历史公告不能直接转为当前承诺。当前来源和刷新状态通过 `growthpilot knowledge status` 查看。
 
 公开资料无法给出个人审批、实际费率、收入或到账保证。即使索引中存在某条规则，也必须以当次返回正文为依据。Agent 可能遗漏或压缩必要条件，仍需通过具体问答复核。
 

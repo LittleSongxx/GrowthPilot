@@ -503,7 +503,7 @@ def up(args, settings):
                     "port": port,
                     "name": name,
                     "process_started": process_field(process.pid, "lstart"),
-                    "project_root": "/growth-agent",
+                    "project_root": "/growthpilot",
                 }
             )
             state.write_text(json.dumps({"scenario": scenario.id, "processes": records}, indent=2))
@@ -528,13 +528,13 @@ def up(args, settings):
         down(args, settings)
         raise
     print(
-        f"Growth Agent 已启动：http://127.0.0.1:{settings.app_port}\n当前场景：{scenario.data['scenario']['title']}\n语音："
+        f"GrowthPilot 已启动：http://127.0.0.1:{settings.app_port}\n当前场景：{scenario.data['scenario']['title']}\n语音："
         + (
             "可用，点击页面开始通话"
             if settings.dashscope_api_key and settings.dashscope_base_url
             else "缺少语音凭据，请检查 .env"
         )
-        + "\n停止：growth down（保留历史）"
+        + "\n停止：growthpilot down（保留历史）"
     )
     return 0
 
@@ -705,7 +705,7 @@ def voice_case(args, settings):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="growth", description="通用外呼 Agent · 多场景客户增长工作台"
+        prog="growthpilot", description="GrowthPilot · 四场景语音用户增长工作台"
     )
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("doctor", help="离线检查；仅 --online 发起模型请求")

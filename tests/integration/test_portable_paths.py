@@ -21,31 +21,31 @@ from evaluation.common.io import dump
 
 
 def test_project_paths_are_stable_between_checkouts(tmp_path):
-    first = tmp_path / "author checkout" / "growth-agent"
-    second = tmp_path / "student checkout" / "growth-agent"
+    first = tmp_path / "author checkout" / "growthpilot"
+    second = tmp_path / "student checkout" / "growthpilot"
     relative = Path("data/knowledge/catalog.json")
 
-    assert portable_path(first / relative, first) == "/growth-agent/data/knowledge/catalog.json"
+    assert portable_path(first / relative, first) == "/growthpilot/data/knowledge/catalog.json"
     assert portable_path(second / relative, second) == portable_path(first / relative, first)
     assert portable_path(relative, first) == portable_path(first / relative, first)
-    assert portable_path(first, first) == "/growth-agent"
-    assert portable_path("/growth-agent/data/knowledge/catalog.json", first) == (
-        "/growth-agent/data/knowledge/catalog.json"
+    assert portable_path(first, first) == "/growthpilot"
+    assert portable_path("/growthpilot/data/knowledge/catalog.json", first) == (
+        "/growthpilot/data/knowledge/catalog.json"
     )
 
 
 def test_paths_from_another_machine_do_not_expose_usernames(tmp_path):
-    assert portable_path("/Users/example/projects/growth-agent/data/catalog.json", tmp_path) == (
-        "/growth-agent/data/catalog.json"
+    assert portable_path("/Users/example/projects/growthpilot/data/catalog.json", tmp_path) == (
+        "/growthpilot/data/catalog.json"
     )
-    assert portable_path(r"C:\Users\example\growth-agent\data\catalog.json", tmp_path) == (
-        "/growth-agent/data/catalog.json"
+    assert portable_path(r"C:\Users\example\growthpilot\data\catalog.json", tmp_path) == (
+        "/growthpilot/data/catalog.json"
     )
     assert portable_path("/home/example/private/report.json", tmp_path) == "report.json"
 
 
 def test_redaction_preserves_public_urls_and_handles_project_parent_spaces(tmp_path):
-    root = tmp_path / "author checkout" / "growth-agent"
+    root = tmp_path / "author checkout" / "growthpilot"
     text = (
         f'File "{root}/backend/cli.py", line 1\n'
         "外部资料 file:///Users/example/private/example.pdf\n"
@@ -54,7 +54,7 @@ def test_redaction_preserves_public_urls_and_handles_project_parent_spaces(tmp_p
     )
 
     assert redact_local_paths(text, root) == (
-        'File "/growth-agent/backend/cli.py", line 1\n'
+        'File "/growthpilot/backend/cli.py", line 1\n'
         "外部资料 example.pdf\n"
         "公开网页 https://example.com/home/example/page\n"
         "相对引用 data/knowledge/catalog.json"
@@ -64,7 +64,7 @@ def test_redaction_preserves_public_urls_and_handles_project_parent_spaces(tmp_p
 def test_saved_evaluation_json_redacts_nested_paths_without_mutating_inputs(tmp_path, monkeypatch):
     from backend import paths
 
-    root = tmp_path / "author" / "growth-agent"
+    root = tmp_path / "author" / "growthpilot"
     monkeypatch.setattr(paths, "PROJECT_ROOT", root)
     original = {
         "snapshots": [str(root / "data/knowledge/catalog.json")],
@@ -76,8 +76,8 @@ def test_saved_evaluation_json_redacts_nested_paths_without_mutating_inputs(tmp_
     saved = json.loads(output.read_text(encoding="utf-8"))
 
     assert saved == portable_data(original, root)
-    assert saved["snapshots"] == ["/growth-agent/data/knowledge/catalog.json"]
-    assert saved["nested"]["source"] == "/growth-agent/evaluation/datasets/corpus/meituan_rider.jsonl"
+    assert saved["snapshots"] == ["/growthpilot/data/knowledge/catalog.json"]
+    assert saved["nested"]["source"] == "/growthpilot/evaluation/datasets/corpus/meituan_rider.jsonl"
     assert str(root) not in output.read_text(encoding="utf-8")
     assert original["snapshots"][0] == str(root / "data/knowledge/catalog.json")
 
@@ -85,7 +85,7 @@ def test_saved_evaluation_json_redacts_nested_paths_without_mutating_inputs(tmp_
 def test_formatter_redacts_exception_frames_and_message(tmp_path, monkeypatch):
     from backend import paths
 
-    root = tmp_path / "author checkout" / "growth-agent"
+    root = tmp_path / "author checkout" / "growthpilot"
     monkeypatch.setattr(paths, "PROJECT_ROOT", root)
     def fail_in_project():
         raise ValueError("读取失败")
@@ -102,8 +102,8 @@ def test_formatter_redacts_exception_frames_and_message(tmp_path, monkeypatch):
         )
 
     rendered = PortablePathFormatter("%(message)s").format(record)
-    assert "/growth-agent/data/knowledge/catalog.json" in rendered
-    assert 'File "/growth-agent/backend/worker.py"' in rendered
+    assert "/growthpilot/data/knowledge/catalog.json" in rendered
+    assert 'File "/growthpilot/backend/worker.py"' in rendered
     assert str(root) not in rendered
     assert "ValueError: 读取失败" in rendered
 
@@ -112,7 +112,7 @@ def test_rag_snapshot_paths_are_portable_and_content_hash_is_unchanged(tmp_path)
     from backend.agent_harness.rag.index import _json
     from evaluation.rag.runner import _load_frozen_chunks
 
-    root = tmp_path / "growth-agent"
+    root = tmp_path / "growthpilot"
     chunk = {"id": "example", "scenario_id": "meituan_rider", "text": "固定教学语料"}
     snapshot = root / "evaluation/datasets/corpus/meituan_rider.jsonl"
     snapshot.parent.mkdir(parents=True)
@@ -124,7 +124,7 @@ def test_rag_snapshot_paths_are_portable_and_content_hash_is_unchanged(tmp_path)
     )
 
     assert chunks == [chunk]
-    assert references == ["/growth-agent/evaluation/datasets/corpus/meituan_rider.jsonl"]
+    assert references == ["/growthpilot/evaluation/datasets/corpus/meituan_rider.jsonl"]
 
 
 def test_agentscope_logger_redacts_exception_without_changing_handler_settings(
@@ -134,7 +134,7 @@ def test_agentscope_logger_redacts_exception_without_changing_handler_settings(
 
     from backend import paths
 
-    root = tmp_path / "author checkout" / "growth-agent"
+    root = tmp_path / "author checkout" / "growthpilot"
     monkeypatch.setattr(paths, "PROJECT_ROOT", root)
     stream = io.StringIO()
     handler = logging.StreamHandler(stream)
@@ -165,8 +165,8 @@ def test_agentscope_logger_redacts_exception_without_changing_handler_settings(
         logger.exception("AgentScope 执行失败：%s", root / "data/knowledge/catalog.json")
 
     rendered = stream.getvalue()
-    assert rendered.startswith("ERROR | AgentScope 执行失败：/growth-agent/")
-    assert 'File "/growth-agent/backend/worker.py"' in rendered
+    assert rendered.startswith("ERROR | AgentScope 执行失败：/growthpilot/")
+    assert 'File "/growthpilot/backend/worker.py"' in rendered
     assert "ValueError: 依赖库执行失败" in rendered
     assert str(root) not in rendered
     assert "应被 handler 级别过滤" not in rendered
@@ -177,7 +177,7 @@ def test_loguru_sink_redacts_paths_and_exception_after_formatting(tmp_path, monk
 
     from backend import paths
 
-    root = tmp_path / "author checkout" / "growth-agent"
+    root = tmp_path / "author checkout" / "growthpilot"
     monkeypatch.setattr(paths, "PROJECT_ROOT", root)
     install_path_safe_logging()
     install_path_safe_logging()
@@ -195,9 +195,9 @@ def test_loguru_sink_redacts_paths_and_exception_after_formatting(tmp_path, monk
         logger.exception("FastEmbed 读取失败：{}", root / ".run/knowledge/models/model.onnx")
 
     rendered = capsys.readouterr().err
-    assert rendered.count("模型缓存：/growth-agent/.run/knowledge/models") == 1
+    assert rendered.count("模型缓存：/growthpilot/.run/knowledge/models") == 1
     assert "WARNING" in rendered and "ERROR" in rendered
-    assert 'File "/growth-agent/backend/model.py"' in rendered
+    assert 'File "/growthpilot/backend/model.py"' in rendered
     assert "ValueError: 模型加载失败" in rendered
     assert str(root) not in rendered
 
@@ -205,7 +205,7 @@ def test_loguru_sink_redacts_paths_and_exception_after_formatting(tmp_path, monk
 def test_evaluation_rejects_private_paths_before_freezing_inputs(tmp_path, monkeypatch):
     from evaluation import runner
 
-    root = tmp_path / "growth-agent"
+    root = tmp_path / "growthpilot"
     dataset = [{
         "scenario_id": "meituan_rider",
         "version": "test-version",

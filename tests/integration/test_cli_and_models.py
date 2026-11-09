@@ -359,7 +359,7 @@ def test_up_starts_only_the_application_and_checks_its_port(tmp_path, monkeypatc
     state_text = (settings.runtime_dir / "services.json").read_text()
     state = json.loads(state_text)
     assert [p["name"] for p in state["processes"]] == ["application"]
-    assert state["processes"][0]["project_root"] == "/growth-agent"
+    assert state["processes"][0]["project_root"] == "/growthpilot"
     assert str(tmp_path) not in state_text
     assert str(tmp_path) not in capsys.readouterr().out
 
@@ -443,7 +443,7 @@ def test_validation_outputs_only_project_relative_display_paths(tmp_path, capsys
     output = capsys.readouterr().out
     assert str(tmp_path) not in output
     result = json.loads(output)
-    assert all(item["entry"].startswith("/growth-agent/backend/scenarios/")
+    assert all(item["entry"].startswith("/growthpilot/backend/scenarios/")
                for item in result["scenarios"])
 
 
@@ -452,4 +452,4 @@ def test_cli_path_errors_hide_the_local_project_root(tmp_path, monkeypatch):
     path = tmp_path / "backend/agent_harness/rag/knowledge/v1/catalog.json"
     output = safe_error(FileNotFoundError(f"找不到文件：{path}"))
     assert str(tmp_path) not in output
-    assert "/growth-agent/backend/agent_harness/rag/knowledge/v1/catalog.json" in output
+    assert "/growthpilot/backend/agent_harness/rag/knowledge/v1/catalog.json" in output

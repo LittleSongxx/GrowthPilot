@@ -1,6 +1,6 @@
 # 前端阅读入口
 
-从项目根运行 `uv run growth up --scenario didi_driver` 即可启动完整系统。前端是 TypeScript + Vite，不单独保存客户业务状态或模型凭据。
+从项目根运行 `uv run growthpilot up --scenario didi_driver` 即可启动完整系统。前端是 TypeScript + Vite，不单独保存客户业务状态或模型凭据。
 
 | 文件 | 职责 |
 | --- | --- |
@@ -25,4 +25,4 @@
 
 `npm test` 检查语音处理、录放与资源释放，以及业务结果和内部诊断的展示边界、旧事件兼容、RAG 引用保留和 HTML 转义。自动测试不能替代外放回声、噪声和真人插话验收。
 
-`growth voice-case --case dialogue-growth-v2-R01` 会生成对应场景的入口，并预选当前观察案例。D03/D04 需使用同一 `--customer` 标识。观察记录携带完整案例 ID 和 `review_version`；旧版本反馈仍可读取，但不会计入本版观察结果。自动测试和界面检查不代表已经完成真实语音验收。
+`growthpilot voice-case --case dialogue-growth-v2-R01` 会生成对应场景的入口，并预选当前观察案例。D03/D04 需使用同一 `--customer` 标识。观察记录携带完整案例 ID 和 `review_version`；旧版本反馈仍可读取，但不会计入本版观察结果。自动测试和界面检查不代表已经完成真实语音验收。

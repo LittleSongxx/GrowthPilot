@@ -24,6 +24,6 @@
 
 宿主控制结束会话、取消请求和释放资源；Agent 理解拒绝后自然道别。`snapshot()` 返回 session、messages、memory、audit，客户反馈用于继续对话。
 
-从项目根运行 `uv run growth up --scenario meituan_rider`，静态页面与 API 共用应用服务。扩展见[工具与 Skill 指南](../docs/extending-agent.md)。
+从项目根运行 `uv run growthpilot up --scenario meituan_rider`，静态页面与 API 共用应用服务。扩展见[工具与 Skill 指南](../docs/extending-agent.md)。
 
 业务库与 RAG 共用 PostgreSQL 服务。`Settings.app_db` 保存连接与 schema 配置，调用方通过连接池借用连接，多步写入显式使用事务；不再把数据库当成本地文件操作。数据库启动与迁移见[数据库说明](../docs/database.md)。
