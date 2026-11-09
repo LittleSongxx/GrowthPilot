@@ -4,7 +4,7 @@
 
 ## 本机启动
 
-在 `growth-agent/` 中执行，已有 `.env` 时保留原文件，只补齐缺少的数据库配置：
+在 `GrowthPilot/` 中执行，已有 `.env` 时保留原文件，只补齐缺少的数据库配置：
 
 以下命令使用 Docker Compose 插件形式 `docker compose`；只有独立命令时改用 `docker-compose`，其余参数相同。
 
@@ -13,8 +13,8 @@
 cp .env.example .env
 chmod 600 .env
 docker compose up -d --wait postgres
-uv run growth database init
-uv run growth database status
+uv run growthpilot database init
+uv run growthpilot database status
 ```
 
 [compose.yaml](../compose.yaml) 使用 `pgvector/pgvector:pg17`，默认数据库与用户名为 `growth`，密码为 `growth_local`，端口仅绑定 `127.0.0.1:55432`。`.env` 中的默认连接为：
@@ -30,7 +30,7 @@ POSTGRES_PASSWORD=growth_local
 
 已有 PostgreSQL 服务时可以跳过 Compose，直接设置连接。服务需要安装 pgvector 扩展文件；初始化账号需有创建 schema、表和 `vector` 扩展的权限，或由管理员提前安装扩展。`DATABASE_SCHEMA` 用于同一数据库内的数据隔离，使用小写字母、数字和下划线，不能使用 PostgreSQL 系统 schema 名。
 
-`growth down` 只停止应用。`docker compose stop postgres` 停止本地数据库但保留数据；`docker compose up -d --wait postgres` 恢复服务。数据位于 Compose 命名卷 `postgres_data`，不在 `.run/` 中。
+`growthpilot down` 只停止应用。`docker compose stop postgres` 停止本地数据库但保留数据；`docker compose up -d --wait postgres` 恢复服务。数据位于 Compose 命名卷 `postgres_data`，不在 `.run/` 中。
 
 ## 表结构与事务
 
@@ -47,12 +47,12 @@ POSTGRES_PASSWORD=growth_local
 默认构建会校验 `backend/agent_harness/rag/knowledge/v1/` 的文件哈希，并使用固定分块重建 PostgreSQL 中的 RAG 索引，无需访问政策网页；模型缓存缺失时仍可能下载 BGE 模型：
 
 ```sh
-uv run growth knowledge build
-uv run growth knowledge status
-uv run growth knowledge search --scenario meituan_rider --query '报名要交钱吗'
+uv run growthpilot knowledge build
+uv run growthpilot knowledge status
+uv run growthpilot knowledge search --scenario meituan_rider --query '报名要交钱吗'
 ```
 
-需要实验最新资料时，显式使用 `growth knowledge build --refresh` 联网采集，或使用 `--from-cache` 复用 `.run/knowledge/catalog.json` 指向的上次采集结果；两个选项互斥。`growth up` 会比对数据库与固定语料的四场景版本，不一致时恢复教学版本，并确保模型可用。更新分块、向量模型或检索算法后，使用已有 RAG 题集验证检索效果；历史评测报告保留其当时的存储与检索说明。
+需要实验最新资料时，显式使用 `growthpilot knowledge build --refresh` 联网采集，或使用 `--from-cache` 复用 `.run/knowledge/catalog.json` 指向的上次采集结果；两个选项互斥。`growthpilot up` 会比对数据库与固定语料的四场景版本，不一致时恢复教学版本，并确保模型可用。更新分块、向量模型或检索算法后，使用已有 RAG 题集验证检索效果；历史评测报告保留其当时的存储与检索说明。
 
 ## 测试、评测与维护
 

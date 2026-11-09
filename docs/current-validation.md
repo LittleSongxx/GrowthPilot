@@ -6,8 +6,8 @@
 
 ```sh
 docker compose up -d --wait postgres
-uv run growth database init
-uv run growth validate
+uv run growthpilot database init
+uv run growthpilot validate
 uv run pytest -q
 npm --prefix frontend test
 npm --prefix frontend run build
@@ -19,19 +19,19 @@ uv run python -m evaluation.checks.business_coverage --output .run/checks/growth
 
 业务覆盖使用 [business-coverage-v1.json](../evaluation/checks/data/business-coverage-v1.json) 的确定性输入。时间相关检查使用固定日期，不表示当前地区业务数据仍然有效。
 
-切换模型时，先按 [README](../README.md#按用途配置和切换文本模型) 配置 `AGENT_*`、`JUDGE_*`、`CUSTOMER_*`、`PROFILE_*`，再运行 `uv run growth doctor` 确认本地配置。需要发起真实连通性请求时执行 `uv run growth doctor --online`。连通性通过不代表工具循环、JSON 输出或业务质量已验证；随后用少量真实对话覆盖政策查询、业务工具和通话后的画像提取，再逐步增加评测范围。切换文本服务不会更改 DashScope ASR/TTS 配置。
+切换模型时，先按 [README](../README.md#按用途配置和切换文本模型) 配置 `AGENT_*`、`JUDGE_*`、`CUSTOMER_*`、`PROFILE_*`，再运行 `uv run growthpilot doctor` 确认本地配置。需要发起真实连通性请求时执行 `uv run growthpilot doctor --online`。连通性通过不代表工具循环、JSON 输出或业务质量已验证；随后用少量真实对话覆盖政策查询、业务工具和通话后的画像提取，再逐步增加评测范围。切换文本服务不会更改 DashScope ASR/TTS 配置。
 
 ## 正式质量评测
 
 只有两类：四场景各 100 道 RAG 问题，以及各 100 个动态客户案例。先预览，再显式执行；对话正式运行每例两次，共 800 条轨迹。
 
 ```sh
-uv run growth evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3
 # 本地检索执行不调用云端生成模型
-uv run growth evaluate --suite rag --run rag-baseline --execute
+uv run growthpilot evaluate --suite rag --run rag-baseline --execute
 # 真实对话执行调用 AGENT_*、CUSTOMER_*、PROFILE_* 与 JUDGE_* 配置的模型
-uv run growth evaluate --suite dialogue --execute
+uv run growthpilot evaluate --suite dialogue --execute
 ```
 
 RAG 报告 Recall/Precision@1、3、5、8 和 MRR@8；对话报告目标完成度、问题解决度、事实可靠性、沟通体验四项 1～5 分评分，以及每通 Agent token 和客户轮首 token 时延（TTFT）P50/P95。TTFT 从客户文本提交给 Agent 到最终回复首个非空文本块到达，包含此前工具调用等待；以流式文本块近似首 token，完整回复耗时仅留作诊断。各维度分别展示均分、分布、低分案例和未评数，不输出综合总分。数据来源是公开资料、模型辅助标注与自建客户设定，不是实际客户通话。结果不等同于真实业务转化。
@@ -44,7 +44,7 @@ RAG 报告 Recall/Precision@1、3、5、8 和 MRR@8；对话报告目标完成�
 
 ## 兼容探针与当前评分口径
 
-[工程检查说明](../evaluation/checks/README.md)保留知识覆盖和语音探针命令。ASR/TTS 观察见[语音验证](voice-acceptance.md)，不混入文本评测分数。语音验收以 `evaluation/checks/config/acceptance.yaml` 的人工记录为准；当前 `observations` 为空，`growth evaluate --suite voice` 只会返回 pending，不能当作已完成验收。
+[工程检查说明](../evaluation/checks/README.md)保留知识覆盖和语音探针命令。ASR/TTS 观察见[语音验证](voice-acceptance.md)，不混入文本评测分数。语音验收以 `evaluation/checks/config/acceptance.yaml` 的人工记录为准；当前 `observations` 为空，`growthpilot evaluate --suite voice` 只会返回 pending，不能当作已完成验收。
 
 2026-11-02 的全量评测记录已按 RAG 与 Agent 分类，详见[本轮评测记录](../evaluation/reports/README.md)。RAG 已完成 400 道检索题；Agent 全量运行保留 800 条记录，其中 799 通完成并取得有效评分，另 1 通客户模型输出异常。该客户的两次连续通话已独立补跑，原全量运行仍保留未完成状态，不能用补跑结果覆盖原始记录。报告作为教学成果保留运行清单、案例快照、原始结果、裁判记录与汇总，完整产物说明见[评测说明](../evaluation/README.md#三看报告和追溯一次失败)。
 

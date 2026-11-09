@@ -36,12 +36,12 @@
 当前运行时使用自包含正文，没有额外 `references` 文件读取链路。不要把完成 SOP 所需步骤只放在附属文件或假定模型可使用文件、Shell、其他场域工具。场景快照保存引用时正文，运行时原生加载器读取标准目录；修改资源后重新加载场景并创建新会话，历史快照保留。
 
 ```sh
-uv run growth validate
+uv run growthpilot validate
 uv run pytest -q tests/agent_harness/test_native_skills.py tests/agent_harness/test_scenario_v2.py tests/agent_harness/test_budget_tools.py
 # 预览该场景统一的动态客户案例
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --run my-dialogue-preview
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --run my-dialogue-preview
 # 显式执行会调用真实业务模型、普通客户模型与独立评审
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --run my-dialogue-run --execute
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --run my-dialogue-run --execute
 ```
 
 新增或修改 Skill 后，补充其代表性客户问题到所属场景的统一动态案例集，用目标完成度、问题解决度、事实可靠性、沟通体验四项 1～5 分评分，以及 token、首 token 时延（TTFT）观察完整 Agent。TTFT 从客户文本提交到最终回复首个非空文本块到达，包含此前的 Skill 加载与工具调用等待；不要把工具调用前的中间说明当作最终回复，也不要用完整回复耗时代替。不要添加独立 Skill suite、强制加载指标或 Memory/Skill 消融实验。工程测试仍验证原生加载、工具依赖和权限，加载成功本身不表示问题已经解决。

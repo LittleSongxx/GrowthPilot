@@ -1,6 +1,6 @@
 # 场景配置与工具
 
-场景入口为 `backend/scenarios/<id>/scenario.yaml`，使用 `schema_version: '2.0'`。`growth validate` 加载四场景、资源和业务数据，不调用模型。
+场景入口为 `backend/scenarios/<id>/scenario.yaml`，使用 `schema_version: '2.0'`。`growthpilot validate` 加载四场景、资源和业务数据，不调用模型。
 
 | 配置段 | 含义 |
 | --- | --- |

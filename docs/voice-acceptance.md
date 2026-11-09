@@ -21,7 +21,7 @@
 插话停止旧一轮的 Agent 回答和 TTS，会话仍可继续；结束通话取消当前处理并释放资源。自动挂断由系统通话工具请求，普通回复或仅口头道别不会触发。页面关闭释放媒体并尽力通知后端；服务端会话期限处理未送达的关闭。ASR 与 Agent 仍需完成当前阶段，流式播放缩短的是 TTS 等待，不能据此认定整条链路已经全流式。
 
 ```sh
-uv run growth evaluate --suite voice
+uv run growthpilot evaluate --suite voice
 # 调用真实云端 API，检查语音链路
 uv run python -m evaluation.checks.speech_probe --output .run/checks/growth-speech-probe.json
 ```
