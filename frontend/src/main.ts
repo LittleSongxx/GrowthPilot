@@ -9,7 +9,7 @@ app.innerHTML = `<div class="layout">
   <aside class="sidebar">
     <div class="brand">
       <span class="brandmark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-7"/><path d="M20 8h-4"/><path d="M20 8v4"/></svg></span>
-      <span class="brand-text"><span class="brand-name">Growth Agent</span><span class="brand-sub">语音用增工作台</span></span>
+      <span class="brand-text"><span class="brand-name">GrowthPilot</span><span class="brand-sub">语音用增工作台</span></span>
     </div>
     <nav class="nav" aria-label="业务场景">
       <div class="eyebrow">业务场景</div>

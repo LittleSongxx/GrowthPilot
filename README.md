@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="Growth Agent" width="96" />
+  <img src="docs/assets/logo.svg" alt="GrowthPilot" width="96" />
 </p>
 
-<h1 align="center">Growth Agent</h1>
+<h1 align="center">GrowthPilot</h1>
 
 <p align="center">
   <b>四个业务场景的语音用增 Agent</b><br/>
@@ -20,12 +20,12 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/screenshots/hero.png" alt="Growth Agent 语音用增工作台" width="100%" />
+  <img src="docs/assets/screenshots/hero.png" alt="GrowthPilot 语音用增工作台" width="100%" />
 </p>
 
 ---
 
-**Growth Agent 是一套跑在自己机器上的四场景语音用增 Agent，主线只有一件事：把客户的疑问变成“下载、注册、使用 App”的下一步。** 它不靠话术硬推——政策条款走本地 RAG 原文，地区、费用和联系方式走版本化业务目录，客户说过的话走画像记忆；模型只决定「何时查、怎么说」。
+**GrowthPilot 是一套跑在自己机器上的四场景语音用增 Agent，主线只有一件事：把客户的疑问变成“下载、注册、使用 App”的下一步。** 它不靠话术硬推——政策条款走本地 RAG 原文，地区、费用和联系方式走版本化业务目录，客户说过的话走画像记忆；模型只决定「何时查、怎么说」。
 
 覆盖 **美团骑手 / 美团商家 / 滴滴司机 / 度小满** 四个场景：16 个带类型业务工具、17 个问题型 Skill、42 份冻结政策语料（1,285 个分块）、本地业务目录（60 城 / 11 类模板 / 67 个条件分支），以及 400 道 RAG 检索题与 800 通动态客户对话的离线评测。前端与后端跑在同一个本机服务上，`.env` 只保存服务端凭据。
 
@@ -131,25 +131,25 @@ Agent 按需调用 16 个业务工具：政策检索、地区站点/租车/计�
 uv sync --locked
 cp .env.example .env && chmod 600 .env      # 填入文本模型与 DashScope Key
 docker compose up -d --wait postgres
-uv run growth database init
-uv run growth doctor --init-secrets
-uv run growth validate
-uv run growth up --build --scenario meituan_rider
+uv run growthpilot database init
+uv run growthpilot doctor --init-secrets
+uv run growthpilot validate
+uv run growthpilot up --build --scenario meituan_rider
 ```
 
-打开 <http://127.0.0.1:8787>，选择场景、填写客户标识，允许麦克风后直接说话。`growth down` 停止应用并保留数据库。
+打开 <http://127.0.0.1:8787>，选择场景、填写客户标识，允许麦克风后直接说话。`growthpilot down` 停止应用并保留数据库。
 
 ### 方式二：Docker 持久化部署（推荐）
 
 ```bash
 cp .env.example .env && chmod 600 .env      # 填 Key；POSTGRES_PASSWORD 建议换成随机值
-docker build -t growth-agent:local .
+docker build -t growthpilot:local .
 docker compose up -d
 ```
 
 - 应用：<http://127.0.0.1:8787>（仅绑定本机回环）
-- 数据卷：`postgres_data`（业务库 + 政策索引）、`growth_runtime`（向量模型缓存、日志）
-- 容器：`growth-agent` 应用 + PostgreSQL；两者 `restart: unless-stopped`
+- 数据卷：`postgres_data`（业务库 + 政策索引）、`growthpilot_runtime`（向量模型缓存、日志）
+- 容器：`growthpilot-app-1` 应用 + `growthpilot-postgres-1` PostgreSQL；两者 `restart: unless-stopped`
 - 常用命令：`docker compose ps / logs -f app / restart app / down`（`down` 不会删除数据卷）
 
 > 默认使用标准镜像 `pgvector/pgvector:pg17`（当前部署即此镜像，pgvector 0.8.7）。
@@ -183,7 +183,7 @@ TTS_MODEL=qwen3-tts-flash
 TTS_VOICE=Cherry
 ```
 
-切换厂商时按整组替换 `EXTRA_BODY`、温度与 token 参数；`uv run growth doctor --online` 只检查文本连通性，工具循环与业务质量仍需对话验证。完整配置说明见[文档导航](docs/README.md)与[排障](docs/troubleshooting.md)。
+切换厂商时按整组替换 `EXTRA_BODY`、温度与 token 参数；`uv run growthpilot doctor --online` 只检查文本连通性，工具循环与业务质量仍需对话验证。完整配置说明见[文档导航](docs/README.md)与[排障](docs/troubleshooting.md)。
 
 ---
 
@@ -203,13 +203,13 @@ TTS_VOICE=Cherry
 uv run pytest -q                              # 1,191 passed, 12 skipped
 npm --prefix frontend test                    # 38 passed
 npm --prefix frontend run build               # tsc + Vite 构建
-uv run growth validate
+uv run growthpilot validate
 uv run python -m evaluation.checks.contracts --output .run/checks/growth-contracts.json
 uv run python -m evaluation.checks.business_coverage --output .run/checks/growth-business-coverage.json
 
 # 评测预览 / 显式执行
-uv run growth evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
-uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --execute
+uv run growthpilot evaluate --suite rag --scenario meituan_rider --limit 3 --run rag-preview
+uv run growthpilot evaluate --suite dialogue --scenario meituan_rider --limit 3 --execute
 ```
 
 真实模型的 12 项 live 测试默认跳过；设置 `GROWTH_RUN_LIVE=1` 才会调用云端模型与语音服务。
@@ -246,3 +246,4 @@ uv run growth evaluate --suite dialogue --scenario meituan_rider --limit 3 --exe
 - 服务只绑定 `127.0.0.1`，并校验 Host / Origin / 回环来源；Docker 部署通过端口映射到本机 `8787`。
 - `.env` 保存服务端密钥，权限应为 `600`，不要提交到版本库；会话使用按会话派生的 Bearer token。
 - 语音链路需要 DashScope 凭据；没有语音 Key 时仍可使用文本评测与工程检查。
+- 本项目采用 [MIT 许可](LICENSE)；第三方依赖与资料见[上游资源归属](docs/third_party/README.md)。
