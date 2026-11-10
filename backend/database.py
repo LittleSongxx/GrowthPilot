@@ -21,7 +21,7 @@ from psycopg.pq import TransactionStatus
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool, PoolTimeout
 
-DEFAULT_DATABASE_URL = "postgresql://growth:growth_local@127.0.0.1:55432/growth"
+DEFAULT_DATABASE_URL = "postgresql://growthpilot:growthpilot_local@127.0.0.1:55432/growthpilot"
 MIGRATIONS_DIR = Path(__file__).with_name("migrations")
 _IDENTIFIER = re.compile(r"[a-z_][a-z0-9_]{0,62}\Z")
 _MIGRATION_NAME = re.compile(r"(\d{3,})_[a-z][a-z0-9_]*\.sql\Z")
@@ -34,7 +34,7 @@ class DatabaseConfig:
     """数据库凭据不参与日志展示；schema 用于隔离运行和评测数据。"""
 
     dsn: str = field(repr=False)
-    schema: str = "growth"
+    schema: str = "growthpilot"
 
     def __post_init__(self) -> None:
         if (
@@ -57,7 +57,7 @@ class DatabaseConfig:
     def from_env(cls) -> DatabaseConfig:
         return cls(
             dsn=os.environ.get("DATABASE_URL", DEFAULT_DATABASE_URL),
-            schema=os.environ.get("DATABASE_SCHEMA", "growth"),
+            schema=os.environ.get("DATABASE_SCHEMA", "growthpilot"),
         )
 
     @property
@@ -223,7 +223,7 @@ def table_exists(connection: psycopg.Connection, name: str) -> bool:
 
 @contextmanager
 def temporary_database(
-    config: DatabaseConfig, prefix: str = "growth_test"
+    config: DatabaseConfig, prefix: str = "growthpilot_test"
 ) -> Iterator[DatabaseConfig]:
     """为一次测试或评测创建独立 schema，结束时仅删除本次实际创建的 schema。"""
     if (

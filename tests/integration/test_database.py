@@ -28,11 +28,11 @@ def test_schema_rejects_unsafe_or_reserved_names(schema):
 
 
 def test_database_identity_and_repr_never_include_credentials(monkeypatch):
-    monkeypatch.setenv("DATABASE_URL", "postgresql://owner:do-not-expose@localhost:55432/growth")
+    monkeypatch.setenv("DATABASE_URL", "postgresql://owner:do-not-expose@localhost:55432/growthpilot")
     monkeypatch.setenv("DATABASE_SCHEMA", "course")
     config = DatabaseConfig.from_env()
     assert config.schema == "course"
-    assert config.identity == "postgresql://localhost:55432/growth?schema=course"
+    assert config.identity == "postgresql://localhost:55432/growthpilot?schema=course"
     assert "do-not-expose" not in f"{config!r} {config}"
     with pytest.raises(ValueError) as error:
         DatabaseConfig("postgresql://owner:do-not-expose@localhost:invalid-port/growth?unknown=bad")

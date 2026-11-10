@@ -18,7 +18,7 @@ def database_for(path: Path) -> DatabaseConfig:
     key = Path(path).resolve()
     if key not in _databases:
         _databases[key] = _contexts.enter_context(
-            temporary_database(DatabaseConfig.from_env(), prefix="growth_test")
+            temporary_database(DatabaseConfig.from_env(), prefix="growthpilot_test")
         )
     return _databases[key]
 

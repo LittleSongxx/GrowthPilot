@@ -1,8 +1,14 @@
 """统一管理 PostgreSQL 测试隔离；数据库不可用时保留明确的连接错误。"""
 
+from pathlib import Path
+
 import pytest
+from dotenv import load_dotenv
 
 from tests.db import cleanup_databases, database_for
+
+# 与应用使用同一份本地配置；CI/显式导出的环境变量优先。
+load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 
 @pytest.fixture(autouse=True)

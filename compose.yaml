@@ -3,27 +3,34 @@ name: growthpilot
 services:
   postgres:
     image: ${POSTGRES_IMAGE:-pgvector/pgvector:pg17}
+    container_name: growthpilot-postgres
     environment:
-      POSTGRES_DB: growth
-      POSTGRES_USER: growth
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-growth_local}
+      POSTGRES_DB: growthpilot
+      POSTGRES_USER: growthpilot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-growthpilot_local}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - growthpilot_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U growth -d growth"]
+      test: ["CMD-SHELL", "pg_isready -U growthpilot -d growthpilot"]
       interval: 3s
       timeout: 3s
       retries: 20
     restart: unless-stopped
+    networks:
+      - growthpilot
 
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: growthpilot:local
+    container_name: growthpilot-app
     env_file: .env
     environment:
-      DATABASE_URL: postgresql://growth:${POSTGRES_PASSWORD}@postgres:5432/growth
-      DATABASE_SCHEMA: growth
+      DATABASE_URL: postgresql://growthpilot:${POSTGRES_PASSWORD}@postgres:5432/growthpilot
+      DATABASE_SCHEMA: growthpilot
       # 仅用于本地端口映射：容器内客户端地址是网桥网关，Host/Origin 仍限本机。
       GROWTH_ALLOW_PROXY_CLIENT: "1"
     ports:
@@ -34,7 +41,15 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - growthpilot
 
 volumes:
-  postgres_data:
+  growthpilot_postgres_data:
+    name: growthpilot_postgres_data
   growthpilot_runtime:
+    name: growthpilot_runtime
+
+networks:
+  growthpilot:
+    name: growthpilot

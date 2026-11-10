@@ -17,20 +17,20 @@ uv run growthpilot database init
 uv run growthpilot database status
 ```
 
-[compose.yaml](../compose.yaml) 使用 `pgvector/pgvector:pg17`，默认数据库与用户名为 `growth`，密码为 `growth_local`，端口仅绑定 `127.0.0.1:55432`。`.env` 中的默认连接为：
+[compose.yaml](../compose.yaml) 使用 `pgvector/pgvector:pg17`，默认数据库与用户名为 `growthpilot`，密码为 `growthpilot_local`，端口仅绑定 `127.0.0.1:55432`。`.env` 中的默认连接为：
 
 ```dotenv
-DATABASE_URL=postgresql://growth:growth_local@127.0.0.1:55432/growth
-DATABASE_SCHEMA=growth
+DATABASE_URL=postgresql://growthpilot:growthpilot_local@127.0.0.1:55432/growthpilot
+DATABASE_SCHEMA=growthpilot
 POSTGRES_PORT=55432
-POSTGRES_PASSWORD=growth_local
+POSTGRES_PASSWORD=growthpilot_local
 ```
 
 `POSTGRES_PORT`、`POSTGRES_PASSWORD` 用于 Compose；应用实际读取 `DATABASE_URL` 和 `DATABASE_SCHEMA`。更改前两项后同步更新连接串。Compose 的初始密码只在空数据卷初始化时使用，修改环境变量不会自动修改已有数据库角色的密码。
 
 已有 PostgreSQL 服务时可以跳过 Compose，直接设置连接。服务需要安装 pgvector 扩展文件；初始化账号需有创建 schema、表和 `vector` 扩展的权限，或由管理员提前安装扩展。`DATABASE_SCHEMA` 用于同一数据库内的数据隔离，使用小写字母、数字和下划线，不能使用 PostgreSQL 系统 schema 名。
 
-`growthpilot down` 只停止应用。`docker compose stop postgres` 停止本地数据库但保留数据；`docker compose up -d --wait postgres` 恢复服务。数据位于 Compose 命名卷 `postgres_data`，不在 `.run/` 中。
+`growthpilot down` 只停止应用。`docker compose stop postgres` 停止本地数据库但保留数据；`docker compose up -d --wait postgres` 恢复服务。数据位于 Compose 命名卷 `growthpilot_postgres_data`，不在 `.run/` 中。
 
 ## 表结构与事务
 
@@ -62,8 +62,8 @@ uv run growthpilot knowledge search --scenario meituan_rider --query '报名要�
 
 ```sh
 mkdir -p backups
-docker compose exec -T postgres pg_dump -U growth -d growth -Fc > backups/growth.dump
-docker compose exec -T postgres pg_restore --list < backups/growth.dump
+docker compose exec -T postgres pg_dump -U growthpilot -d growthpilot -Fc > backups/growthpilot.dump
+docker compose exec -T postgres pg_restore --list < backups/growthpilot.dump
 ```
 
 固定教学语料由 Git 版本记录。若需保留在线采集实验，还应备份 `.run/knowledge/catalog.json` 及其引用的 `documents/` 快照；模型缓存可重新下载。恢复应在空的独立数据库中演练，并核对会话、画像和知识版本，不直接覆盖正在使用的库。

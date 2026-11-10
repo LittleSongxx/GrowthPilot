@@ -143,13 +143,13 @@ uv run growthpilot up --build --scenario meituan_rider
 
 ```bash
 cp .env.example .env && chmod 600 .env      # 填 Key；POSTGRES_PASSWORD 建议换成随机值
-docker build -t growthpilot:local .
+docker compose build
 docker compose up -d
 ```
 
 - 应用：<http://127.0.0.1:8787>（仅绑定本机回环）
-- 数据卷：`postgres_data`（业务库 + 政策索引）、`growthpilot_runtime`（向量模型缓存、日志）
-- 容器：`growthpilot-app-1` 应用 + `growthpilot-postgres-1` PostgreSQL；两者 `restart: unless-stopped`
+- 数据卷：`growthpilot_postgres_data`（业务库 + 政策索引）、`growthpilot_runtime`（向量模型缓存、日志）
+- 容器：`growthpilot-app` 应用 + `growthpilot-postgres` PostgreSQL；两者 `restart: unless-stopped`
 - 常用命令：`docker compose ps / logs -f app / restart app / down`（`down` 不会删除数据卷）
 
 > 默认使用标准镜像 `pgvector/pgvector:pg17`（当前部署即此镜像，pgvector 0.8.7）。
